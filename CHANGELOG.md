@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- ✨(backend) add recursive folder export as ZIP archive
+
 ### Changed
 
 - 🐛(backend) replace VersionId by Etag for WOPI
