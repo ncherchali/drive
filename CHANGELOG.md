@@ -11,6 +11,7 @@ and this project adheres to
 ### Added
 
 - ✨(backend) add recursive folder export as ZIP archive
+- ✨(frontend) add folder export action
 
 ### Changed
 
