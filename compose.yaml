@@ -14,12 +14,14 @@ services:
       - env.d/development/postgresql
       - env.d/development/postgresql.${ENV_OVERRIDE:-local}
     volumes:
-      - ./data/postgresql.${ENV_OVERRIDE:-local}:/var/lib/postgresql/data
+      # Local dev (Windows): use a named volume on the Docker VM's Linux FS
+      # instead of a Windows bind mount, which causes fsync/IO crash loops.
+      - drive-postgresql-${ENV_OVERRIDE:-local}:/var/lib/postgresql/data
 
   redis:
     image: redis:5
     ports:
-      - "6379:6379"
+      - "6381:6379"
 
   mailcatcher:
     image: sj26/mailcatcher:latest
@@ -33,7 +35,7 @@ services:
       - MINIO_ROOT_USER=drive
       - MINIO_ROOT_PASSWORD=password
     ports:
-      - "9000:9000"
+      - "9100:9000"
       - "9001:9001"
     healthcheck:
       test: ["CMD", "mc", "ready", "local"]
@@ -154,7 +156,7 @@ services:
   nginx:
     image: nginx:1.25
     ports:
-      - "8083:8083"
+      - "8183:8083"
     networks:
       default: {}
       lasuite:
@@ -222,7 +224,7 @@ services:
       - --features=preview
       - --import-realm
       - --proxy=edge
-      - --hostname=http://localhost:8083
+      - --hostname=http://localhost:8183
       - --hostname-strict=false
     environment:
       KEYCLOAK_ADMIN: admin
@@ -235,7 +237,7 @@ services:
       KC_DB_SCHEMA: public
       PROXY_ADDRESS_FORWARDING: "true"
     ports:
-      - "8080:8080"
+      - "8180:8080"
     depends_on:
       - kc_postgresql
     networks:
@@ -283,3 +285,7 @@ networks:
     name: lasuite-network
     driver: bridge
     external: true
+
+volumes:
+  drive-postgresql-local:
+  drive-postgresql-e2e:
