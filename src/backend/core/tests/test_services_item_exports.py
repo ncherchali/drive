@@ -93,6 +93,7 @@ def test_services_item_exports_export_descendants_builds_hierarchical_archive_pa
 
     assert by_archive_path == {
         "top.txt": top_file.file_key,
+        "sub/": None,
         "sub/nested.txt": nested_file.file_key,
     }
 

@@ -149,7 +149,7 @@ def test_api_items_export_preserves_hierarchy():
     response = client.get(f"/api/v1.0/items/{root.pk}/export/")
 
     assert response.status_code == 200
-    assert sorted(_zip_names(response)) == ["sub/nested.txt", "top.txt"]
+    assert sorted(_zip_names(response)) == ["sub/", "sub/nested.txt", "top.txt"]
 
 
 def test_api_items_export_skips_soft_deleted_descendants():
@@ -237,6 +237,26 @@ def test_api_items_export_empty_folder():
 
     assert response.status_code == 200
     assert _zip_names(response) == []
+
+
+def test_api_items_export_includes_empty_subfolders():
+    """Subfolders must appear as directory entries in the zip."""
+    user = factories.UserFactory()
+    client = APIClient()
+    client.force_login(user)
+
+    root = factories.ItemFactory(
+        type=models.ItemTypeChoices.FOLDER,
+        title="root",
+        users=[(user, models.RoleChoices.OWNER)],
+    )
+    sub = factories.ItemFactory(parent=root, type=models.ItemTypeChoices.FOLDER, title="sub")
+    factories.ItemFactory(parent=sub, type=models.ItemTypeChoices.FOLDER, title="nested")
+
+    response = client.get(f"/api/v1.0/items/{root.pk}/export/")
+
+    assert response.status_code == 200
+    assert sorted(_zip_names(response)) == ["sub/", "sub/nested/"]
 
 
 def test_api_items_export_filename_with_unicode():
