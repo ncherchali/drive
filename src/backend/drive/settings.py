@@ -768,6 +768,7 @@ class Base(Configuration):
             ("fr-fr", _("French")),
             ("de-de", _("German")),
             ("nl-nl", _("Dutch")),
+            ("ar", _("Arabic")),
         )
     )
 

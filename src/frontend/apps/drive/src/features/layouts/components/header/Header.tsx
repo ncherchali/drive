@@ -41,6 +41,11 @@ export const LANGUAGES = [
     value: "de-de",
     shortLabel: "DE",
   },
+  {
+    label: "العربية",
+    value: "ar",
+    shortLabel: "ع",
+  },
 ];
 
 
@@ -108,9 +113,17 @@ export const LanguagePickerUserMenu = () => {
       console.error("Error changing language", err);
     });
     if (user) {
-      driver.updateUser({ language: value, id: user.id }).then(() => {
-        void refreshUser?.();
-      });
+      // The language still applies client-side via i18n above. Persisting to
+      // the backend may fail if the server doesn't allow this language (its
+      // User.language choices come from settings.LANGUAGES) — don't crash then.
+      driver
+        .updateUser({ language: value, id: user.id })
+        .then(() => {
+          void refreshUser?.();
+        })
+        .catch((err) => {
+          console.error("Could not persist language to backend", err);
+        });
     }
   };
 

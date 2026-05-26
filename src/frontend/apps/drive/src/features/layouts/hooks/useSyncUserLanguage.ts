@@ -31,9 +31,16 @@ export const useSyncUserLanguage = () => {
       return;
     }
 
-    driver.updateUser({ language: language.value, id: user.id }).then(() => {
-      void refreshUser?.();
-    });
+    driver
+      .updateUser({ language: language.value, id: user.id })
+      .then(() => {
+        void refreshUser?.();
+      })
+      .catch((err) => {
+        // The backend may reject this language (settings.LANGUAGES). The UI
+        // language still applies client-side, so just log instead of crashing.
+        console.error("Could not sync language to backend", err);
+      });
   }, [user, i18n.language, driver, refreshUser]);
 
   // On first load, if user has a language, sync it to the browser.

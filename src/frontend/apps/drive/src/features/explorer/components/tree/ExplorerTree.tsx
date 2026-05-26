@@ -22,6 +22,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExplorerTreeItem } from "./ExplorerTreeItem";
 import { useMoveItems } from "../../api/useMoveItem";
 import { ExplorerTreeActions } from "./ExplorerTreeActions";
+import { ExplorerTreeWorkspaces } from "./ExplorerTreeWorkspaces";
 import { ExplorerTreeNav } from "./nav/ExplorerTreeNav";
 import { addItemsMovedToast } from "../toasts/addItemsMovedToast";
 import { ExplorerTreeMoveConfirmationModal } from "./ExplorerTreeMoveConfirmationModal";
@@ -174,6 +175,7 @@ export const ExplorerTree = () => {
           rootNodeId={"root"}
         />
       )}
+      <ExplorerTreeWorkspaces />
       <ExplorerTreeNav />
       <div className="explorer__tree__mobile-navs">
         <HorizontalSeparator />

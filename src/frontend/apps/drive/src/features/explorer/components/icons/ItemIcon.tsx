@@ -1,5 +1,12 @@
-import { Item, ItemType, ItemUploadState } from "@/features/drivers/types";
+import {
+  Item,
+  ItemType,
+  ItemUploadState,
+  WorkspaceType,
+} from "@/features/drivers/types";
 import folderIcon from "@/assets/folder/folder.svg";
+import folderPublicIcon from "@/assets/folder/folder-tiny-public.svg";
+import folderSharedIcon from "@/assets/folder/folder-tiny-shared.svg";
 import {
   FileIcon,
   FileIconContent,
@@ -7,7 +14,8 @@ import {
   IconSize,
   MimeCategory,
 } from "@gouvfr-lasuite/ui-kit";
-import { itemToPreviewFile } from "../../utils/utils";
+import { itemToPreviewFile, getWorkspaceType } from "../../utils/utils";
+import { itemIsWorkspace } from "@/features/drivers/utils";
 
 type ItemIconProps = {
   item: Item;
@@ -42,6 +50,12 @@ export const getItemExtendedIcon = (
   type: "normal" | "mini",
 ): string | null => {
   if (item.type === ItemType.FOLDER) {
+    // A workspace (root-level folder) gets a distinct icon from a nested folder.
+    if (itemIsWorkspace(item)) {
+      return getWorkspaceType(item) === WorkspaceType.PUBLIC
+        ? folderPublicIcon.src
+        : folderSharedIcon.src;
+    }
     return folderIcon.src;
   }
 

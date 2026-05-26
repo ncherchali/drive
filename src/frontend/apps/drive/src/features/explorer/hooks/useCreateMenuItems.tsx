@@ -2,6 +2,7 @@ import { MenuItem, IconSize } from "@gouvfr-lasuite/ui-kit";
 import { useTranslation } from "react-i18next";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 import createFolderSvg from "@/assets/icons/create_folder.svg";
+import createWorkspaceSvg from "@/assets/icons/create_workspace.svg";
 import uploadFileSvg from "@/assets/icons/upload_file.svg";
 import uploadFolderSvg from "@/assets/icons/upload_folder.svg";
 import { ItemIcon } from "../components/icons/ItemIcon";
@@ -11,6 +12,7 @@ import {
   ExplorerCreateFileType,
 } from "../components/modals/ExplorerCreateFileModal";
 import { ExplorerCreateFolderModal } from "../components/modals/ExplorerCreateFolderModal";
+import { ExplorerCreateWorkspaceModal } from "../components/modals/ExplorerCreateWorkspaceModal";
 import { useModal } from "@gouvfr-lasuite/cunningham-react";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -48,6 +50,13 @@ export const useCreateMenuItems = ({
   // it in the current view — no redirect needed.
   const shouldRedirectToCreated = !canCreateHere && !isOnMyFiles;
 
+  // At the root level there is no parent to create into. A loose folder/file
+  // cannot live at the root — it would itself become a workspace. So at the
+  // root we only offer workspace creation; folders/files are created inside
+  // a workspace.
+  const isAtRoot = !effectiveParentId;
+
+  const createWorkspaceModal = useModal();
   const createFolderModal = useModal();
   const [createFileModalType, setCreateFileModalType] =
     useState<ExplorerCreateFileType>(ExplorerCreateFileType.DOC);
@@ -58,72 +67,86 @@ export const useCreateMenuItems = ({
     createFileModal.open();
   };
 
-  const items: MenuItem[] = [
-    {
-      icon: <img src={createFolderSvg.src} alt="" />,
-      label: t("explorer.tree.create.folder"),
-      callback: createFolderModal.open,
-    },
-    { type: "separator" },
-  ];
+  const items: MenuItem[] = [];
 
-  if (includeImport) {
+  if (isAtRoot) {
+    items.push({
+      icon: <img src={createWorkspaceSvg.src} alt="" />,
+      label: t("explorer.tree.create.workspace"),
+      callback: createWorkspaceModal.open,
+    });
+  } else {
     items.push(
       {
-        icon: <img src={uploadFileSvg.src} alt="" />,
-        label: t("explorer.tree.import.files"),
-        callback: () => {
-          document.getElementById("import-files")?.click();
-        },
-      },
-      {
-        icon: <img src={uploadFolderSvg.src} alt="" />,
-        label: t("explorer.tree.import.folders"),
-        callback: () => {
-          document.getElementById("import-folders")?.click();
-        },
+        icon: <img src={createFolderSvg.src} alt="" />,
+        label: t("explorer.tree.create.folder"),
+        callback: createFolderModal.open,
       },
       { type: "separator" },
     );
-  }
 
-  if (includeCreate) {
-    items.push(
-      {
-        icon: renderFileIcon({
-          type: ItemType.FILE,
-          filename: "doc.odt",
-          mimetype:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        }),
-        label: t("explorer.tree.create.file.doc"),
-        callback: () => openCreateFileModal(ExplorerCreateFileType.DOC),
-      },
-      {
-        icon: renderFileIcon({
-          type: ItemType.FILE,
-          filename: "powerpoint.odp",
-          mimetype:
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        }),
-        label: t("explorer.tree.create.file.powerpoint"),
-        callback: () => openCreateFileModal(ExplorerCreateFileType.POWERPOINT),
-      },
-      {
-        icon: renderFileIcon({
-          type: ItemType.FILE,
-          filename: "calc.ods",
-          mimetype:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        }),
-        label: t("explorer.tree.create.file.calc"),
-        callback: () => openCreateFileModal(ExplorerCreateFileType.CALC),
-      },
-    );
+    if (includeImport) {
+      items.push(
+        {
+          icon: <img src={uploadFileSvg.src} alt="" />,
+          label: t("explorer.tree.import.files"),
+          callback: () => {
+            document.getElementById("import-files")?.click();
+          },
+        },
+        {
+          icon: <img src={uploadFolderSvg.src} alt="" />,
+          label: t("explorer.tree.import.folders"),
+          callback: () => {
+            document.getElementById("import-folders")?.click();
+          },
+        },
+        { type: "separator" },
+      );
+    }
+
+    if (includeCreate) {
+      items.push(
+        {
+          icon: renderFileIcon({
+            type: ItemType.FILE,
+            filename: "doc.odt",
+            mimetype:
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          }),
+          label: t("explorer.tree.create.file.doc"),
+          callback: () => openCreateFileModal(ExplorerCreateFileType.DOC),
+        },
+        {
+          icon: renderFileIcon({
+            type: ItemType.FILE,
+            filename: "powerpoint.odp",
+            mimetype:
+              "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          }),
+          label: t("explorer.tree.create.file.powerpoint"),
+          callback: () => openCreateFileModal(ExplorerCreateFileType.POWERPOINT),
+        },
+        {
+          icon: renderFileIcon({
+            type: ItemType.FILE,
+            filename: "calc.ods",
+            mimetype:
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          }),
+          label: t("explorer.tree.create.file.calc"),
+          callback: () => openCreateFileModal(ExplorerCreateFileType.CALC),
+        },
+      );
+    }
   }
 
   const modals = (
     <>
+      <ExplorerCreateWorkspaceModal
+        {...createWorkspaceModal}
+        redirectAfterCreate={true}
+      />
       <ExplorerCreateFolderModal
         {...createFolderModal}
         parentId={effectiveParentId}

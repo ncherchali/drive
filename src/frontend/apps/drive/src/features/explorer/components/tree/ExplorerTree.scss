@@ -248,3 +248,10 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     }
   }
 }
+
+.explorer__tree__workspaces__title {
+  padding: 8px 12px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c--contextuals--content--semantic--neutral--tertiary);
+}

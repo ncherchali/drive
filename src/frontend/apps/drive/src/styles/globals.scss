@@ -34,6 +34,24 @@ body {
   box-sizing: border-box;
 }
 
+// --- RTL / Arabic support ---------------------------------------------------
+// Cairo is reserved for the right-to-left (Arabic) interface.
+:root {
+  --font-cairo: "Cairo", sans-serif;
+}
+
+// When the document is in RTL (set by initI18n on <html dir="rtl">), use Cairo
+// across the UI. We target broadly because the design system sets the base
+// font-family on several elements rather than relying on inheritance.
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select,
+[dir="rtl"] .c__button {
+  font-family: var(--font-cairo);
+}
+
 // Related to @viselect/react
 .selection-area {
   background: rgba(46, 115, 252, 0.11);

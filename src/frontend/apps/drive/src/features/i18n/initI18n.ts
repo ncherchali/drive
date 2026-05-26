@@ -19,6 +19,13 @@ import resources from "./translations.json";
 
 const fallbackLng = "en";
 
+// Languages whose UI must render right-to-left.
+const RTL_LANGUAGES = ["ar", "he", "fa", "ur"];
+export const getTextDirection = (language: string): "rtl" | "ltr" =>
+  RTL_LANGUAGES.includes((language || fallbackLng).split(/[-_]/)[0])
+    ? "rtl"
+    : "ltr";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -42,10 +49,9 @@ i18n
   })
   .then(() => {
     if (typeof document !== "undefined") {
-      document.documentElement.setAttribute(
-        "lang",
-        i18n.language || fallbackLng
-      );
+      const lng = i18n.language || fallbackLng;
+      document.documentElement.setAttribute("lang", lng);
+      document.documentElement.setAttribute("dir", getTextDirection(lng));
     }
   })
   .catch(() => {
@@ -56,6 +62,7 @@ i18n
 i18n.on("languageChanged", (lng) => {
   if (typeof window !== "undefined") {
     document.documentElement.setAttribute("lang", lng);
+    document.documentElement.setAttribute("dir", getTextDirection(lng));
     localStorage.setItem(LANGUAGE_LOCAL_STORAGE, lng);
   }
 });

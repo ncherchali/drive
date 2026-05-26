@@ -315,7 +315,10 @@
           "recent": "Recents",
           "my_files": "My files",
           "shared_with_me": "Shared with me",
-          "favorites": "Starred"
+          "favorites": "Starred",
+          "workspaces": {
+            "title": "Workspaces"
+          }
         },
         "trash": {
           "title": "Trash",
@@ -404,6 +407,15 @@
               "title": "Create folder",
               "label": "Folder name",
               "placeholder": "Enter folder name",
+              "cancel": "Cancel",
+              "submit": "Create"
+            }
+          },
+          "createWorkspace": {
+            "modal": {
+              "title": "Create workspace",
+              "label": "Workspace name",
+              "placeholder": "Enter workspace name",
               "cancel": "Cancel",
               "submit": "Create"
             }
@@ -858,6 +870,9 @@
           "my_files": "Mes fichiers",
           "shared_with_me": "Partagés avec moi",
           "favorites": "Favoris",
+          "workspaces": {
+            "title": "Espaces"
+          },
           "import": {
             "label": "Importer",
             "files": "Importer des fichiers",
@@ -985,6 +1000,15 @@
               "title": "Créer un dossier",
               "label": "Nom du dossier",
               "placeholder": "Entrez le nom du dossier",
+              "cancel": "Annuler",
+              "submit": "Créer"
+            }
+          },
+          "createWorkspace": {
+            "modal": {
+              "title": "Créer un espace",
+              "label": "Nom de l'espace",
+              "placeholder": "Entrez le nom de l'espace",
               "cancel": "Annuler",
               "submit": "Créer"
             }
@@ -1735,6 +1759,110 @@
             "2": {
               "title": "Nieuw \"Verplaatsen\" venster",
               "description": "Verplaats uw bestanden en mappen gemakkelijker met een nieuw \"Verplaatsen\" venster, ook op mobiel."
+            }
+          }
+        }
+      }
+    }
+  },
+  "ar": {
+    "translation": {
+      "app_title": "Drive",
+      "app_description": "إدارة الملفات",
+      "welcome": "مرحبًا",
+      "logout": "تسجيل الخروج",
+      "login": "تسجيل الدخول",
+      "my_account": "حسابي",
+      "common": {
+        "cancel": "إلغاء"
+      },
+      "roles": {
+        "administrator": "مدير",
+        "editor": "محرّر",
+        "reader": "قارئ",
+        "owner": "مالك"
+      },
+      "explorer": {
+        "tree": {
+          "trash": "المهملات",
+          "create": {
+            "label": "جديد",
+            "folder": "مجلد جديد",
+            "workspace": "مساحة جديدة",
+            "file": {
+              "doc": "مستند نصي جديد",
+              "powerpoint": "عرض تقديمي جديد",
+              "calc": "جدول بيانات جديد"
+            }
+          },
+          "import": {
+            "label": "استيراد",
+            "files": "استيراد ملفات",
+            "folders": "استيراد مجلدات"
+          },
+          "workspace": {
+            "options": {
+              "info": "معلومات",
+              "settings_workspace": "إعدادات المساحة",
+              "settings_folder": "إعدادات المجلد",
+              "delete_item": "حذف",
+              "share": "مشاركة",
+              "share_view": "عرض المشاركات"
+            },
+            "move": {
+              "confirmation_modal": {
+                "title": "نقل الصلاحيات",
+                "aria_label": "نافذة تأكيد النقل",
+                "description": "أنت على وشك نقل العنصر <strong>{{sourceItem}}</strong> إلى المجلد <strong>{{targetItem}}</strong>، وسيرث المستند صلاحيات مشاركة المجلد الهدف.",
+                "description_multiple": "أنت على وشك نقل <strong>{{count}}</strong> عناصر إلى المجلد <strong>{{targetItem}}</strong>، وسترث مستنداتك صلاحيات مشاركة المجلد الهدف.",
+                "root_description": "ستكون المستندات المنقولة متاحة عبر علامة التبويب «ملفاتي». لن يتمكّن الأشخاص الذين كان وصولهم إلى المستندات عبر صلاحيات موروثة من عنصر أصل فقط من الوصول إليها بعد الآن.",
+                "confirm_button": "النقل على أي حال",
+                "cancel_button": "إلغاء"
+              }
+            }
+          },
+          "createFolder": "إنشاء",
+          "search": "بحث",
+          "personalSpace": "مساحة شخصية",
+          "shared_space": "مساحة مشتركة",
+          "public_space": "مساحة عامة",
+          "recent": "الأخيرة",
+          "my_files": "ملفاتي",
+          "shared_with_me": "تمت مشاركتها معي",
+          "favorites": "المفضّلة",
+          "workspaces": {
+            "title": "المساحات"
+          }
+        },
+        "actions": {
+          "createFolder": {
+            "modal": {
+              "title": "إنشاء مجلد",
+              "label": "اسم المجلد",
+              "placeholder": "أدخل اسم المجلد",
+              "cancel": "إلغاء",
+              "submit": "إنشاء"
+            }
+          },
+          "createWorkspace": {
+            "modal": {
+              "title": "إنشاء مساحة",
+              "label": "اسم المساحة",
+              "placeholder": "أدخل اسم المساحة",
+              "cancel": "إلغاء",
+              "submit": "إنشاء"
+            }
+          },
+          "createFile": {
+            "modal": {
+              "title": "إنشاء ملف",
+              "title_doc": "إنشاء مستند نصي",
+              "title_powerpoint": "إنشاء عرض تقديمي",
+              "title_calc": "إنشاء جدول بيانات",
+              "label": "اسم الملف",
+              "placeholder": "أدخل اسم الملف",
+              "cancel": "إلغاء",
+              "submit": "إنشاء"
             }
           }
         }
