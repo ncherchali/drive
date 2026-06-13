@@ -111,7 +111,9 @@ const getSahlaTheme = (
   base: "dsfr-light" | "dsfr-dark",
 ) => {
   const img = sahlaImages[mode];
-  return deepMerge((cunninghamConfig as any).themes[base], {
+  const themes = (cunninghamConfig as { themes: Record<string, object> })
+    .themes;
+  return deepMerge(themes[base], {
     globals: {
       colors: {
         ...sahlaBrandRamp,

@@ -1,6 +1,6 @@
 import { GlobalLayout } from "@/features/layouts/components/global/GlobalLayout";
 import Head from "next/head";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 import { Hero, Footer, MainLayout, HomeGutter } from "@gouvfr-lasuite/ui-kit";
 import { login, useAuth } from "@/features/auth/Auth";
 import { useEffect, useState } from "react";

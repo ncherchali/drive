@@ -1,20 +1,22 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import coreWebVitals from "eslint-config-next/core-web-vitals";
+import typescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  { ignores: [".next/**", "out/**", "node_modules/**", "public/**"] },
+  ...coreWebVitals,
+  ...typescript,
   {
     rules: {
       "react-hooks/exhaustive-deps": "off",
       "@next/next/no-img-element": "off",
+      // eslint-config-next 16 active les règles « React Compiler » de
+      // eslint-plugin-react-hooks v6. Elles signalent du code préexistant ;
+      // on les garde en avertissement (dette technique à traiter à part)
+      // pour ne pas bloquer le lint sur la montée de version Next 16.
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/preserve-manual-memoization": "warn",
+      "react-hooks/refs": "warn",
+      "react-hooks/immutability": "warn",
     },
   },
 ];

@@ -10,7 +10,12 @@ and this project adheres to
 
 ### Changed
 
+- ⬆️(frontend) upgrade Next.js 15.5 to 16.2 (Turbopack build, native flat ESLint config)
 - 🐛(backend) replace VersionId by Etag for WOPI
+
+### Removed
+
+- 🔥(frontend) drop next-i18next, use react-i18next for translations
 
 ## [v0.18.0] - 2026-05-04
 
