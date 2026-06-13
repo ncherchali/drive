@@ -137,7 +137,10 @@ export function AiPromptInput({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-full border border-border/70 px-2.5 py-1",
                   "text-xs font-medium text-muted-foreground",
-                  "transition-colors hover:border-ai-purple/40 hover:bg-ai-purple/5 hover:text-ai-purple",
+                  // Accent IA porté par la bordure + le fond (AA-safe) ; le
+                  // libellé reste lisible (foreground), ai-purple n'est pas
+                  // utilisé comme couleur de texte sur surface.
+                  "transition-colors hover:border-ai-purple/50 hover:bg-ai-purple/10 hover:text-foreground",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ai-purple/50",
                   "disabled:pointer-events-none disabled:opacity-50",
                 )}

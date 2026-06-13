@@ -7,8 +7,6 @@
 // (cf. _app.tsx) → visible sans backend.
 import * as React from "react";
 import {
-  Moon,
-  Sun,
   Folder,
   Sparkles,
   Trash2,
@@ -18,6 +16,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { DsProvider } from "@/components/ds-provider";
+import { ThemeProvider } from "@/features/theme/ThemeProvider";
+import { ModeToggle } from "@/features/theme/ModeToggle";
 import {
   FileRow,
   type FileItem,
@@ -108,7 +108,6 @@ function Section({
 }
 
 export default function DsPreviewPage() {
-  const [isDark, setIsDark] = React.useState(false);
   const [dir, setDir] = React.useState<"ltr" | "rtl">("ltr");
   const [selectedId, setSelectedId] = React.useState<string | null>("3");
   const [lastAction, setLastAction] = React.useState<string>("—");
@@ -146,13 +145,11 @@ export default function DsPreviewPage() {
   };
 
   return (
-    <DsProvider
-      dir={dir}
-      className={cn(
-        "min-h-screen bg-background text-foreground",
-        isDark && "dark",
-      )}
-    >
+    <ThemeProvider defaultMode="light">
+      <DsProvider
+        dir={dir}
+        className="min-h-screen bg-background text-foreground"
+      >
       <div className="mx-auto max-w-5xl space-y-12 p-6 sm:p-10">
         {/* En-tête */}
         <header className="flex items-start justify-between gap-4">
@@ -171,15 +168,7 @@ export default function DsPreviewPage() {
             >
               <ArrowLeftRight /> {dir === "ltr" ? "RTL" : "LTR"}
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsDark((v) => !v)}
-              aria-pressed={isDark}
-            >
-              {isDark ? <Sun /> : <Moon />}
-              {isDark ? "Clair" : "Sombre"}
-            </Button>
+            <ModeToggle />
           </div>
         </header>
 
@@ -360,6 +349,7 @@ export default function DsPreviewPage() {
           Page de prévisualisation — composants montés hors de tout contexte Cunningham.
         </footer>
       </div>
-    </DsProvider>
+      </DsProvider>
+    </ThemeProvider>
   );
 }

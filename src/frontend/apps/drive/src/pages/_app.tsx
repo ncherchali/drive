@@ -1,12 +1,12 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactElement,
   type ReactNode,
 } from "react";
+import { useSyncDarkClass } from "@/features/theme/ThemeProvider";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import {
@@ -127,13 +127,10 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
   const router = useRouter();
   const themeTokens = useCunninghamTheme();
 
-  // Pont dark mode du futur Design System (shadcn) : on réplique l'état sombre
-  // du thème Cunningham sur la classe `.dark` de <html>, que les composants DS
-  // consomment via le variant `dark:`. Inerte tant qu'aucun composant DS n'est
-  // monté (cf. ds.css / décisions de migration).
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme.includes("dark"));
-  }, [theme]);
+  // Pont dark mode (coexistence Cunningham) : reflète l'état sombre du thème
+  // Cunningham courant sur la classe `.dark` de <html>, consommée par les
+  // composants DS (variant `dark:`). Cf. features/theme/ThemeProvider.
+  useSyncDarkClass(theme.includes("dark"));
 
   const isSdk = useMemo(
     () => router.pathname.startsWith("/sdk"),

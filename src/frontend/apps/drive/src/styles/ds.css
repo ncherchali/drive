@@ -38,11 +38,11 @@
   --secondary: oklch(0.97 0.01 271);
   --secondary-foreground: oklch(0.3 0.04 271);
   --muted: oklch(0.97 0.01 271);
-  --muted-foreground: oklch(0.552 0.02 271);
+  --muted-foreground: oklch(0.518 0.02 271); /* AA: 4.5:1 sur muted */
   --accent: oklch(0.962 0.02 277);
   --accent-foreground: oklch(0.3 0.06 277);
-  --destructive: oklch(0.577 0.245 27);
-  --destructive-foreground: oklch(0.98 0.01 27);
+  --destructive: oklch(0.565 0.235 27);
+  --destructive-foreground: oklch(0.985 0.01 27);
 
   --border: oklch(0.92 0.008 271);
   --input: oklch(0.92 0.008 271);
@@ -75,8 +75,8 @@
   --muted-foreground: oklch(0.7 0.02 271);
   --accent: oklch(0.32 0.05 277);
   --accent-foreground: oklch(0.97 0.01 277);
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.97 0.01 25);
+  --destructive: oklch(0.55 0.21 25);
+  --destructive-foreground: oklch(0.985 0.01 25);
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 14%);
@@ -147,9 +147,11 @@
   --color-encrypted: oklch(0.7 0.15 162);            /* émeraude — sécurité */
   --color-encrypted-foreground: oklch(0.26 0.06 162);
 
-  /* IA */
-  --color-ai-purple: oklch(0.62 0.25 303);           /* violet vibrant */
-  --color-ai-purple-foreground: oklch(0.98 0.01 303);
+  /* IA — réservé aux remplissages (boutons) et accents graphiques/icônes,
+     PAS au texte courant sur surface (le contraste texte/fond varie selon le
+     thème). Le bouton bg-ai-purple + ai-purple-foreground passe AA (≥4.5:1). */
+  --color-ai-purple: oklch(0.55 0.24 303);           /* violet vibrant */
+  --color-ai-purple-foreground: oklch(0.985 0.01 303);
   --color-ai-purple-soft: oklch(0.96 0.04 303);
 
   /* Layout explorateur de fichiers */

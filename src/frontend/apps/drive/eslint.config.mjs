@@ -2,10 +2,13 @@ import coreWebVitals from "eslint-config-next/core-web-vitals";
 import typescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  { ignores: [".next/**", "out/**", "node_modules/**", "public/**"] },
+  { ignores: [".next/**", "out/**", "node_modules/**", "public/**", "scripts/**"] },
   ...coreWebVitals,
   ...typescript,
   {
+    // Limité aux sources React : les règles react-hooks/* ne sont chargées que
+    // là (sinon ESLint plante sur un .cjs « plugin react-hooks introuvable »).
+    files: ["**/*.{ts,tsx}"],
     rules: {
       "react-hooks/exhaustive-deps": "off",
       "@next/next/no-img-element": "off",
