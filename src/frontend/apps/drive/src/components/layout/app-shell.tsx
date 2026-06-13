@@ -42,7 +42,7 @@ function MetaPanel({ className, ...props }: React.ComponentProps<"aside">) {
     <aside
       data-slot="meta-panel"
       className={cn(
-        "hidden w-meta-panel shrink-0 overflow-auto border-s border-border bg-card lg:block",
+        "box-border hidden w-meta-panel shrink-0 overflow-auto border-s border-solid border-border bg-card lg:block",
         className,
       )}
       {...props}

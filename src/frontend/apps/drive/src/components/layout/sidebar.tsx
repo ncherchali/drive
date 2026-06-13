@@ -1,6 +1,8 @@
 // Primitives de layout DS — barre latérale de l'explorateur EFSS.
 // Sobre, enterprise, SANS sélecteur d'apps « gaufre » DINUM. Largeur pilotée par
 // le token `--spacing-sidebar` (w-sidebar). RTL-aware (border-e logique).
+// Auto-suffisant (border-solid + box-border) : fonctionne SANS le reset
+// `.sahla-ds`, pour pouvoir héberger du contenu Cunningham sans l'altérer.
 // Pages Router : pas de "use client".
 import * as React from "react";
 import { cn } from "@/utils/cn";
@@ -10,7 +12,7 @@ function Sidebar({ className, ...props }: React.ComponentProps<"aside">) {
     <aside
       data-slot="sidebar"
       className={cn(
-        "flex h-full w-sidebar shrink-0 flex-col border-e border-sidebar-border bg-sidebar text-sidebar-foreground",
+        "box-border flex h-full w-sidebar shrink-0 flex-col border-e border-solid border-sidebar-border bg-sidebar text-sidebar-foreground",
         className,
       )}
       {...props}
@@ -49,7 +51,7 @@ function SidebarNavItem({
       data-slot="sidebar-nav-item"
       data-active={active}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium outline-none transition-colors",
+        "flex appearance-none items-center gap-3 rounded-md border-0 bg-transparent px-3 py-2 text-sm font-medium outline-none transition-colors",
         "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
         "focus-visible:ring-2 focus-visible:ring-sidebar-ring",
         "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",

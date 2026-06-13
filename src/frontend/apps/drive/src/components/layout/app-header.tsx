@@ -7,7 +7,7 @@ function AppHeader({ className, ...props }: React.ComponentProps<"header">) {
     <header
       data-slot="app-header"
       className={cn(
-        "flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-4",
+        "box-border flex h-14 shrink-0 items-center gap-3 border-b border-solid border-border bg-background px-4",
         className,
       )}
       {...props}

@@ -17,6 +17,11 @@ import { ReleaseNoteAuto } from "@/features/ui/components/release-note";
 import { setManualNavigationItemId } from "@/features/explorer/utils/utils";
 import { ColumnPreferencesProvider } from "@/features/explorer/hooks/useColumnPreferences";
 import { EntitlementDisclaimers } from "@/features/entitlement-disclaimers/EntitlementDisclaimers";
+import {
+  useFeatureFlag,
+  FLAG_DS_APP_SHELL,
+} from "@/features/flags/useFeatureFlag";
+import { DsExplorerShell } from "./DsExplorerShell";
 
 export const getGlobalExplorerLayout = (page: React.ReactElement) => {
   return <GlobalExplorerLayout>{page}</GlobalExplorerLayout>;
@@ -96,21 +101,44 @@ export const ExplorerPanelsLayout = ({
   } = useGlobalExplorer();
 
   const { user } = useAuth();
+  const useDsShell = useFeatureFlag(FLAG_DS_APP_SHELL);
+
+  const leftPanelContent = user ? <ExplorerTree /> : <LeftPanelMobile />;
+  const rightPanelContent = <ExplorerRightPanelContent item={rightPanelItem} />;
+  const hideLeftPanelOnDesktop = !user || isMinimalLayout;
+  const icon = <HeaderIcon />;
+  const rightHeaderContent = (
+    <HeaderRight displaySearch={isMinimalLayout} currentItem={item} />
+  );
+
+  // Bascule de coquille derrière le flag DS_APP_SHELL (cf. DsExplorerShell).
+  if (useDsShell) {
+    return (
+      <DsExplorerShell
+        leftPanelContent={leftPanelContent}
+        rightPanelContent={rightPanelContent}
+        rightPanelIsOpen={rightPanelOpen}
+        hideLeftPanelOnDesktop={hideLeftPanelOnDesktop}
+        icon={icon}
+        rightHeaderContent={rightHeaderContent}
+      >
+        {children}
+      </DsExplorerShell>
+    );
+  }
 
   return (
     <MainLayout
       enableResize
-      rightPanelContent={<ExplorerRightPanelContent item={rightPanelItem} />}
+      rightPanelContent={rightPanelContent}
       rightPanelIsOpen={rightPanelOpen}
       onToggleRightPanel={() => setRightPanelOpen(!rightPanelOpen)}
-      leftPanelContent={user ? <ExplorerTree /> : <LeftPanelMobile />}
+      leftPanelContent={leftPanelContent}
       isLeftPanelOpen={isLeftPanelOpen}
-      hideLeftPanelOnDesktop={!user || isMinimalLayout}
+      hideLeftPanelOnDesktop={hideLeftPanelOnDesktop}
       setIsLeftPanelOpen={() => setIsLeftPanelOpen(!isLeftPanelOpen)}
-      icon={<HeaderIcon />}
-      rightHeaderContent={
-        <HeaderRight displaySearch={isMinimalLayout} currentItem={item} />
-      }
+      icon={icon}
+      rightHeaderContent={rightHeaderContent}
     >
       {children}
     </MainLayout>

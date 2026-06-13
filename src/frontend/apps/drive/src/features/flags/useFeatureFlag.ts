@@ -30,3 +30,6 @@ export function useFeatureFlag(name: string, fallback = false): boolean {
 
 /** Nom du flag pilotant la bascule des modales de confirmation vers le DS. */
 export const FLAG_DS_CONFIRM_MODALS = "DS_CONFIRM_MODALS";
+
+/** Nom du flag pilotant la bascule de la coquille d'application vers le DS. */
+export const FLAG_DS_APP_SHELL = "DS_APP_SHELL";

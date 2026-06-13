@@ -17,6 +17,7 @@ and this project adheres to
 - ✨(frontend) Sahla DS phase 3 pilot: migrate HardDeleteConfirmationModal to DS AlertDialog behind FEATURES_ flag (DS_CONFIRM_MODALS); useFeatureFlag helper; portaled-content `.sahla-ds` + Radix DirectionProvider pattern
 - ✨(frontend) Sahla DS: reusable DsConfirmDialog; migrate CancelUpload and TreeMove confirmation modals to DS behind the same flag
 - ✨(frontend) Sahla DS phase 4: layout primitives (AppShell, Sidebar, AppHeader, MetaPanel) — sober EFSS shell, no DINUM gaufre, RTL-aware; /ds-preview layout demo
+- ✨(frontend) Sahla DS: wire DS app shell into the explorer (DsExplorerShell) behind FEATURES_ flag (DS_APP_SHELL); layout primitives made preflight-independent so they host Cunningham content without the `.sahla-ds` reset
 
 ### Changed
 
