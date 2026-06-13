@@ -5,13 +5,35 @@ import {
   ModalSize,
 } from "@gouvfr-lasuite/cunningham-react";
 import { useTranslation } from "react-i18next";
+import {
+  useFeatureFlag,
+  FLAG_DS_CONFIRM_MODALS,
+} from "@/features/flags/useFeatureFlag";
+import { CancelUploadConfirmationModalDs } from "./CancelUploadConfirmationModalDs";
 
-export const CancelUploadConfirmationModal = ({
+type Props = Pick<ModalProps, "isOpen" | "onClose"> & {
+  onConfirm: () => void;
+};
+
+/** Bascule Cunningham ↔ DS selon le flag DS_CONFIRM_MODALS (cf. pilote). */
+export const CancelUploadConfirmationModal = (props: Props) => {
+  const useDs = useFeatureFlag(FLAG_DS_CONFIRM_MODALS);
+  if (useDs) {
+    return (
+      <CancelUploadConfirmationModalDs
+        isOpen={props.isOpen}
+        onClose={props.onClose}
+        onConfirm={props.onConfirm}
+      />
+    );
+  }
+  return <CancelUploadConfirmationModalCunningham {...props} />;
+};
+
+const CancelUploadConfirmationModalCunningham = ({
   onConfirm,
   ...props
-}: Pick<ModalProps, "isOpen" | "onClose"> & {
-  onConfirm: () => void;
-}) => {
+}: Props) => {
   const { t } = useTranslation();
   return (
     <Modal

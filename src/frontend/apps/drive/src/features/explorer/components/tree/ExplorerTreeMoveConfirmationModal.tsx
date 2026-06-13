@@ -1,6 +1,11 @@
 import { Item } from "@/features/drivers/types";
 import { Button, Modal, ModalSize } from "@gouvfr-lasuite/cunningham-react";
 import { Trans, useTranslation } from "react-i18next";
+import {
+  useFeatureFlag,
+  FLAG_DS_CONFIRM_MODALS,
+} from "@/features/flags/useFeatureFlag";
+import { ExplorerTreeMoveConfirmationModalDs } from "./ExplorerTreeMoveConfirmationModalDs";
 
 export type ConfirmationMoveState = {
   sourceItem: Item;
@@ -18,7 +23,18 @@ type ExplorerTreeMoveConfirmationModalProps = {
   isMoveToRoot?: boolean;
 };
 
-export const ExplorerTreeMoveConfirmationModal = ({
+/** Bascule Cunningham ↔ DS selon le flag DS_CONFIRM_MODALS (cf. pilote). */
+export const ExplorerTreeMoveConfirmationModal = (
+  props: ExplorerTreeMoveConfirmationModalProps,
+) => {
+  const useDs = useFeatureFlag(FLAG_DS_CONFIRM_MODALS);
+  if (useDs) {
+    return <ExplorerTreeMoveConfirmationModalDs {...props} />;
+  }
+  return <ExplorerTreeMoveConfirmationModalCunningham {...props} />;
+};
+
+const ExplorerTreeMoveConfirmationModalCunningham = ({
   isOpen,
   onClose,
   sourceItem,
@@ -34,7 +50,7 @@ export const ExplorerTreeMoveConfirmationModal = ({
       onClose={onClose}
       size={ModalSize.MEDIUM}
       aria-label={t(
-        "explorer.tree.workspace.move.confirmation_modal.aria_label"
+        "explorer.tree.workspace.move.confirmation_modal.aria_label",
       )}
       rightActions={
         <>
@@ -42,9 +58,7 @@ export const ExplorerTreeMoveConfirmationModal = ({
             {t("explorer.tree.workspace.move.confirmation_modal.cancel_button")}
           </Button>
           <Button color="error" onClick={onMove}>
-            {t(
-              "explorer.tree.workspace.move.confirmation_modal.confirm_button"
-            )}
+            {t("explorer.tree.workspace.move.confirmation_modal.confirm_button")}
           </Button>
         </>
       }
