@@ -24,7 +24,7 @@ export function useFeatureFlag(name: string, fallback = false): boolean {
   const { config } = useConfig();
   const override = devOverride(name);
   if (override !== undefined) return override;
-  const flags = (config as { FEATURES?: FlagMap }).FEATURES ?? {};
+  const flags = config.FEATURES ?? {};
   return typeof flags[name] === "boolean" ? flags[name] : fallback;
 }
 

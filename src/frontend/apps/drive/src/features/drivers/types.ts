@@ -206,6 +206,8 @@ export type ApiConfig = {
   };
   FRONTEND_CSS_URL?: string;
   FRONTEND_JS_URL?: string;
+  /** Bascules progressives du Design System (cf. useFeatureFlag). */
+  FEATURES?: Record<string, boolean>;
   theme_customization?: ThemeCustomization;
 };
 

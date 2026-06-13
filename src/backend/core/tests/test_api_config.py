@@ -73,6 +73,7 @@ def test_api_config(is_authenticated):
         "FRONTEND_CSS_URL": "http://testcss/",
         "FRONTEND_JS_URL": "http://testjs/",
         "FRONTEND_ENTITLEMENTS_DISCLAIMERS": {},
+        "FEATURES": {"DS_CONFIRM_MODALS": False, "DS_APP_SHELL": False},
         "LANGUAGES": [
             ["en-us", "English"],
             ["fr-fr", "French"],
@@ -85,6 +86,27 @@ def test_api_config(is_authenticated):
         "POSTHOG_HOST": "https://eu.i.posthog-test.com",
         "SENTRY_DSN": "https://sentry.test/123",
         "theme_customization": {},
+    }
+
+
+@override_settings(
+    FEATURES_DS_CONFIRM_MODALS=True,
+    FEATURES_DS_APP_SHELL=False,
+)
+@pytest.mark.parametrize("is_authenticated", [False, True])
+def test_api_config_features(is_authenticated):
+    """Feature flags are exposed under the FEATURES key, reflecting settings."""
+    client = APIClient()
+
+    if is_authenticated:
+        user = factories.UserFactory()
+        client.force_login(user)
+
+    response = client.get("/api/v1.0/config/")
+    assert response.status_code == HTTP_200_OK
+    assert response.json()["FEATURES"] == {
+        "DS_CONFIRM_MODALS": True,
+        "DS_APP_SHELL": False,
     }
 
 

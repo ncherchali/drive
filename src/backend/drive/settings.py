@@ -1036,6 +1036,16 @@ class Base(Configuration):
     )
     FRONTEND_CSS_URL = values.Value(None, environ_name="FRONTEND_CSS_URL", environ_prefix=None)
     FRONTEND_JS_URL = values.Value(None, environ_name="FRONTEND_JS_URL", environ_prefix=None)
+
+    # Feature flags exposés au frontend via /config/ sous la clé FEATURES.
+    # Convention : un booléen FEATURES_<NAME> par bascule progressive du Design
+    # System (cf. core.api.viewsets.ConfigView.FEATURE_FLAGS).
+    FEATURES_DS_CONFIRM_MODALS = values.BooleanValue(
+        default=False, environ_name="FEATURES_DS_CONFIRM_MODALS", environ_prefix=None
+    )
+    FEATURES_DS_APP_SHELL = values.BooleanValue(
+        default=False, environ_name="FEATURES_DS_APP_SHELL", environ_prefix=None
+    )
     THEME_CUSTOMIZATION_FILE_PATH = values.Value(
         os.path.join(BASE_DIR, "drive/configuration/theme/default.json"),
         environ_name="THEME_CUSTOMIZATION_FILE_PATH",

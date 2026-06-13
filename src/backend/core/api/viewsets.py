@@ -2089,6 +2089,13 @@ class ConfigView(drf.views.APIView):
 
     permission_classes = [AllowAny]
 
+    # Bascules progressives du Design System, exposées au frontend sous la clé
+    # FEATURES (chaque flag est adossé à un setting booléen FEATURES_<NAME>).
+    FEATURE_FLAGS = (
+        "DS_CONFIRM_MODALS",
+        "DS_APP_SHELL",
+    )
+
     def get(self, request):
         """
         GET /api/v1.0/config/
@@ -2125,6 +2132,11 @@ class ConfigView(drf.views.APIView):
         for setting in array_settings:
             if hasattr(settings, setting):
                 dict_settings[setting] = getattr(settings, setting)
+
+        dict_settings["FEATURES"] = {
+            flag: bool(getattr(settings, f"FEATURES_{flag}", False))
+            for flag in self.FEATURE_FLAGS
+        }
 
         dict_settings["theme_customization"] = self._load_theme_customization()
 
