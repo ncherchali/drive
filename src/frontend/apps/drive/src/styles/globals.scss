@@ -2,9 +2,7 @@
 @use "@gouvfr-lasuite/ui-kit/style";
 @use "./cunningham-tokens.css";
 @use "./../features/layouts/components/global/GlobalLayout.scss";
-@use "./../features/layouts/components/explorer/ExplorerLayout.scss";
 @use "./../features/explorer/components/app-view/AppExplorer.scss";
-@use "./../features/explorer/components/app-view/ExplorerFilters.scss";
 @use "./../features/explorer/components/embedded-explorer/EmbeddedExplorer.scss";
 @use "./../features/feedback/Feedback.scss";
 @use "./../features/explorer/components/right-panel/ExplorerRightPanel.scss";
@@ -34,6 +32,20 @@ body {
   box-sizing: border-box;
 }
 
+// --- Identité Sahla : couleur « sceau » -------------------------------------
+// L'or n'est pas dans la rampe de marque : il est réservé aux moments de
+// confiance (coffre-fort, document certifié). Exposé en variable CSS afin que
+// les composants l'utilisent via var(--sahla-seal) plutôt qu'un hex en dur.
+:root,
+.cunningham-theme--sahla-light {
+  --sahla-seal: #c2740e;
+  --sahla-seal-bg: rgba(194, 116, 14, 0.12);
+}
+.cunningham-theme--sahla-dark {
+  --sahla-seal: #e0954a;
+  --sahla-seal-bg: rgba(224, 149, 74, 0.15);
+}
+
 // --- RTL / Arabic support ---------------------------------------------------
 // Cairo is reserved for the right-to-left (Arabic) interface.
 :root {
@@ -54,8 +66,8 @@ body {
 
 // Related to @viselect/react
 .selection-area {
-  background: rgba(46, 115, 252, 0.11);
-  border: 2px solid rgba(98, 155, 255, 0.81);
+  background: rgba(21, 49, 91, 0.11);
+  border: 2px solid rgba(21, 49, 91, 0.55);
   border-radius: 0.1em;
 
   &__container {

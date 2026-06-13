@@ -1,13 +1,13 @@
+// Migration Tailwind (Étape 0.5) : mise en page via `@apply` ; tailles de
+// police et couleurs par token Cunningham (var(--c--…)) gardées en CSS.
 .info-row {
-  display: flex;
-  justify-content: space-between;
+  @apply flex items-center justify-between;
   padding: var(--c--globals--spacings--3xs, 0.25rem) 0;
-  align-items: center;
 
   &__label {
+    @apply font-bold;
     font-size: var(--c--globals--font--sizes--sm);
     color: var(--c--contextuals--content--semantic--neutral--primary);
-    font-weight: 700;
   }
 
   &__right-content {

@@ -22,6 +22,7 @@ import {
 } from "@tanstack/react-query";
 
 import "../styles/globals.scss";
+import "../styles/tailwind.css";
 import "../features/i18n/initI18n";
 import {
   addToast,
@@ -108,7 +109,7 @@ export default function MyApp({
   pageProps,
   router,
 }: AppPropsWithLayout) {
-  const [theme, setTheme] = useState<string>("anct-light");
+  const [theme, setTheme] = useState<string>("sahla-light");
 
   return (
     <AppContext.Provider value={{ theme, setTheme }}>
@@ -137,7 +138,11 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
         <link
           rel="icon"
           href={removeQuotes(themeTokens.components.favicon.src)}
-          type="image/png"
+          type={
+            removeQuotes(themeTokens.components.favicon.src).endsWith(".svg")
+              ? "image/svg+xml"
+              : "image/png"
+          }
         />
         {/* Cairo font, used for the Arabic (RTL) interface — see --font-cairo */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

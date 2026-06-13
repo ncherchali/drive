@@ -4,7 +4,6 @@ import { useTranslation } from "next-i18next";
 import { Hero, Footer, MainLayout, HomeGutter } from "@gouvfr-lasuite/ui-kit";
 import { login, useAuth } from "@/features/auth/Auth";
 import { useEffect, useState } from "react";
-import logoGouv from "@/assets/logo-gouv.svg";
 import banner from "@/assets/home/banner.png";
 import { HeaderRight } from "@/features/layouts/components/header/Header";
 import {
@@ -103,7 +102,7 @@ const HomePageContent = () => {
         <title>{t("app_title")}</title>
         <meta name="description" content={t("app_description")} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.png" />
+        <link rel="icon" href="/assets/sahla_favicon.svg" type="image/svg+xml" />
       </Head>
 
       <HomeGutter>
@@ -148,7 +147,6 @@ const HomePageLayout = ({children}: {children: React.ReactNode}) => {
       leftPanelContent={<LeftPanelMobile />}
       icon={
         <div className="drive__header__left">
-          <img src={logoGouv.src} alt="" />
           <div className="drive__header__logo" />
           <Feedback />
         </div>

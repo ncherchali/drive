@@ -14,7 +14,9 @@ export const Gaufre = () => {
   const widgetPath = removeQuotes(theme.components.gaufre.widgetPath);
   const apiUrl = removeQuotes(theme.components.gaufre.apiUrl);
 
-  if (hideGaufre) {
+  // La gaufre est le sélecteur d'applications de l'État (La Suite). Hors de cet
+  // écosystème, l'identité Sahla ne l'affiche pas.
+  if (hideGaufre || themeName.startsWith("sahla") || !widgetPath) {
     return null;
   }
 

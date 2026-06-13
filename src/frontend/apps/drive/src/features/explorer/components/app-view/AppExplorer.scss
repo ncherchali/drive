@@ -1,41 +1,41 @@
 @use "sass:map";
 @use "@/styles/cunningham-tokens-sass" as *;
 
+// Migration Tailwind (Étape 0.5) : mise en page de notre markup via `@apply` ;
+// couleurs/espacements par token Cunningham (var(--c--…)), états, responsive
+// (@media $tablet) et surcharges ui-kit (.c__datagrid, table) restent du CSS.
+// Aucun changement de markup → rendu identique, marque pilotée par les tokens.
+
 $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
 .explorer {
-  display: flex;
+  @apply flex justify-center items-start relative;
   min-height: calc(100vh - 52px);
 
-  justify-content: center;
-  align-items: flex-start;
-  position: relative;
-
   &--app {
-    padding: 16px;
+    @apply p-4;
     background-color: var(--c--contextuals--background--surface--tertiary);
 
     @media (max-width: $tablet) {
-      padding: 0;
+      @apply p-0;
       background-color: var(--c--contextuals--background--surface--tertiary);
     }
 
     .explorer__container {
-      width: 992px;
+      @apply w-[992px];
     }
 
     .explorer__content {
       border: 1px var(--c--contextuals--border--surface--primary) solid;
 
       @media (max-width: $tablet) {
-        border: none;
-        padding: 5px;
+        @apply border-none p-[5px];
       }
 
       &__breadcrumbs,
       &__separator {
         @media (max-width: $tablet) {
-          display: none;
+          @apply hidden;
         }
       }
     }
@@ -43,36 +43,29 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
   &__grid {
     &__empty__image {
-      width: 100%;
+      @apply w-full mx-auto;
       max-width: 140px !important;
-      margin: 0 auto;
     }
 
     @media (min-width: $tablet) {
       &__container {
-        padding: 0 14px;
-        padding-right: 24px;
+        @apply px-3.5 pr-6;
       }
     }
   }
   &__container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    @apply flex flex-col gap-3;
 
     @media (max-width: $tablet) {
-      gap: 0;
+      @apply gap-0;
     }
   }
 
   &__filters {
-    height: 32px;
-    display: flex;
-    align-items: center;
+    @apply flex h-8 items-center;
 
     @media (max-width: $tablet) {
-      padding: 8px;
-      height: auto;
+      @apply h-auto p-2;
       background-color: var(--c--contextuals--background--surface--secondary);
     }
   }
@@ -102,117 +95,74 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
   }
 
   &__content {
-    flex: 1;
+    @apply flex flex-1 flex-col gap-4 box-content rounded;
     background-color: var(--c--contextuals--background--surface--secondary);
-
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    box-sizing: content-box;
     transition:
       background-color 0.3s ease,
       box-shadow 0.3s ease;
 
     &__breadcrumbs {
+      @apply flex items-center justify-between;
       padding: 16px 24px 0 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
 
       &__actions {
-        padding-right: 6px;
-        display: flex;
-        align-items: center;
+        @apply flex items-center pr-1.5;
         gap: var(--c--globals--spacings--2xs);
       }
 
       &--mobile {
-        display: none;
-        padding: 0 12px;
+        @apply hidden items-center justify-between h-16 px-3;
         border-bottom: 1px solid var(--c--contextuals--border--surface--primary);
         border-top: 2px solid
           var(--c--contextuals--border--semantic--brand--primary);
-
         background: var(--c--contextuals--background--surface--secondary);
-        align-items: center;
-        justify-content: space-between;
-        height: 64px;
 
         @media (max-width: $tablet) {
-          display: flex;
+          @apply flex;
         }
 
         &__default-route {
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          @apply flex items-center gap-2 font-semibold overflow-hidden;
           font-size: var(--c--globals--font--sizes--sm);
           color: var(--c--contextuals--content--semantic--neutral--primary);
-          font-weight: 600;
-          overflow: hidden;
 
           img {
-            width: 18px;
-            height: 18px;
+            @apply w-[18px] h-[18px];
           }
         }
 
         &__container {
-          display: flex;
-          gap: 12px;
-          overflow: hidden;
+          @apply flex gap-3 overflow-hidden;
 
           &__info {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
+            @apply flex flex-col justify-between overflow-hidden;
 
             &__title {
-              font-size: 14px;
+              @apply flex items-center gap-1.5 font-medium text-sm;
               line-height: 20px;
-              font-weight: 500;
               color: var(
                 --c--contextuals--content--semantic--neutral--secondary
               );
-              display: flex;
-              align-items: center;
-              gap: 6px;
 
               span {
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
+                @apply overflow-hidden text-ellipsis whitespace-nowrap;
               }
             }
 
             &__folder {
-              font-size: 16px;
+              @apply text-base font-semibold overflow-hidden text-ellipsis whitespace-nowrap;
               line-height: 18px;
-              font-weight: 600;
               color: var(--c--contextuals--content--semantic--neutral--primary);
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              overflow: hidden;
             }
           }
         }
 
         &__workspace {
-          font-size: 16px;
-          font-weight: 600;
+          @apply flex items-center gap-2 text-base font-semibold px-2 overflow-hidden;
           color: var(--c--contextuals--content--semantic--neutral--primary);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 0 8px;
-          overflow: hidden;
 
           span {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
+            @apply overflow-hidden text-ellipsis whitespace-nowrap;
           }
         }
       }
@@ -220,65 +170,46 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
     &__header {
       &__title {
-        font-size: 22px;
-        font-weight: 700;
+        @apply text-[22px] font-bold pl-1.5;
         color: var(--c--contextuals--content--semantic--neutral--primary);
-        padding-left: 6px;
       }
 
       &__description {
-        font-size: 12px;
-        font-weight: 400;
+        @apply text-xs font-normal;
         color: var(--c--contextuals--content--semantic--neutral--secondary);
       }
     }
   }
 
   &__selection-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 32px;
-    padding: 0 8px;
+    @apply flex items-center justify-between h-8 px-2 rounded;
     background-color: var(
       --c--contextuals--background--semantic--brand--tertiary
     );
     border: 1px solid var(--c--contextuals--border--semantic--brand--tertiary);
-    border-radius: 4px;
 
     &__left {
-      display: flex;
-      gap: 16px;
-      align-items: center;
+      @apply flex items-center gap-4;
     }
 
     &__actions {
-      display: flex;
-      gap: 4px;
-      align-items: center;
+      @apply flex items-center gap-1;
     }
 
     &__caption {
-      font-size: 14px;
-      font-weight: 500;
+      @apply text-sm font-medium;
       color: var(--c--contextuals--content--semantic--brand--primary);
     }
   }
 
   &__drag-overlay {
-    cursor: grabbing;
+    @apply cursor-grabbing rounded-xl font-bold text-[11px] w-fit whitespace-nowrap min-w-[120px];
     padding: var(--c--globals--spacings--3xs, 4px)
       calc(var(--c--globals--spacings--2xs, 6px) + 10px);
     background-color: var(
       --c--contextuals--background--semantic--brand--primary
     );
-    border-radius: 12px;
     color: var(--c--contextuals--content--semantic--brand--on-brand, #fff);
-    font-weight: 700;
-    font-size: 11px;
-    width: fit-content;
-    white-space: nowrap;
-    min-width: 120px;
 
     &__cannot-move {
       background-color: var(
@@ -290,52 +221,32 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 }
 
 .file-upload-toast {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
+  @apply w-full flex flex-col min-w-0 overflow-hidden;
 
   &__item {
+    @apply w-[560px] min-w-[400px] max-w-full overflow-hidden;
     padding: 8px !important;
-    width: 560px;
-    min-width: 400px;
-    max-width: 100%;
-    overflow: hidden;
 
     @media (max-width: 600px) {
-      width: 100%;
+      @apply w-full;
       min-width: unset;
     }
   }
 
   &__files {
+    @apply px-3 py-1 rounded mb-2 max-h-[250px];
     background-color: var(--c--contextuals--background--surface--secondary);
-    padding: 4px 12px;
-    border-radius: 4px;
     border: 1px solid var(--c--contextuals--border--semantic--brand--tertiary);
     overflow: hidden auto;
-    margin-bottom: 8px;
     transition: all 0.2s ease-in-out;
-    max-height: 250px;
 
     &--closed {
-      margin-bottom: 0;
-      max-height: 0;
-      padding: 0 12px;
-      opacity: 0;
+      @apply mb-0 max-h-0 px-3 opacity-0;
     }
 
     &__item {
-      font-size: 14px;
+      @apply flex items-center justify-between h-10 text-sm font-semibold overflow-hidden min-w-0;
       color: var(--c--contextuals--content--semantic--neutral--primary);
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      height: 40px;
-      align-items: center;
-      overflow: hidden;
-      min-width: 0;
 
       &--error {
         .file-upload-toast__files__item__name span:first-of-type {
@@ -344,36 +255,22 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       }
 
       &__size {
-        font-size: 14px;
-        font-weight: 400;
+        @apply text-sm font-normal shrink-0 whitespace-nowrap;
         color: var(--c--contextuals--content--semantic--neutral--tertiary);
-        flex-shrink: 0;
-        white-space: nowrap;
       }
 
       &__error-text {
-        font-size: 12px;
-        cursor: default;
-        font-weight: 400;
+        @apply text-xs font-normal cursor-default;
         color: var(--c--contextuals--content--semantic--error--primary);
       }
 
       &__error-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
+        @apply flex items-center justify-center w-6 h-6;
         color: var(--c--contextuals--content--semantic--error--primary);
       }
 
       &__check {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        font-size: 20px;
+        @apply flex items-center justify-center w-6 h-6 text-xl;
         color: var(
           --c--contextuals--content--semantic--success--primary,
           #18753c
@@ -381,12 +278,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       }
 
       &__cancel-overlay {
-        position: absolute;
-        inset: 1px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
+        @apply absolute inset-[1px] flex items-center justify-center rounded-full;
         background-color: var(
           --c--contextuals--background--semantic--brand--secondary
         );
@@ -394,78 +286,46 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       }
 
       &__cancel-icon {
-        font-size: 16px;
+        @apply text-base;
         color: var(--c--contextuals--content--semantic--brand--primary);
       }
 
       &__name {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        overflow: hidden;
-        flex: 1;
-        min-width: 0;
+        @apply flex items-center gap-2 overflow-hidden flex-1 min-w-0;
 
         > span:first-of-type {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          @apply overflow-hidden text-ellipsis whitespace-nowrap;
         }
       }
 
       &__progress {
-        display: flex;
-        align-items: center;
-        gap: 4px;
+        @apply flex items-center gap-1;
 
         &--hoverable {
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          position: relative;
+          @apply flex items-center justify-center w-6 h-6 rounded-full relative cursor-pointer;
         }
       }
     }
   }
 
   &__description {
-    min-height: 32px;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    justify-content: space-between;
-    gap: 8px;
+    @apply flex items-center justify-between min-h-8 px-2 gap-2;
 
     &__text {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow: hidden;
-      min-width: 0;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      @apply flex items-center gap-2 overflow-hidden min-w-0 whitespace-nowrap text-ellipsis;
     }
 
     &__actions {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
+      @apply flex items-center shrink-0;
     }
 
     &__percentage {
-      font-size: 14px;
-      font-weight: 400;
+      @apply text-sm font-normal shrink-0;
       color: var(--c--contextuals--content--semantic--neutral--tertiary);
-      flex-shrink: 0;
     }
 
     &__error-indicator {
-      display: flex;
-      align-items: center;
+      @apply flex items-center;
 
       .material-icons {
         font-size: 18px;

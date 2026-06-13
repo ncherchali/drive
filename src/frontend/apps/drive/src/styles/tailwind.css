@@ -1,0 +1,5 @@
+/* Directives Tailwind. Importé avant globals.scss dans _app.tsx. Preflight est
+   désactivé (cf. tailwind.config.js) pour cohabiter avec Cunningham/ui-kit. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

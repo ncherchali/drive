@@ -1,11 +1,9 @@
+// Migration Tailwind (Étape 0.5) : reset du lien-bouton via `@apply` ; le
+// `font: inherit` (raccourci sans équivalent utilitaire) et l'outline de focus
+// par token Cunningham restent du CSS.
 .workspace-share-modal {
   &__parent-folder-link {
-    background: none;
-    border: none;
-    padding: 0;
-    color: inherit;
-    text-decoration: underline;
-    cursor: pointer;
+    @apply bg-transparent border-none p-0 text-inherit underline cursor-pointer;
     font: inherit;
 
     &:focus {

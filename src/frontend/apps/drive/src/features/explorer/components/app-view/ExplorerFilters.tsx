@@ -32,7 +32,7 @@ const getResetOption = (t: TFunction) => {
   return {
     label: t("explorer.filters.type.options.reset"),
     render: () => (
-      <div className="explorer__filters__item">
+      <div className="flex items-center gap-[0.5em]">
         <span className="material-icons">undo</span>
         {t("explorer.filters.type.options.reset")}
       </div>
@@ -70,7 +70,7 @@ export const ExplorerFilterType = (props: {
         label: t("explorer.filters.type.options.folder"),
         value: "folder",
         render: () => (
-          <div className="explorer__filters__item">
+          <div className="flex items-center gap-[0.5em]">
             <img src={folderIcon.src} alt="" width="24" height="24" />
             {t("explorer.filters.type.options.folder")}
           </div>
@@ -79,7 +79,7 @@ export const ExplorerFilterType = (props: {
       {
         label: t("explorer.filters.type.options.file"),
         render: () => (
-          <div className="explorer__filters__item">
+          <div className="flex items-center gap-[0.5em]">
             <img src={mimeOther.src} alt="" width="24" height="24" />
             {t("explorer.filters.type.options.file")}
           </div>
@@ -116,7 +116,7 @@ export const ExplorerFilterWorkspace = (props: {
         label: item.title,
         value: item.id,
         render: () => (
-          <div className="explorer__filters__item">
+          <div className="flex items-center gap-[0.5em]">
             <ItemIcon item={item} size={IconSize.SMALL} />
             {getItemTitle(item)}
           </div>
@@ -153,7 +153,7 @@ export const ExplorerFilterScope = (props: {
         label: t("explorer.filters.scopes.options.trash"),
         value: ItemFiltersScope.DELETED,
         render: () => (
-          <div className="explorer__filters__item">
+          <div className="flex items-center gap-[0.5em]">
             {t("explorer.filters.scopes.options.trash")}
           </div>
         ),

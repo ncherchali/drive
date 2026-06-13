@@ -30,7 +30,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
     if (config?.FRONTEND_THEME) {
       setTheme(config.FRONTEND_THEME);
     } else {
-      setTheme("dsfr-light");
+      setTheme("sahla-light");
     }
   }, [config?.FRONTEND_THEME, setTheme]);
 

@@ -1,30 +1,27 @@
 @use "sass:map";
 @use "@/styles/cunningham-tokens-sass" as *;
 
+// Migration Tailwind (Étape 0.5) : la mise en page de NOTRE markup passe par
+// `@apply` (utilitaires Tailwind) ; les couleurs/espacements/polices par token
+// Cunningham (var(--c--…)), les états et le responsive restent du CSS — c'est
+// là leur place. Les sélecteurs `.c__…` sont des surcharges ui-kit, non
+// Tailwind-isables. Rendu identique, source de marque inchangée (tokens).
+
 $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
 .explorer__tree__item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @apply flex w-full items-center justify-between overflow-hidden h-6;
   gap: var(--c--globals--spacings--xs);
-  overflow: hidden;
-  height: 24px;
 
   &__title {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap max-w-full font-medium;
     font-size: var(--c--globals--font--sizes--sm);
-    font-weight: 500;
     color: var(--c--contextuals--content--semantic--neutral--primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 100%;
   }
 
   &__droppable {
+    @apply rounded;
     border: 1.5px solid transparent;
-    border-radius: 4px;
     &.over {
       background-color: var(
         --c--contextuals--background--semantic--brand--tertiary
@@ -35,33 +32,24 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
   }
   &:hover {
     .explorer__tree__item__actions {
-      display: flex;
+      @apply flex;
     }
   }
 
   &__content {
-    display: flex;
-    align-items: center;
+    @apply flex flex-1 items-center overflow-hidden text-ellipsis whitespace-nowrap;
     gap: var(--c--globals--spacings--xs);
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   &__actions {
-    display: none;
-    gap: 4px;
-    align-items: center;
-    padding-right: 4px;
+    @apply hidden items-center gap-1 pr-1;
 
     .c__dropdown-menu-trigger {
-      display: flex;
-      align-items: center;
+      @apply flex items-center;
     }
 
     &--open {
-      display: flex;
+      @apply flex;
     }
 
     &__button-more {
@@ -73,40 +61,29 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     &__button-add {
       width: 18px !important;
       height: 18px !important;
-      padding: 0;
-      border-radius: 2px;
+      @apply p-0 rounded-sm;
     }
   }
 }
 
 .explorer__tree__item-standalone {
-  padding-left: 4px;
+  @apply pl-1;
 }
 
 .explorer__tree__nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 0.75rem;
-  padding: 0 12px;
+  @apply flex flex-col gap-0.5 mt-3 px-3;
 
   &__item {
-    cursor: pointer;
-    display: flex;
-    border-radius: 4px;
-    align-items: center;
+    @apply flex cursor-pointer items-center rounded h-[34px] pl-[22px] font-medium;
     gap: var(--c--globals--spacings--xs);
-    height: 34px;
-    padding-left: 22px;
     font-size: var(--c--globals--font--sizes--sm);
     color: var(--c--contextuals--content--semantic--neutral--primary);
-    font-weight: 500;
 
     &.active {
+      @apply font-bold;
       background-color: var(
         --c--contextuals--background--semantic--contextual--primary
       );
-      font-weight: 700;
     }
 
     &:hover {
@@ -116,40 +93,29 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     }
 
     &__icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @apply flex items-center justify-center;
       color: var(--c--contextuals--content--semantic--neutral--tertiary);
     }
   }
 }
 
 .explorer__tree {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  @apply flex flex-col h-full;
 
   &__nav {
-    padding: 0 12px;
+    @apply px-3;
 
     &__icon {
-      width: 16px;
-      height: 16px;
+      @apply w-4 h-4;
       color: var(--c--contextuals--content--semantic--neutral--tertiary);
     }
   }
 
   &__actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px;
+    @apply flex items-center justify-between gap-2 p-3;
 
     &__left {
-      display: flex;
-      gap: 8px;
-      align-items: center;
+      @apply flex items-center gap-2;
     }
 
     @media (max-width: $tablet) {
@@ -179,22 +145,13 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
   }
 
   &__mobile {
-    display: flex;
-
-    flex-direction: column;
+    @apply flex flex-col gap-0.5;
     padding: 12px 0;
-    gap: 2px;
-
-    @media (max-width: $tablet) {
-    }
 
     &__item {
+      @apply flex cursor-pointer items-center gap-2;
       font-size: 14px;
       margin: 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
 
       &:hover {
         background-color: var(
@@ -203,26 +160,22 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       }
 
       span {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        @apply overflow-hidden text-ellipsis whitespace-nowrap;
       }
     }
 
     &__title {
-      font-weight: 700;
+      @apply font-bold;
       height: 30px;
     }
 
     &__node {
+      @apply flex-grow rounded font-medium;
       padding: 6px;
-      font-weight: 500;
-      border-radius: 4px;
       border: none;
       outline: none;
       background-color: transparent;
       font-family: inherit;
-      flex-grow: 1;
 
       &--selected {
         background-color: var(
@@ -238,9 +191,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
   @media (max-width: $tablet) {
     .explorer__tree__mobile-navs {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
+      @apply flex flex-col flex-1;
 
       .c__dropdown-menu-trigger {
         width: 100%;
@@ -250,8 +201,8 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 }
 
 .explorer__tree__workspaces__title {
+  @apply font-semibold;
   padding: 8px 12px 4px;
   font-size: 12px;
-  font-weight: 600;
   color: var(--c--contextuals--content--semantic--neutral--tertiary);
 }
