@@ -66,6 +66,7 @@ import {
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { HardDeleteConfirmationModalDs } from "@/features/explorer/components/modals/HardDeleteConfirmationModalDs";
 
 const SAMPLE_FILES: FileItem[] = [
   { id: "1", name: "Contrats clients 2026", type: "folder", updatedAt: "2026-05-28", syncState: "synced" },
@@ -113,6 +114,8 @@ export default function DsPreviewPage() {
   const [lastAction, setLastAction] = React.useState<string>("—");
   const [checked, setChecked] = React.useState<Set<string>>(new Set(["3"]));
   const [encryptOn, setEncryptOn] = React.useState(true);
+  const [hardDeleteOpen, setHardDeleteOpen] = React.useState(false);
+  const [lastDecision, setLastDecision] = React.useState<string>("—");
 
   const [isStreaming, setIsStreaming] = React.useState(false);
   const [log, setLog] = React.useState<string[]>([]);
@@ -280,6 +283,30 @@ export default function DsPreviewPage() {
               <ContextMenuItem variant="destructive"><Trash2 /> Supprimer</ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
+        </Section>
+
+        <Separator />
+
+        {/* Pilote — substitution end-to-end (modale de confirmation DS) */}
+        <Section
+          title="Pilote — Modale de confirmation (DS)"
+          description="Substitution Cunningham → DS de HardDeleteConfirmationModal, derrière le flag DS_CONFIRM_MODALS. AlertDialog Radix portalé (.sahla-ds + dir posés sur le contenu)."
+        >
+          <div className="flex flex-wrap items-center gap-4">
+            <Button variant="destructive" onClick={() => setHardDeleteOpen(true)}>
+              <Trash2 /> Supprimer définitivement…
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              Dernière décision :{" "}
+              <span className="font-medium text-foreground">{lastDecision}</span>
+            </span>
+          </div>
+          <HardDeleteConfirmationModalDs
+            isOpen={hardDeleteOpen}
+            onClose={() => setHardDeleteOpen(false)}
+            onDecide={(d) => setLastDecision(d === "yes" ? "Confirmé" : "Annulé")}
+            count={3}
+          />
         </Section>
 
         <Separator />

@@ -14,6 +14,7 @@ and this project adheres to
 - ✨(frontend) extend Sahla DS kit: Button (cva, incl. AI variant), Dialog, Tooltip, Checkbox + row selection in FileRow; /ds-preview demo page
 - ✨(frontend) Sahla DS phase 1: Input, Label, Select, Switch, Separator, Spinner, ContextMenu, AlertDialog primitives; DsProvider (RTL via Radix DirectionProvider) + useDisclosure; logical-property RTL pass; /ds-preview gallery with LTR/RTL + light/dark toggles
 - ✨(frontend) Sahla DS phase 2: ThemeProvider (light/dark/system, localStorage) + ModeToggle + useSyncDarkClass bridge; WCAG AA contrast audit (scripts/contrast-audit.cjs) and token fixes (muted-foreground, destructive, ai-purple)
+- ✨(frontend) Sahla DS phase 3 pilot: migrate HardDeleteConfirmationModal to DS AlertDialog behind FEATURES_ flag (DS_CONFIRM_MODALS); useFeatureFlag helper; portaled-content `.sahla-ds` + Radix DirectionProvider pattern
 
 ### Changed
 
