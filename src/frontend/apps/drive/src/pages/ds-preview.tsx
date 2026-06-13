@@ -87,6 +87,41 @@ import {
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+// Primitives ajoutées en phase 5 (complétion du kit).
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Icon } from "@/components/ui/icon";
 import { HardDeleteConfirmationModalDs } from "@/features/explorer/components/modals/HardDeleteConfirmationModalDs";
 
 const SAMPLE_FILES: FileItem[] = [
@@ -523,6 +558,170 @@ export default function DsPreviewPage() {
             >
               Erreur
             </Button>
+          </div>
+        </Section>
+
+        <Separator />
+
+        {/* Primitives — Phase 5 (kit complété) */}
+        <Section
+          title="Primitives — Phase 5 (kit complété)"
+          description="popover · command · sheet · table · tabs · scroll-area · badge · progress · icon (adaptateur lucide). Pré-requis des phases 6→12 ; tous RTL/dark-aware."
+        >
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Badges (dont états EFSS / IA) */}
+            <div className="space-y-2 rounded-lg border border-border p-4">
+              <p className="text-sm font-medium">Badge</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge>Défaut</Badge>
+                <Badge variant="secondary">Secondaire</Badge>
+                <Badge variant="outline">Outline</Badge>
+                <Badge variant="destructive">Corbeille</Badge>
+                <Badge variant="syncing">
+                  <Clock /> Synchro
+                </Badge>
+                <Badge variant="encrypted">
+                  <ShieldCheck /> Chiffré
+                </Badge>
+                <Badge variant="ai">
+                  <Sparkles /> IA
+                </Badge>
+              </div>
+            </div>
+
+            {/* Progress + Icon adapter */}
+            <div className="space-y-3 rounded-lg border border-border p-4">
+              <p className="text-sm font-medium">Progress &amp; Icon</p>
+              <Progress value={28} />
+              <Progress value={64} />
+              <Progress value={100} />
+              <div className="flex items-end gap-3 pt-1">
+                <Icon icon={Folder} size="xsmall" />
+                <Icon icon={Folder} size="small" />
+                <Icon icon={Folder} size="medium" />
+                <Icon icon={Folder} size="large" />
+                <Icon icon={Folder} size="xlarge" />
+              </div>
+            </div>
+
+            {/* Popover + Sheet */}
+            <div className="space-y-2 rounded-lg border border-border p-4">
+              <p className="text-sm font-medium">Popover &amp; Sheet</p>
+              <div className="flex flex-wrap gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Settings /> Popover
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 space-y-2">
+                    <p className="text-sm font-medium">Préférences</p>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="pp-enc">Chiffrement</Label>
+                      <Switch
+                        id="pp-enc"
+                        checked={encryptOn}
+                        onCheckedChange={setEncryptOn}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Info /> Sheet
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right">
+                    <SheetHeader>
+                      <SheetTitle>Détails de l’élément</SheetTitle>
+                      <SheetDescription>
+                        Panneau latéral mobile (socle du meta-panel responsive).
+                      </SheetDescription>
+                    </SheetHeader>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </div>
+
+            {/* Command (inline) */}
+            <div className="space-y-2 rounded-lg border border-border p-4">
+              <p className="text-sm font-medium">Command (palette)</p>
+              <Command className="rounded-md border border-border">
+                <CommandInput placeholder="Rechercher un fichier…" />
+                <CommandList>
+                  <CommandEmpty>Aucun résultat.</CommandEmpty>
+                  <CommandGroup heading="Récents">
+                    {SAMPLE_FILES.slice(0, 3).map((f) => (
+                      <CommandItem key={f.id} value={f.name}>
+                        {f.type === "folder" ? <Folder /> : <Info />}
+                        {f.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </div>
+
+            {/* Tabs + ScrollArea */}
+            <div className="space-y-2 rounded-lg border border-border p-4">
+              <p className="text-sm font-medium">Tabs &amp; ScrollArea</p>
+              <Tabs defaultValue="infos">
+                <TabsList>
+                  <TabsTrigger value="infos">Infos</TabsTrigger>
+                  <TabsTrigger value="activite">Activité</TabsTrigger>
+                </TabsList>
+                <TabsContent value="infos">
+                  <ScrollArea className="h-28 rounded-md border border-border p-3">
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      {SAMPLE_FILES.map((f) => (
+                        <li key={f.id}>{f.name}</li>
+                      ))}
+                      {SAMPLE_FILES.map((f) => (
+                        <li key={`bis-${f.id}`}>{f.name}</li>
+                      ))}
+                    </ul>
+                  </ScrollArea>
+                </TabsContent>
+                <TabsContent value="activite">
+                  <p className="p-3 text-sm text-muted-foreground">
+                    Aucune activité récente.
+                  </p>
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            {/* Table */}
+            <div className="space-y-2 rounded-lg border border-border p-4">
+              <p className="text-sm font-medium">Table</p>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nom</TableHead>
+                    <TableHead>État</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {SAMPLE_FILES.slice(0, 4).map((f) => (
+                    <TableRow key={f.id}>
+                      <TableCell className="font-medium text-foreground">
+                        {f.name}
+                      </TableCell>
+                      <TableCell>
+                        {f.encrypted ? (
+                          <Badge variant="encrypted">
+                            <ShieldCheck /> Chiffré
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary">Standard</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </Section>
 
