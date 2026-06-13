@@ -1,5 +1,12 @@
-/* Directives Tailwind. Importé avant globals.scss dans _app.tsx. Preflight est
-   désactivé (cf. tailwind.config.js) pour cohabiter avec Cunningham/ui-kit. */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Entrée Tailwind 4. Importée avant globals.scss dans _app.tsx.
+ *
+ * On n'importe PAS `tailwindcss/preflight.css` : Tailwind n'apporte que ses
+ * utilitaires (et le thème), pas de reset global, pour cohabiter avec
+ * Cunningham/ui-kit (équivalent de l'ancien `corePlugins.preflight: false`).
+ *
+ * `@config` réutilise tailwind.config.js (couleurs/polices branchées sur les
+ * tokens Cunningham — source unique de vérité, cf. ce fichier). */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@config "../../tailwind.config.js";

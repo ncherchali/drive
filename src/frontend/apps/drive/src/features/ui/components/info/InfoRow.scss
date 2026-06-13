@@ -1,3 +1,7 @@
+/* Tailwind 4 : contexte de thème pour résoudre `@apply` dans ce fichier Sass
+   (cf. AppExplorer.scss). N'émet aucun CSS. */
+@reference "tailwindcss";
+
 // Migration Tailwind (Étape 0.5) : mise en page via `@apply` ; tailles de
 // police et couleurs par token Cunningham (var(--c--…)) gardées en CSS.
 .info-row {

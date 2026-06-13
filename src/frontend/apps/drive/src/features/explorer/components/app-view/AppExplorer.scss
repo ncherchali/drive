@@ -1,5 +1,9 @@
 @use "sass:map";
 @use "@/styles/cunningham-tokens-sass" as *;
+/* Tailwind 4 : `@reference` donne à ce fichier (compilé par Sass, hors de
+   l'entrée principale) le contexte de thème nécessaire pour résoudre `@apply`.
+   N'émet aucun CSS. */
+@reference "tailwindcss";
 
 // Migration Tailwind (Étape 0.5) : mise en page de notre markup via `@apply` ;
 // couleurs/espacements par token Cunningham (var(--c--…)), états, responsive

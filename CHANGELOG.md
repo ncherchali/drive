@@ -11,6 +11,7 @@ and this project adheres to
 ### Changed
 
 - ⬆️(frontend) upgrade Next.js 15.5 to 16.2 (Turbopack build, native flat ESLint config)
+- ⬆️(frontend) upgrade Tailwind CSS 3.4 to 4.3 (@tailwindcss/postcss, CSS-first entry, preflight kept off via layer imports, tokens via @config)
 - 🐛(backend) replace VersionId by Etag for WOPI
 
 ### Removed

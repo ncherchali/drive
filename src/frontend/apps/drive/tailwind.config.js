@@ -4,15 +4,17 @@
  * `yarn build-theme` (tokens Sahla). Changer la marque = changer le token, pas
  * la config Tailwind. Source unique de vérité.
  *
- * `preflight` est désactivé : Tailwind n'apporte que des utilitaires, pas de
- * reset global, pour ne pas perturber les composants upstream (ui-kit/Cunningham).
+ * Le preflight (reset global) est désactivé non pas ici mais à l'entrée
+ * `src/styles/tailwind.css`, qui n'importe que les layers theme + utilities
+ * (en v4 `corePlugins` n'existe plus). Tailwind n'apporte donc que ses
+ * utilitaires, sans perturber les composants upstream (ui-kit/Cunningham).
+ *
+ * Ce fichier reste chargé via `@config` pour garder le câblage couleurs/polices
+ * sur les tokens Cunningham (source unique de vérité).
  */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{ts,tsx,js,jsx}"],
-  corePlugins: {
-    preflight: false,
-  },
   theme: {
     extend: {
       // Chaque couleur pointe sur le token Cunningham (source de vérité) AVEC un
