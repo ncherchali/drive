@@ -61,7 +61,7 @@ function DialogContent({
         {children}
         <DialogPrimitive.Close
           className={cn(
-            "absolute right-4 top-4 rounded-sm opacity-70 outline-none transition-opacity",
+            "absolute end-4 top-4 rounded-sm opacity-70 outline-none transition-opacity",
             "hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring",
             "[&_svg]:size-4",
           )}
@@ -78,7 +78,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-1.5 text-left", className)}
+      className={cn("flex flex-col gap-1.5 text-start", className)}
       {...props}
     />
   );

@@ -61,7 +61,7 @@ function DropdownMenuItem({
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg]:size-4 [&_svg]:shrink-0",
         "data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10",
-        inset && "pl-8",
+        inset && "ps-8",
         className,
       )}
       {...props}
@@ -105,7 +105,7 @@ function DropdownMenuShortcut({
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground",
+        "ms-auto text-xs tracking-widest text-muted-foreground",
         className,
       )}
       {...props}

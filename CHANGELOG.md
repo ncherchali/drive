@@ -12,6 +12,7 @@ and this project adheres to
 
 - ✨(frontend) scaffold Sahla Design System (shadcn/Radix + Tailwind v4): DS token layer (ds.css), FileRow and AiPromptInput components, scoped under `.sahla-ds` to coexist with Cunningham
 - ✨(frontend) extend Sahla DS kit: Button (cva, incl. AI variant), Dialog, Tooltip, Checkbox + row selection in FileRow; /ds-preview demo page
+- ✨(frontend) Sahla DS phase 1: Input, Label, Select, Switch, Separator, Spinner, ContextMenu, AlertDialog primitives; DsProvider (RTL via Radix DirectionProvider) + useDisclosure; logical-property RTL pass; /ds-preview gallery with LTR/RTL + light/dark toggles
 
 ### Changed
 

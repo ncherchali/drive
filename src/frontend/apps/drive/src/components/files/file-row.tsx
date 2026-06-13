@@ -178,7 +178,7 @@ export function FileRow({
           type="button"
           onClick={handleOpen}
           className={cn(
-            "truncate rounded-sm text-left text-sm font-medium text-foreground outline-none",
+            "truncate rounded-sm text-start text-sm font-medium text-foreground outline-none",
             "hover:text-primary focus-visible:ring-2 focus-visible:ring-ring",
           )}
         >
@@ -207,13 +207,13 @@ export function FileRow({
       {/* Métadonnées */}
       <span
         role="gridcell"
-        className="hidden w-20 shrink-0 text-right text-xs tabular-nums text-muted-foreground md:block"
+        className="hidden w-20 shrink-0 text-end text-xs tabular-nums text-muted-foreground md:block"
       >
         {item.type === "folder" ? "—" : formatBytes(item.size)}
       </span>
       <span
         role="gridcell"
-        className="hidden w-28 shrink-0 text-right text-xs text-muted-foreground lg:block"
+        className="hidden w-28 shrink-0 text-end text-xs text-muted-foreground lg:block"
       >
         {formatDate(item.updatedAt)}
       </span>
