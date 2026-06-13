@@ -140,6 +140,15 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
     [router.pathname],
   );
 
+  // Page de démo du Design System : rendue HORS du stack de providers
+  // (ConfigProvider bloque toutes les pages derrière un spinner tant que la
+  // config backend n'est pas chargée). La preview est autonome (composants DS +
+  // état local), donc on la sert sans backend — utile pour un `next dev` ou un
+  // export statique sans pile Docker. Page de DEV uniquement.
+  if (router.pathname === "/ds-preview") {
+    return getLayout(<Component {...pageProps} />);
+  }
+
   return (
     <>
       <Head>
