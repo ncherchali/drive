@@ -31,6 +31,12 @@ import {
   SidebarFooter,
 } from "@/components/layout/sidebar";
 import { AppHeader, AppHeaderTitle } from "@/components/layout/app-header";
+import { UserMenu } from "@/components/layout/user-menu";
+import {
+  Toaster,
+  ToasterItem,
+  addToast,
+} from "@/features/ui/components/toaster/Toaster";
 import { ThemeProvider } from "@/features/theme/ThemeProvider";
 import { ModeToggle } from "@/features/theme/ModeToggle";
 import {
@@ -252,6 +258,11 @@ export default function DsPreviewPage() {
                     <Button size="sm">
                       <Upload /> Importer
                     </Button>
+                    <UserMenu
+                      name="Nabil Cherchali"
+                      email="nabil@sahla.dz"
+                      onLogout={() => {}}
+                    />
                   </div>
                 </AppHeader>
               }
@@ -480,10 +491,46 @@ export default function DsPreviewPage() {
           )}
         </Section>
 
+        <Separator />
+
+        {/* Notifications — Toaster restylé (react-toastify) */}
+        <Section
+          title="Notifications — Toaster"
+          description="react-toastify restylé aux tokens DS (carte, bouton de fermeture). Les call sites addToast/ToasterItem restent inchangés."
+        >
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              onClick={() =>
+                addToast(
+                  <ToasterItem closeButton>
+                    Fichier déplacé avec succès.
+                  </ToasterItem>,
+                )
+              }
+            >
+              Notification
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                addToast(
+                  <ToasterItem type="error" closeButton>
+                    Échec de l’upload du fichier.
+                  </ToasterItem>,
+                )
+              }
+            >
+              Erreur
+            </Button>
+          </div>
+        </Section>
+
         <footer className="border-t border-border pt-6 text-xs text-muted-foreground">
           Page de prévisualisation — composants montés hors de tout contexte Cunningham.
         </footer>
       </div>
+      <Toaster />
       </DsProvider>
     </ThemeProvider>
   );

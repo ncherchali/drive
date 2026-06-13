@@ -22,6 +22,7 @@ import {
   FLAG_DS_APP_SHELL,
 } from "@/features/flags/useFeatureFlag";
 import { DsExplorerShell } from "./DsExplorerShell";
+import { DsExplorerHeader } from "./DsExplorerHeader";
 
 export const getGlobalExplorerLayout = (page: React.ReactElement) => {
   return <GlobalExplorerLayout>{page}</GlobalExplorerLayout>;
@@ -115,12 +116,16 @@ export const ExplorerPanelsLayout = ({
   if (useDsShell) {
     return (
       <DsExplorerShell
+        header={
+          <DsExplorerHeader
+            displaySearch={isMinimalLayout}
+            currentItem={item}
+          />
+        }
         leftPanelContent={leftPanelContent}
         rightPanelContent={rightPanelContent}
         rightPanelIsOpen={rightPanelOpen}
         hideLeftPanelOnDesktop={hideLeftPanelOnDesktop}
-        icon={icon}
-        rightHeaderContent={rightHeaderContent}
       >
         {children}
       </DsExplorerShell>

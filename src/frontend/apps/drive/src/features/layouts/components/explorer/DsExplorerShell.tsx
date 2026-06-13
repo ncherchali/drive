@@ -10,26 +10,24 @@
 import * as React from "react";
 import { AppShell, MetaPanel } from "@/components/layout/app-shell";
 import { Sidebar } from "@/components/layout/sidebar";
-import { AppHeader } from "@/components/layout/app-header";
 
 export interface DsExplorerShellProps {
   children: React.ReactNode;
+  /** Contenu d'en-tête (typiquement <DsExplorerHeader />). */
+  header: React.ReactNode;
   leftPanelContent: React.ReactNode;
   rightPanelContent: React.ReactNode;
   rightPanelIsOpen?: boolean;
   hideLeftPanelOnDesktop?: boolean;
-  icon?: React.ReactNode;
-  rightHeaderContent?: React.ReactNode;
 }
 
 export function DsExplorerShell({
   children,
+  header,
   leftPanelContent,
   rightPanelContent,
   rightPanelIsOpen = false,
   hideLeftPanelOnDesktop = false,
-  icon,
-  rightHeaderContent,
 }: DsExplorerShellProps) {
   return (
     <div className="h-dvh w-full bg-background text-foreground">
@@ -39,14 +37,7 @@ export function DsExplorerShell({
             <Sidebar className="hidden md:flex">{leftPanelContent}</Sidebar>
           )
         }
-        header={
-          <AppHeader>
-            {icon}
-            <div className="ms-auto flex min-w-0 items-center gap-2">
-              {rightHeaderContent}
-            </div>
-          </AppHeader>
-        }
+        header={header}
         metaPanel={
           rightPanelIsOpen ? (
             <MetaPanel>{rightPanelContent}</MetaPanel>

@@ -1,9 +1,21 @@
-import { Button } from "@gouvfr-lasuite/cunningham-react";
-import clsx from "clsx";
 import { ToastContainer, ToastContentProps, toast } from "react-toastify";
+import { X } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 export const Toaster = () => {
-  return <ToastContainer />;
+  return (
+    <ToastContainer
+      position="bottom-center"
+      hideProgressBar
+      closeButton={false}
+      icon={false}
+      newestOnTop
+      // Neutralise le chrome par défaut de react-toastify : seul le ToasterItem
+      // (carte DS) est visible.
+      toastClassName="!bg-transparent !p-0 !shadow-none !min-h-0 !mb-2 !rounded-none"
+      className="!w-auto !max-w-[min(28rem,92vw)] !p-3"
+    />
+  );
 };
 
 export const ToasterItem = ({
@@ -23,20 +35,26 @@ export const ToasterItem = ({
   return (
     <div
       onDrop={(event) => onDrop?.(event)}
-      className={clsx(
-        "suite__toaster__item",
-        "suite__toaster__item--" + type,
-        className
+      className={cn(
+        // `.sahla-ds` : reset scopé sur le contenu portalé (toast hors du DS).
+        "sahla-ds flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground shadow-lg",
+        type === "error" && "border-destructive/40",
+        className,
       )}
     >
-      <div className="suite__toaster__item__content">{children}</div>
+      <div className="min-w-0 flex-1">{children}</div>
       {closeButton && (
-        <Button
+        <button
+          type="button"
           onClick={closeToast}
-          variant="tertiary"
-          size="small"
-          icon={<span className="material-icons">close</span>}
-        ></Button>
+          aria-label="Fermer"
+          className={cn(
+            "shrink-0 rounded-sm text-muted-foreground outline-none transition-colors",
+            "hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4",
+          )}
+        >
+          <X aria-hidden />
+        </button>
       )}
     </div>
   );
@@ -44,12 +62,11 @@ export const ToasterItem = ({
 
 export const addToast = (
   children: React.ReactNode,
-  options: Parameters<typeof toast>[1] = {}
+  options: Parameters<typeof toast>[1] = {},
 ) => {
   return toast(children, {
     position: "bottom-center",
     closeButton: false,
-    className: "suite__toaster__wrapper",
     autoClose: 8000,
     hideProgressBar: true,
     ...options,

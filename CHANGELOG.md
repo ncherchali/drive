@@ -19,6 +19,8 @@ and this project adheres to
 - ✨(frontend) Sahla DS phase 4: layout primitives (AppShell, Sidebar, AppHeader, MetaPanel) — sober EFSS shell, no DINUM gaufre, RTL-aware; /ds-preview layout demo
 - ✨(frontend) Sahla DS: wire DS app shell into the explorer (DsExplorerShell) behind FEATURES_ flag (DS_APP_SHELL); layout primitives made preflight-independent so they host Cunningham content without the `.sahla-ds` reset
 - ✨(backend) expose Design System feature flags via the config API `FEATURES` key (FEATURES_DS_CONFIRM_MODALS, FEATURES_DS_APP_SHELL settings, env-overridable)
+- ✨(frontend) Sahla DS: DS explorer header (Avatar, UserMenu) replacing HeaderRight under the DS shell flag — drops the DINUM gaufre
+- ✨(frontend) Sahla DS: restyle the Toaster (react-toastify) to DS tokens — call sites (addToast/ToasterItem) unchanged
 
 ### Changed
 
