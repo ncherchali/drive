@@ -8,6 +8,12 @@
 import * as React from "react";
 import {
   Folder,
+  FolderOpen,
+  Clock,
+  Users,
+  ShieldCheck,
+  Settings,
+  Upload,
   Sparkles,
   Trash2,
   Info,
@@ -16,6 +22,15 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { DsProvider } from "@/components/ds-provider";
+import { AppShell, MetaPanel } from "@/components/layout/app-shell";
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarNav,
+  SidebarNavItem,
+  SidebarFooter,
+} from "@/components/layout/sidebar";
+import { AppHeader, AppHeaderTitle } from "@/components/layout/app-header";
 import { ThemeProvider } from "@/features/theme/ThemeProvider";
 import { ModeToggle } from "@/features/theme/ModeToggle";
 import {
@@ -183,6 +198,99 @@ export default function DsPreviewPage() {
                 <span className="text-xs font-medium">{s.name}</span>
               </div>
             ))}
+          </div>
+        </Section>
+
+        <Separator />
+
+        {/* Layout — App shell (Phase 4) */}
+        <Section
+          title="Layout — App shell (Phase 4)"
+          description="Coquille DS sobre, SANS gaufre DINUM : sidebar (w-sidebar), en-tête, contenu, panneau de méta (w-meta-panel). RTL-aware (bordures logiques)."
+        >
+          <div className="h-[26rem] overflow-hidden rounded-xl border border-border">
+            <AppShell
+              sidebar={
+                <Sidebar>
+                  <SidebarHeader>
+                    <div className="flex size-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+                      S
+                    </div>
+                    <span className="text-sm font-semibold">Sahla</span>
+                  </SidebarHeader>
+                  <SidebarNav>
+                    <SidebarNavItem active>
+                      <FolderOpen /> Mes fichiers
+                    </SidebarNavItem>
+                    <SidebarNavItem>
+                      <Clock /> Récents
+                    </SidebarNavItem>
+                    <SidebarNavItem>
+                      <Users /> Partagés
+                    </SidebarNavItem>
+                    <SidebarNavItem>
+                      <ShieldCheck /> Coffre-fort
+                    </SidebarNavItem>
+                    <SidebarNavItem>
+                      <Trash2 /> Corbeille
+                    </SidebarNavItem>
+                  </SidebarNav>
+                  <SidebarFooter>
+                    <SidebarNavItem>
+                      <Settings /> Paramètres
+                    </SidebarNavItem>
+                  </SidebarFooter>
+                </Sidebar>
+              }
+              header={
+                <AppHeader>
+                  <AppHeaderTitle>Mes fichiers</AppHeaderTitle>
+                  <div className="ms-auto flex items-center gap-2">
+                    <Button variant="ai" size="sm">
+                      <Sparkles /> Analyser
+                    </Button>
+                    <Button size="sm">
+                      <Upload /> Importer
+                    </Button>
+                  </div>
+                </AppHeader>
+              }
+              metaPanel={
+                <MetaPanel className="space-y-3 p-4">
+                  <p className="text-sm font-semibold text-foreground">
+                    Détails
+                  </p>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Type</span>
+                    <span>Dossier</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Éléments</span>
+                    <span>12</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Sécurité</span>
+                    <span className="inline-flex items-center gap-1 text-encrypted">
+                      <ShieldCheck className="size-3.5" /> Chiffré
+                    </span>
+                  </div>
+                </MetaPanel>
+              }
+            >
+              <div className="file-grid p-4">
+                {["Contrats", "RH", "Finance", "Juridique", "Marketing", "Archives"].map(
+                  (name) => (
+                    <div
+                      key={name}
+                      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
+                    >
+                      <Folder className="size-7 text-primary" />
+                      <p className="truncate text-sm font-medium">{name}</p>
+                    </div>
+                  ),
+                )}
+              </div>
+            </AppShell>
           </div>
         </Section>
 
