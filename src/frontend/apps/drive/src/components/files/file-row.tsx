@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -50,7 +51,10 @@ export interface FileRowProps
   extends Omit<React.ComponentProps<"div">, "onSelect"> {
   item: FileItem;
   selected?: boolean;
+  /** Affiche une case à cocher de sélection en tête de ligne. */
+  selectable?: boolean;
   onOpen?: (item: FileItem) => void;
+  onSelectedChange?: (checked: boolean, item: FileItem) => void;
   onAction?: (action: FileRowAction, item: FileItem) => void;
 }
 
@@ -110,7 +114,9 @@ function SyncIndicator({ state }: { state: SyncState }) {
 export function FileRow({
   item,
   selected = false,
+  selectable = false,
   onOpen,
+  onSelectedChange,
   onAction,
   className,
   ...props
@@ -138,6 +144,23 @@ export function FileRow({
       )}
       {...props}
     >
+      {/* Case à cocher de sélection (optionnelle) */}
+      {selectable && (
+        <span role="gridcell" className="shrink-0">
+          <Checkbox
+            checked={selected}
+            onCheckedChange={(c) => onSelectedChange?.(c === true, item)}
+            aria-label={`Sélectionner ${item.name}`}
+            className={cn(
+              "transition-opacity",
+              selected
+                ? "opacity-100"
+                : "opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100",
+            )}
+          />
+        </span>
+      )}
+
       {/* Icône type */}
       <span role="gridcell" className="shrink-0">
         <Icon

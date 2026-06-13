@@ -7,10 +7,26 @@
 // sémantiques basculent via redéfinition des variables CSS). Auto-suffisant :
 // n'interfère pas avec le pont `.dark` global de _app.tsx.
 import * as React from "react";
-import { Moon, Sun, Folder } from "lucide-react";
+import { Moon, Sun, Folder, Sparkles, Trash2, Info } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { FileRow, type FileItem, type FileRowAction } from "@/components/files/file-row";
 import { AiPromptInput } from "@/components/ai/ai-prompt-input";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 const SAMPLE_FILES: FileItem[] = [
   {
@@ -93,6 +109,16 @@ export default function DsPreviewPage() {
   const [isDark, setIsDark] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<string | null>("3");
   const [lastAction, setLastAction] = React.useState<string>("—");
+  const [checked, setChecked] = React.useState<Set<string>>(new Set(["3"]));
+
+  const toggleChecked = (id: string, value: boolean) => {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (value) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
 
   const [isStreaming, setIsStreaming] = React.useState(false);
   const [log, setLog] = React.useState<string[]>([]);
@@ -175,8 +201,21 @@ export default function DsPreviewPage() {
         {/* Explorateur — FileRow */}
         <Section
           title="Explorateur de fichiers — FileRow"
-          description="Survolez une ligne pour révéler le menu d'actions. Sync animée, badge chiffré, sélection."
+          description="Survolez une ligne : la case de sélection et le menu d'actions apparaissent. Sync animée, badge chiffré."
         >
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {checked.size} élément(s) sélectionné(s)
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={checked.size === 0}
+              onClick={() => setChecked(new Set())}
+            >
+              <Trash2 /> Tout désélectionner
+            </Button>
+          </div>
           <div
             role="grid"
             aria-label="Fichiers de démonstration"
@@ -186,16 +225,77 @@ export default function DsPreviewPage() {
               <FileRow
                 key={item.id}
                 item={item}
-                selected={selectedId === item.id}
+                selectable
+                selected={checked.has(item.id)}
+                onSelectedChange={(c, it) => toggleChecked(it.id, c)}
                 onOpen={(it) => setSelectedId(it.id)}
                 onAction={handleAction}
               />
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            Dernière action :{" "}
+            Dernière ouverture :{" "}
+            <span className="font-medium text-foreground">
+              {SAMPLE_FILES.find((f) => f.id === selectedId)?.name ?? "—"}
+            </span>{" "}
+            · Dernière action :{" "}
             <span className="font-medium text-foreground">{lastAction}</span>
           </p>
+        </Section>
+
+        {/* Kit — Button / Dialog / Tooltip */}
+        <Section
+          title="Kit — Button, Dialog, Tooltip"
+          description="Variantes de boutons (dont la variante IA), modale Radix et infobulle."
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <Button>Principal</Button>
+            <Button variant="secondary">Secondaire</Button>
+            <Button variant="outline">Contour</Button>
+            <Button variant="ghost">Fantôme</Button>
+            <Button variant="destructive">
+              <Trash2 /> Supprimer
+            </Button>
+            <Button variant="ai">
+              <Sparkles /> Analyser
+            </Button>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" aria-label="Informations">
+                  <Info />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Infobulle accessible (Radix)</TooltipContent>
+            </Tooltip>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ai">
+                  <Sparkles /> Ouvrir un workflow
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Lancer un workflow IA</DialogTitle>
+                  <DialogDescription>
+                    Exemple de modale Radix sur le document sélectionné, avec
+                    focus-trap et fermeture clavier (Échap).
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Annuler</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="ai">
+                      <Sparkles /> Lancer
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </Section>
 
         {/* Grille — utilitaire file-grid */}
