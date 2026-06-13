@@ -1,0 +1,245 @@
+/* ============================================================================
+ * Sahla DS — couche tokens du futur Design System (shadcn/Radix + Tailwind v4).
+ *
+ * Ce fichier est un PARTIEL : il est `@import`é depuis `tailwind.css` et traité
+ * par la même instance @tailwindcss/postcss (donc PAS de `@import "tailwindcss"`
+ * ici, sinon double génération des utilitaires).
+ *
+ * Coexistence avec Cunningham (décisions actées) :
+ *  - le preflight global reste DÉSACTIVÉ (cf. tailwind.css) ; on fournit ici un
+ *    reset minimal SCOPÉ sous `.sahla-ds` — seuls les sous-arbres marqués
+ *    `class="sahla-ds"` reçoivent le reset dont shadcn/Radix a besoin ;
+ *  - `@config` (tokens Cunningham) reste en place dans tailwind.css ; la bascule
+ *    @config → @theme est l'étape finale, une fois Cunningham retiré ;
+ *  - le dark mode passe par la classe `.dark` (pontée au switch applicatif).
+ * ========================================================================== */
+
+/* Animations shadcn (animate-in/out, fade, zoom, slide) — plugin CSS v4. */
+@import "tw-animate-css";
+
+/* Dark mode piloté par classe `.dark` (et non prefers-color-scheme). */
+@custom-variant dark (&:is(.dark *));
+
+/* ----------------------------------------------------------------------------
+ * 1) Tokens SÉMANTIQUES — themables → variables CSS commutables clair/sombre.
+ * -------------------------------------------------------------------------- */
+:root {
+  --radius: 0.625rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.21 0.03 271);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.03 271);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.03 271);
+
+  --primary: oklch(0.52 0.23 277);            /* indigo robuste = brand-primary */
+  --primary-foreground: oklch(0.98 0.01 277);
+  --secondary: oklch(0.97 0.01 271);
+  --secondary-foreground: oklch(0.3 0.04 271);
+  --muted: oklch(0.97 0.01 271);
+  --muted-foreground: oklch(0.552 0.02 271);
+  --accent: oklch(0.962 0.02 277);
+  --accent-foreground: oklch(0.3 0.06 277);
+  --destructive: oklch(0.577 0.245 27);
+  --destructive-foreground: oklch(0.98 0.01 27);
+
+  --border: oklch(0.92 0.008 271);
+  --input: oklch(0.92 0.008 271);
+  --ring: oklch(0.52 0.23 277);
+
+  /* Sidebar EFSS (explorateur) */
+  --sidebar: oklch(0.985 0.004 271);
+  --sidebar-foreground: oklch(0.21 0.03 271);
+  --sidebar-primary: oklch(0.52 0.23 277);
+  --sidebar-primary-foreground: oklch(0.98 0.01 277);
+  --sidebar-accent: oklch(0.962 0.02 277);
+  --sidebar-accent-foreground: oklch(0.3 0.06 277);
+  --sidebar-border: oklch(0.92 0.008 271);
+  --sidebar-ring: oklch(0.52 0.23 277);
+}
+
+.dark {
+  --background: oklch(0.205 0.03 271);         /* fond sombre = brand-dark */
+  --foreground: oklch(0.97 0.01 271);
+  --card: oklch(0.24 0.03 271);
+  --card-foreground: oklch(0.97 0.01 271);
+  --popover: oklch(0.24 0.03 271);
+  --popover-foreground: oklch(0.97 0.01 271);
+
+  --primary: oklch(0.62 0.2 277);             /* indigo éclairci en sombre */
+  --primary-foreground: oklch(0.18 0.04 277);
+  --secondary: oklch(0.28 0.03 271);
+  --secondary-foreground: oklch(0.97 0.01 271);
+  --muted: oklch(0.28 0.03 271);
+  --muted-foreground: oklch(0.7 0.02 271);
+  --accent: oklch(0.32 0.05 277);
+  --accent-foreground: oklch(0.97 0.01 277);
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.97 0.01 25);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.62 0.2 277);
+
+  --sidebar: oklch(0.24 0.03 271);
+  --sidebar-foreground: oklch(0.97 0.01 271);
+  --sidebar-primary: oklch(0.62 0.2 277);
+  --sidebar-primary-foreground: oklch(0.18 0.04 277);
+  --sidebar-accent: oklch(0.32 0.05 277);
+  --sidebar-accent-foreground: oklch(0.97 0.01 277);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.62 0.2 277);
+}
+
+/* ----------------------------------------------------------------------------
+ * 2) Mapping sémantique → utilitaires (indirection var() pour le runtime).
+ * -------------------------------------------------------------------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ----------------------------------------------------------------------------
+ * 3) Tokens STATIQUES (marque, états EFSS, IA, layout) — directive @theme pure.
+ *    Identiques en clair/sombre (un état « chiffré » reste émeraude partout).
+ * -------------------------------------------------------------------------- */
+@theme {
+  /* Marque */
+  --color-brand-primary: oklch(0.52 0.23 277);
+  --color-brand-primary-foreground: oklch(0.98 0.01 277);
+  --color-brand-dark: oklch(0.205 0.03 271);
+
+  /* États contextuels EFSS */
+  --color-syncing: oklch(0.77 0.16 70);              /* ambre — synchronisation */
+  --color-syncing-foreground: oklch(0.27 0.07 70);
+  --color-encrypted: oklch(0.7 0.15 162);            /* émeraude — sécurité */
+  --color-encrypted-foreground: oklch(0.26 0.06 162);
+
+  /* IA */
+  --color-ai-purple: oklch(0.62 0.25 303);           /* violet vibrant */
+  --color-ai-purple-foreground: oklch(0.98 0.01 303);
+  --color-ai-purple-soft: oklch(0.96 0.04 303);
+
+  /* Layout explorateur de fichiers */
+  --spacing-sidebar: 280px;                          /* → w-sidebar, min-w-sidebar… */
+  --spacing-meta-panel: 360px;                       /* → w-meta-panel… */
+
+  /* Animations */
+  --animate-ai-pulse: ai-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ai-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * 4) Utilitaires sur-mesure.
+ * -------------------------------------------------------------------------- */
+
+/* Grille de fichiers/dossiers responsive et dense. */
+@utility file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: calc(var(--spacing) * 4);
+  align-content: start;
+}
+
+/* Bordure lumineuse thématique IA — sobre, posée en focus-within. */
+@utility ai-ring {
+  box-shadow:
+    0 0 0 1px var(--color-ai-purple),
+    0 0 24px -8px var(--color-ai-purple);
+}
+
+/* ----------------------------------------------------------------------------
+ * 5) Reset preflight SCOPÉ sous `.sahla-ds`.
+ *    Le preflight global de Tailwind reste désactivé (cohabitation Cunningham) ;
+ *    on ne ré-applique ici que ce dont shadcn/Radix dépend, et uniquement à
+ *    l'intérieur des sous-arbres marqués `class="sahla-ds"`.
+ * -------------------------------------------------------------------------- */
+@layer base {
+  .sahla-ds,
+  .sahla-ds *,
+  .sahla-ds *::before,
+  .sahla-ds *::after {
+    box-sizing: border-box;
+    /* largeur 0 par défaut + style solide + couleur de bordure du thème :
+       l'utilitaire `border` n'a plus qu'à fixer la largeur (équivaut au reset
+       de bordure du preflight). */
+    border: 0 solid var(--border);
+  }
+
+  .sahla-ds {
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Les éléments de formulaire héritent de la typographie (sinon styles UA). */
+  .sahla-ds button,
+  .sahla-ds input,
+  .sahla-ds optgroup,
+  .sahla-ds select,
+  .sahla-ds textarea {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+  }
+
+  .sahla-ds button {
+    cursor: pointer;
+    background-color: transparent;
+    background-image: none;
+  }
+
+  .sahla-ds :disabled {
+    cursor: default;
+  }
+
+  /* Cohérence des médias en flux. */
+  .sahla-ds img,
+  .sahla-ds svg,
+  .sahla-ds video,
+  .sahla-ds canvas {
+    display: block;
+    vertical-align: middle;
+  }
+}

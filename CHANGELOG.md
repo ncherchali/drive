@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- ✨(frontend) scaffold Sahla Design System (shadcn/Radix + Tailwind v4): DS token layer (ds.css), FileRow and AiPromptInput components, scoped under `.sahla-ds` to coexist with Cunningham
+
 ### Changed
 
 - ⬆️(frontend) upgrade Next.js 15.5 to 16.2 (Turbopack build, native flat ESLint config)

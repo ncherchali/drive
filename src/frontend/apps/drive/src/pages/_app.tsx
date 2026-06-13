@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactElement,
@@ -125,6 +126,14 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
   const { theme } = useAppContext();
   const router = useRouter();
   const themeTokens = useCunninghamTheme();
+
+  // Pont dark mode du futur Design System (shadcn) : on réplique l'état sombre
+  // du thème Cunningham sur la classe `.dark` de <html>, que les composants DS
+  // consomment via le variant `dark:`. Inerte tant qu'aucun composant DS n'est
+  // monté (cf. ds.css / décisions de migration).
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme.includes("dark"));
+  }, [theme]);
 
   const isSdk = useMemo(
     () => router.pathname.startsWith("/sdk"),

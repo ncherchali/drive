@@ -10,3 +10,8 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 @config "../../tailwind.config.js";
+
+/* Couche tokens du futur Design System (shadcn/Radix). Importée dans la même
+   instance Tailwind ; preflight scopé sous `.sahla-ds`, tokens sémantiques
+   commutables `.dark`. Cohabite avec Cunningham (cf. ds.css). */
+@import "./ds.css";
