@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -111,6 +112,11 @@ export function DsPromptDialog({
         <DialogContent className="sahla-ds" dir={dir}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
+            {/* Description a11y (sr-only) : le libellé du champ décrit la saisie
+                attendue ; évite le warning Radix « Missing Description ». */}
+            <DialogDescription className="sr-only">
+              {formProps.label}
+            </DialogDescription>
           </DialogHeader>
           {/* Monté uniquement à l'ouverture → valeur réinitialisée à chaque fois. */}
           <PromptForm {...formProps} onCancel={() => onOpenChange(false)} />
