@@ -16,7 +16,7 @@ import { ItemIcon } from "../icons/ItemIcon";
 import { useGlobalExplorer } from "../GlobalExplorerContext";
 import { useSelectedItems } from "../../stores/selectionStore";
 import { ItemShareModal } from "../modals/share/ItemShareModal";
-import { ItemInfo } from "@/features/items/components/ItemInfo";
+import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import multipleSelection from "@/assets/mutliple-selection.png";
@@ -141,8 +141,8 @@ export const ExplorerRightPanelContentDs = ({
             )}
           </div>
 
-          {/* Métadonnées (ItemInfo reste Cunningham : non enveloppé). */}
-          <ItemInfo item={firstSelectedItem} />
+          {/* Métadonnées en DS (panneau de droite 100 % DS). */}
+          <ItemInfoDs item={firstSelectedItem} />
         </div>
       </ScrollArea>
 
