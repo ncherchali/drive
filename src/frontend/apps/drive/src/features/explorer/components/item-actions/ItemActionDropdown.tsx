@@ -1,5 +1,5 @@
 import { Item } from "@/features/drivers/types";
-import { DropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { MenuDropdown } from "@/components/ds-menu";
 import { useItemActionMenuItems } from "../../hooks/useItemActionMenuItems";
 
 export type ItemActionDropdownProps = {
@@ -30,9 +30,9 @@ export const ItemActionDropdown = ({
 
   return (
     <>
-      <DropdownMenu options={menuItems} isOpen={isOpen} onOpenChange={setIsOpen}>
+      <MenuDropdown options={menuItems} isOpen={isOpen} onOpenChange={setIsOpen}>
         {trigger}
-      </DropdownMenu>
+      </MenuDropdown>
       {modals}
     </>
   );

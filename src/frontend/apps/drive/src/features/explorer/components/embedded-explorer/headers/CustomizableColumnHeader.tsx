@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@gouvfr-lasuite/cunningham-react";
-import { DropdownMenu, IconSize, MenuItem } from "@gouvfr-lasuite/ui-kit";
+import { IconSize, MenuItem } from "@gouvfr-lasuite/ui-kit";
+import { MenuDropdown } from "@/components/ds-menu";
 import { ColumnType, SortState } from "@/features/explorer/types/columns";
 import { COLUMN_REGISTRY } from "@/features/explorer/config/columnRegistry";
 import { SortColumnButton } from "./SortColumnButton";
@@ -69,7 +70,7 @@ export const CustomizableColumnHeader = ({
 
   return (
     <div className="c__datagrid__header fs-h5 c__datagrid__header--sortable explorer__grid__header">
-      <DropdownMenu
+      <MenuDropdown
         options={dropdownOptions}
         isOpen={isOpen}
         onOpenChange={setIsOpen}
@@ -83,7 +84,7 @@ export const CustomizableColumnHeader = ({
         >
           {t(currentConfig.labelKey)}
         </Button>
-      </DropdownMenu>
+      </MenuDropdown>
       {sortable && currentConfig.sortable !== false && (
         <SortColumnButton
           columnId={currentType}

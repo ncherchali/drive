@@ -8,7 +8,7 @@ import {
 } from "@/features/explorer/hooks/useMutations";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { MenuDropdown } from "@/components/ds-menu";
 import { Button, Decision, useModal } from "@gouvfr-lasuite/cunningham-react";
 import undoIcon from "@/assets/icons/undo.svg";
 import cancelIcon from "@/assets/icons/cancel.svg";
@@ -51,7 +51,7 @@ export const ExplorerGridTrashActionsCell = (
 
   return (
     <>
-      <DropdownMenu
+      <MenuDropdown
         options={[
           {
             icon: <img src={undoIcon.src} alt="info" width={24} height={24} />,
@@ -77,7 +77,7 @@ export const ExplorerGridTrashActionsCell = (
           className="c__language-picker"
           icon={<span className="material-icons">more_horiz</span>}
         ></Button>
-      </DropdownMenu>
+      </MenuDropdown>
       {hardDeleteConfirmationModal.isOpen && (
         <HardDeleteConfirmationModal
           {...hardDeleteConfirmationModal}

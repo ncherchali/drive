@@ -1,4 +1,5 @@
-import { DropdownMenu, useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { MenuDropdown } from "@/components/ds-menu";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 import { Button } from "@gouvfr-lasuite/cunningham-react";
 import { useTranslation } from "react-i18next";
@@ -20,7 +21,7 @@ export const ExplorerTreeActions = () => {
     <>
       <div className="explorer__tree__actions">
         <div className="explorer__tree__actions__left">
-          <DropdownMenu
+          <MenuDropdown
             options={menuItems}
             {...createMenu}
             onOpenChange={createMenu.setIsOpen}
@@ -31,7 +32,7 @@ export const ExplorerTreeActions = () => {
             >
               {t("explorer.tree.create.label")}
             </Button>
-          </DropdownMenu>
+          </MenuDropdown>
         </div>
         <ExplorerSearchButton keyboardShortcut />
       </div>

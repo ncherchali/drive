@@ -1,4 +1,5 @@
-import { DropdownMenu, useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { MenuDropdown } from "@/components/ds-menu";
 import uploadFileSvg from "@/assets/icons/upload_file.svg";
 import uploadFolderSvg from "@/assets/icons/upload_folder.svg";
 import { useTranslation } from "react-i18next";
@@ -13,7 +14,7 @@ export const ImportDropdown = ({
 }: ImportDropdownProps) => {
   const { t } = useTranslation();
   return (
-    <DropdownMenu
+    <MenuDropdown
       options={[
         {
           icon: <img src={uploadFileSvg.src} alt="" />,
@@ -36,6 +37,6 @@ export const ImportDropdown = ({
       onOpenChange={importMenu.setIsOpen}
     >
       {trigger}
-    </DropdownMenu>
+    </MenuDropdown>
   );
 };

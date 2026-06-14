@@ -55,14 +55,27 @@ Additif, vérifiable isolément dans `/ds-preview`.
 
 ---
 
-## Phase 6 — Câblage des menus & actions 🟢 `[DS_APP_SHELL]`
+## Phase 6 — Câblage des menus déroulants 🟢 `[DS_APP_SHELL]`
 
-Remplacement 1-pour-1 de `useDropdownMenu` / `MenuItem` / `ContextMenu` ui-kit par
-les primitives `dropdown-menu` / `context-menu` DS (déjà présentes).
+Adaptateur **pont data-driven** `MenuDropdown` (`src/components/ds-menu.tsx`) :
+expose l'API ui-kit (`options={MenuItem[]}`, `isOpen`, `onOpenChange`) mais rend
+les primitives DS `dropdown-menu` derrière le flag, sinon délègue au ui-kit. Les
+hooks métier (`useItemActionMenuItems`, `useCreateMenuItems`…) restent INCHANGÉS ;
+seul l'import des call sites bascule. Version DS non contrôlée côté Radix (évite
+le double toggle face au `onClick` d'ouverture résiduel des boutons).
 
-- `✨(frontend) DS phase 6 : menus et menu contextuel de l'explorateur en DS`
-- **Fichiers** : `useCreateMenuItems.tsx`, cellules d'actions de ligne, menu contextuel de grille (~10 fichiers).
-- **Validation** : menu « créer », actions de ligne, clic droit grille — parité fonctionnelle. Retire ~10 fichiers de la dette.
+- `✨(frontend) DS phase 6 : adaptateur de menu déroulant DS (pont data-driven)`
+- **Fichiers** : `ds-menu.tsx` + 5 call sites (`ItemActionDropdown`,
+  `ImportDropdown`, `ExplorerTreeActions`, `CustomizableColumnHeader`,
+  `ExplorerGridTrashActionsCell`).
+- **Validation** : typecheck + lint OK ; **validation runtime requise** (flag on)
+  pour l'ouverture/fermeture, la sélection, les états danger/disabled/checked.
+
+> **Rescoping** : le **menu contextuel** (clic droit) est sorti de la phase 6.
+> Sa forme « par ligne » (`useContextMenuContext`/`EmbeddedExplorerGrid`) repose
+> sur le `ContextMenuProvider` global position-based monté dans `_app.tsx` — un
+> remplacement architectural intimement lié à la grille. Il est donc traité en
+> **phase 11** (grille), avec son provider.
 
 ---
 
@@ -118,6 +131,12 @@ coexistence `ds-explorer-grid.css`.
 - `✨(frontend) DS phase 11 : grille de fichiers sur primitive table DS (moteur TanStack inchangé)`
 - **Fichiers** : `AppExplorer` (rendu), suppression de `ds-explorer-grid.css` + repeint `AppExplorer.scss`.
 - **Validation** : sélection multiple, tri, drag-and-drop, navigation clavier, virtualisation — **non-régression du moteur** (priorité absolue).
+
+**Menu contextuel** (reporté de la phase 6) : remplacer le `ContextMenuProvider`
+global position-based (`_app.tsx`) et `useContextMenuContext`
+(`EmbeddedExplorerGrid`) ainsi que le `<ContextMenu options>` de zone
+(`AppExplorerInner`) par les primitives DS `context-menu`. Couplé au flux de clic
+droit par ligne, d'où son traitement avec la grille.
 
 > Alternative (D1 = b) : reconstruire la ligne en `file-row` DS (déjà écrit). Plus
 > « pur » mais réimplémente sélection multiple / DnD / clavier → risque élevé pour
