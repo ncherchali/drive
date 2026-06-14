@@ -1,6 +1,16 @@
 import { Button } from "@gouvfr-lasuite/cunningham-react";
 import React, { ReactElement, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  Breadcrumb,
+  BreadcrumbItem as DsBreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
+  useFeatureFlag,
+  FLAG_DS_EXPLORER_GRID,
+} from "@/features/flags/useFeatureFlag";
 
 export type BreadcrumbItem = {
   content: ReactNode;
@@ -18,6 +28,38 @@ export const Breadcrumbs = ({
   displayBack = false,
 }: BreadcrumbsProps) => {
   const { t } = useTranslation();
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
+
+  // Fil d'Ariane DS : structure shadcn (nav/ol/li) + séparateur chevron lucide.
+  // Les boutons (`.c__breadcrumbs__button`) sont conservés comme contenu et
+  // repeints en liens DS (cf. ds-explorer-grid.css).
+  if (useDs && !displayBack) {
+    return (
+      <Breadcrumb data-testid="explorer-breadcrumbs">
+        <BreadcrumbList>
+          {items.map((item, index) => (
+            <React.Fragment key={index}>
+              {index > 0 && <BreadcrumbSeparator />}
+              <DsBreadcrumbItem>
+                {React.cloneElement(
+                  item.content as ReactElement<HTMLDivElement>,
+                  {
+                    className: `${
+                      (
+                        (item.content as ReactElement<HTMLDivElement>)
+                          .props as { className?: string }
+                      ).className || ""
+                    } ${index === items.length - 1 ? "active" : ""}`,
+                  },
+                )}
+              </DsBreadcrumbItem>
+            </React.Fragment>
+          ))}
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
+
   return (
     <div className="c__breadcrumbs" data-testid="explorer-breadcrumbs">
       {displayBack && (

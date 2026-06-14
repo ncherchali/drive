@@ -10,6 +10,12 @@ import {
   useDropdownMenu,
 } from "@gouvfr-lasuite/ui-kit";
 import { ItemIcon } from "@/features/explorer/components/icons/ItemIcon";
+import { Button as DsButton } from "@/components/ui/button";
+import { FolderPlus, Upload } from "lucide-react";
+import {
+  useFeatureFlag,
+  FLAG_DS_EXPLORER_GRID,
+} from "@/features/flags/useFeatureFlag";
 import createFolderSvg from "@/assets/icons/add_folder.svg";
 import { EmbeddedExplorerGridBreadcrumbs } from "@/features/explorer/components/embedded-explorer/EmbeddedExplorerGridBreadcrumbs";
 import { ExplorerCreateFolderModal } from "../modals/ExplorerCreateFolderModal";
@@ -34,6 +40,7 @@ export const AppExplorerBreadcrumbs = () => {
   const { t } = useTranslation();
   const createFolderModal = useModal();
   const importDropdown = useDropdownMenu();
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   const onDefaultRoute = isDefaultRoute(router.pathname);
   const defaultRouteId = getDefaultRouteId(router.pathname);
 
@@ -65,26 +72,50 @@ export const AppExplorerBreadcrumbs = () => {
             <ImportDropdown
               importMenu={importDropdown}
               trigger={
-                <Button
-                  variant="tertiary"
-                  size="small"
-                  onClick={() => {
-                    importDropdown.setIsOpen(true);
-                  }}
-                >
-                  {t("explorer.tree.import.label")}
-                </Button>
+                useDs ? (
+                  <DsButton
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => importDropdown.setIsOpen(true)}
+                  >
+                    <Upload className="size-4" />
+                    {t("explorer.tree.import.label")}
+                  </DsButton>
+                ) : (
+                  <Button
+                    variant="tertiary"
+                    size="small"
+                    onClick={() => {
+                      importDropdown.setIsOpen(true);
+                    }}
+                  >
+                    {t("explorer.tree.import.label")}
+                  </Button>
+                )
               }
             />
-            <Button
-              icon={<img src={createFolderSvg.src} alt="Create Folder" />}
-              variant="tertiary"
-              data-testid="create-folder-button"
-              size="small"
-              onClick={() => {
-                createFolderModal.open();
-              }}
-            />
+            {useDs ? (
+              <DsButton
+                variant="ghost"
+                size="icon"
+                data-testid="create-folder-button"
+                aria-label={t("explorer.tree.create.folder", "Créer un dossier")}
+                onClick={() => createFolderModal.open()}
+              >
+                <FolderPlus className="size-4" />
+              </DsButton>
+            ) : (
+              <Button
+                icon={<img src={createFolderSvg.src} alt="Create Folder" />}
+                variant="tertiary"
+                data-testid="create-folder-button"
+                size="small"
+                onClick={() => {
+                  createFolderModal.open();
+                }}
+              />
+            )}
           </div>
         )}
       </div>

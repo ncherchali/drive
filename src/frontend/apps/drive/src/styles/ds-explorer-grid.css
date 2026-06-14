@@ -105,6 +105,44 @@
   }
 }
 
+/* ---- Fil d'Ariane (breadcrumb) DS --------------------------------------- */
+/* Le <nav> hérite d'une bordure/fond UA (preflight off) → on neutralise. */
+.sahla-ds-grid [data-slot="breadcrumb"] {
+  border: 0;
+  background: transparent;
+}
+.sahla-ds-grid [data-slot="breadcrumb-list"] {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+/* Boutons du fil d'Ariane repeints en liens DS (muted → foreground au survol ;
+   dernier = foreground/medium). Conserve l'icône de route par défaut. */
+.sahla-ds-grid .c__breadcrumbs__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-md);
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+.sahla-ds-grid .c__breadcrumbs__button:hover {
+  color: var(--foreground);
+  background-color: var(--muted);
+}
+.sahla-ds-grid .c__breadcrumbs__button.active {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
 /* La grille Cunningham `.c__datagrid` est `flex-col; align-items:flex-end` → ses
    enfants ne s'étirent pas (table rétrécie + alignée à droite). En DS on étire
    pour que la data table prenne toute la largeur. */

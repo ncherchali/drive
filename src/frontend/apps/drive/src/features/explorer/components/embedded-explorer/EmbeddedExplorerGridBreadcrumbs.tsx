@@ -12,6 +12,11 @@ import {
 } from "@/features/ui/components/breadcrumbs/Breadcrumbs";
 import { useTranslation } from "react-i18next";
 import { Icon, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { ChevronDown } from "lucide-react";
+import {
+  useFeatureFlag,
+  FLAG_DS_EXPLORER_GRID,
+} from "@/features/flags/useFeatureFlag";
 import { NavigationItem } from "../GlobalExplorerContext";
 import { ItemActionDropdown } from "../item-actions/ItemActionDropdown";
 import clsx from "clsx";
@@ -287,6 +292,7 @@ export const BreadcrumbItemButton = ({
 export const LastItemBreadcrumb = ({ item }: { item: Item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const shareModal = useModal();
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   const icon = useMemo(() => {
     if (item.computed_link_reach === LinkReach.PUBLIC) {
       return (
@@ -321,7 +327,13 @@ export const LastItemBreadcrumb = ({ item }: { item: Item }) => {
             isActive={true}
             item={item}
             onClick={() => setIsOpen(true)}
-            rightIcon={<span className="material-icons">arrow_drop_down</span>}
+            rightIcon={
+              useDs ? (
+                <ChevronDown className="size-4 opacity-70" />
+              ) : (
+                <span className="material-icons">arrow_drop_down</span>
+              )
+            }
           />
         }
       />
