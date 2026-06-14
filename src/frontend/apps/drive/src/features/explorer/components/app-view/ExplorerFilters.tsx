@@ -1,4 +1,5 @@
-import { Filter, FilterOption, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { FilterOption, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { FilterControl } from "@/components/ds-filter";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import folderIcon from "@/assets/folder/folder.svg";
@@ -93,7 +94,7 @@ export const ExplorerFilterType = (props: {
   );
 
   return (
-    <Filter
+    <FilterControl
       label={t("explorer.filters.type.label")}
       options={typeOptions}
       selectedKey={props.value ?? null} // undefined would trigger "uncontrolled components become controlled" warning.
@@ -131,7 +132,7 @@ export const ExplorerFilterWorkspace = (props: {
   }
 
   return (
-    <Filter
+    <FilterControl
       label={t("explorer.filters.folders.label")}
       options={options}
       selectedKey={props.value ?? null} // undefined would trigger "uncontrolled components become controlled" warning.
@@ -165,7 +166,7 @@ export const ExplorerFilterScope = (props: {
   );
 
   return (
-    <Filter
+    <FilterControl
       label={t("explorer.filters.scopes.label")}
       options={options}
       selectedKey={props.value ?? null} // undefined would trigger "uncontrolled components become controlled" warning.

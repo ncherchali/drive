@@ -1,6 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Button, Tooltip } from "@gouvfr-lasuite/cunningham-react";
 import { IconSize } from "@gouvfr-lasuite/ui-kit";
+import { Button as DsButton } from "@/components/ui/button";
+import {
+  FLAG_DS_APP_SHELL,
+  useFeatureFlag,
+} from "@/features/flags/useFeatureFlag";
 import { SortState } from "@/features/explorer/types/columns";
 import { SortAscIcon } from "@/features/ui/components/icon/sorting/sort-asc";
 import { SortDescIcon } from "@/features/ui/components/icon/sorting/sort-desc";
@@ -20,6 +25,7 @@ export const SortColumnButton = <TColumnId extends SortColumnId>({
   onSort,
 }: SortColumnButtonProps<TColumnId>) => {
   const { t } = useTranslation();
+  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
 
   const isActive = sortState?.columnId === columnId;
   const direction = isActive ? sortState.direction : null;
@@ -35,6 +41,25 @@ export const SortColumnButton = <TColumnId extends SortColumnId>({
     if (direction === "asc") return <SortAscIcon size={IconSize.SMALL} />;
     return <SortDescIcon size={IconSize.SMALL} />;
   })();
+
+  // Version DS (tooltip natif `title` : pas de TooltipProvider hors DsProvider).
+  if (useDs) {
+    return (
+      <DsButton
+        variant={isActive ? "secondary" : "ghost"}
+        size="icon"
+        className="size-7"
+        onClick={(e) => {
+          e.stopPropagation();
+          onSort(columnId);
+        }}
+        aria-label={nextTooltip}
+        title={nextTooltip}
+      >
+        {sortIcon}
+      </DsButton>
+    );
+  }
 
   return (
     <Tooltip content={nextTooltip}>
