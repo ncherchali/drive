@@ -174,7 +174,7 @@ export const useItemActionMenuItems = ({
           } catch {
             addToast(
               <ToasterItem type="error">
-                <span className="material-icons">content_copy</span>
+                <Copy className="size-4" />
                 <span>{t("explorer.item.actions.duplicate_error")}</span>
               </ToasterItem>,
             );

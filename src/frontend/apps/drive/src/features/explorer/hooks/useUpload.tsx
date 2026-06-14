@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
+import { UploadCloud } from "lucide-react";
 import { Item } from "@/features/drivers/types";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { useMutationCreateFolder } from "./useMutations";
@@ -347,7 +348,7 @@ export const useUploadZone = ({ item }: { item: Item }) => {
           type={canUpload ? "info" : "error"}
           onDrop={dismissDragToast}
         >
-          <span className="material-icons">cloud_upload</span>
+          <UploadCloud className="size-4" />
           <span>
             {t(
               `explorer.actions.upload.toast${canUpload ? "" : "_no_rights"}`,

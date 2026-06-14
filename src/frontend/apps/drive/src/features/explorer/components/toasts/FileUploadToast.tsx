@@ -1,5 +1,6 @@
 import { ToasterItem } from "@/features/ui/components/toaster/Toaster";
 import { Button, Tooltip } from "@gouvfr-lasuite/cunningham-react";
+import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
@@ -279,14 +280,14 @@ export const FileUploadToast = (
                 onClick={props.closeToast}
                 variant="tertiary"
                 size="small"
-                icon={<span className="material-icons">close</span>}
+                icon={<X className="size-4" />}
               ></Button>
             ) : (
               <Button
                 onClick={() => setIsCancelModalOpen(true)}
                 variant="tertiary"
                 size="small"
-                icon={<span className="material-icons">close</span>}
+                icon={<X className="size-4" />}
               ></Button>
             )}
           </div>

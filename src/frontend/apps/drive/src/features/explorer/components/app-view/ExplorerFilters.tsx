@@ -1,4 +1,5 @@
 import { FilterOption, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { RotateCcw } from "lucide-react";
 import { FilterControl } from "@/components/ds-filter";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,7 +35,7 @@ const getResetOption = (t: TFunction) => {
     label: t("explorer.filters.type.options.reset"),
     render: () => (
       <div className="flex items-center gap-[0.5em]">
-        <span className="material-icons">undo</span>
+        <RotateCcw className="size-4" />
         {t("explorer.filters.type.options.reset")}
       </div>
     ),

@@ -1,4 +1,5 @@
 import { Button, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { ArrowRight, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 import {
@@ -43,7 +44,7 @@ export const ExplorerSelectionBar = () => {
       <div className="explorer__selection-bar__actions">
         <Button
           onClick={handleClearSelection}
-          icon={<span className="material-icons">close</span>}
+          icon={<X className="size-4" />}
           variant="tertiary"
           size="small"
           aria-label={t("explorer.selectionBar.reset_selection")}
@@ -72,7 +73,7 @@ export const ExplorerSelectionBarActions = () => {
     if (canDelete) {
       addToast(
         <ToasterItem>
-          <span className="material-icons">delete</span>
+          <Trash2 className="size-4" />
           <span>
             {t("explorer.actions.delete.toast", {
               count: selectedItems.length,
@@ -87,7 +88,7 @@ export const ExplorerSelectionBarActions = () => {
     } else {
       addToast(
         <ToasterItem type="error">
-          <span className="material-icons">delete</span>
+          <Trash2 className="size-4" />
           <span>{t("explorer.actions.delete.low_rights_toast")}</span>
         </ToasterItem>,
       );
@@ -120,14 +121,14 @@ export const ExplorerSelectionBarActions = () => {
       /> */}
       <Button
         onClick={handleDelete}
-        icon={<span className="material-icons">delete</span>}
+        icon={<Trash2 className="size-4" />}
         variant="tertiary"
         size="small"
         aria-label={t("explorer.selectionBar.delete")}
       />
       <Button
         onClick={moveModal.open}
-        icon={<span className="material-icons">arrow_forward</span>}
+        icon={<ArrowRight className="size-4" />}
         variant="tertiary"
         size="small"
         aria-label={t("explorer.selectionBar.move")}
