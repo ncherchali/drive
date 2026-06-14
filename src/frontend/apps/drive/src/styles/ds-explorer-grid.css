@@ -1,0 +1,278 @@
+/* ============================================================================
+ * Sahla DS — repeinture de la grille de l'explorateur (couche de coexistence).
+ *
+ * Repeint la liste de fichiers Cunningham (`.explorer__grid` / `.embedded-
+ * explorer`) avec les tokens DS, SANS toucher au moteur : TanStack Table,
+ * sélection, tri, menu contextuel, navigation clavier et drag-and-drop restent
+ * le code d'origine. On ne fait qu'overrider les styles visuels.
+ *
+ * Scopé sous `.sahla-ds-grid` (posée sur la racine du DsExplorerShell quand le
+ * flag DS_EXPLORER_GRID est actif). Cette classe ancêtre supplémentaire fait
+ * gagner ces règles en spécificité sur le SCSS Cunningham, quel que soit
+ * l'ordre d'import — fini les batailles d'ordre.
+ *
+ * Partiel `@import`é depuis `ds.css` (même instance @tailwindcss/postcss).
+ * ========================================================================== */
+
+/* ---- Accent unique : remap de la rampe « brand » Cunningham → violet DS ----
+ * Les contrôles non migrés (bouton « Nouveau », lien « Importer », icône de
+ * recherche, états actifs) consomment `--c--globals--colors--brand-*` (bleu
+ * DINUM). On remappe ces stops vers la rampe violet (#7C3AED, Tailwind violet)
+ * pour un accent UNIQUE et cohérent avec l'avatar/boutons DS (`--primary`).
+ * Posé sur `.sahla-ds-grid` (racine du shell) → cascade à toute la coquille. */
+.sahla-ds-grid {
+  --c--globals--colors--brand-050: #f5f3ff;
+  --c--globals--colors--brand-100: #ede9fe;
+  --c--globals--colors--brand-150: #e3ddfd;
+  --c--globals--colors--brand-200: #ddd6fe;
+  --c--globals--colors--brand-250: #ccbdfb;
+  --c--globals--colors--brand-300: #c4b5fd;
+  --c--globals--colors--brand-350: #b39dfb;
+  --c--globals--colors--brand-400: #a78bfa;
+  --c--globals--colors--brand-450: #9a78f8;
+  --c--globals--colors--brand-500: #8b5cf6;
+  --c--globals--colors--brand-550: #7c3aed;
+  --c--globals--colors--brand-600: #7c3aed;
+  --c--globals--colors--brand-650: #6d28d9;
+  --c--globals--colors--brand-700: #6d28d9;
+  --c--globals--colors--brand-750: #5b21b6;
+  --c--globals--colors--brand-800: #5b21b6;
+
+  /* Le thème DSFR APLATIT les tokens contextuels « brand » en littéraux (le
+     remap de la rampe globale ci-dessus ne les atteint donc pas). On les
+     repointe explicitement sur le violet : fond/hover du bouton « Nouveau »,
+     texte des boutons tertiaires (« Importer », icône recherche), bordures. */
+  --c--contextuals--background--semantic--brand--primary: #7c3aed;
+  --c--contextuals--background--semantic--brand--primary-hover: #6d28d9;
+  --c--contextuals--background--semantic--brand--secondary: #ede9fe;
+  --c--contextuals--background--semantic--brand--tertiary: #f5f3ff;
+  --c--contextuals--background--semantic--brand--tertiary-hover: #ede9fe;
+  --c--contextuals--border--semantic--brand--primary: #7c3aed;
+  --c--contextuals--content--semantic--brand--primary: #7c3aed;
+  --c--contextuals--content--semantic--brand--primary-hover: #6d28d9;
+  --c--contextuals--content--semantic--brand--secondary: #7c3aed;
+  --c--contextuals--content--semantic--brand--tertiary: #7c3aed;
+  --c--contextuals--content--semantic--brand--tertiary-hover: #6d28d9;
+}
+
+/* La sidebar shadcn n'est pas enveloppée dans `.sahla-ds` (elle héberge du
+   Cunningham) → le reset scopé ne s'y applique pas. Le preflight global étant
+   désactivé, les utilitaires `border-*` n'ont pas de style → on force `solid` +
+   box-border sur les primitives sidebar pour rendre leurs bordures visibles. */
+.sahla-ds-grid [data-slot^="sidebar"],
+.sahla-ds-grid [data-slot^="sidebar"]::before,
+.sahla-ds-grid [data-slot^="sidebar"]::after {
+  /* largeur 0 + solid + couleur du thème : seuls les utilitaires `border-*`
+     explicites posent une largeur (équivaut au reset de bordure du preflight,
+     globalement désactivé). Sans le `0`, la largeur UA par défaut (medium)
+     dessinerait une bordure noire autour de chaque élément. */
+  border: 0 solid var(--sidebar-border);
+  box-sizing: border-box;
+}
+
+/* Les <ul> shadcn comptent sur le preflight (list-style:none, pas de marge/
+   indentation). Preflight global off → on neutralise puces + indentation UA. */
+.sahla-ds-grid [data-slot="sidebar-menu"],
+.sahla-ds-grid [data-slot="sidebar-menu-sub"] {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+/* Les <button> de la sidebar (hors .sahla-ds) héritent SINON du fond gris natif
+   (buttonface) → boîtes grises sur les items sans fond explicite. On remet le
+   fond transparent dans @layer base : les utilitaires Tailwind (bg-primary du
+   « Nouveau », hover:bg-sidebar-accent) restent prioritaires (layer utilities). */
+/* Data table shadcn (hors .sahla-ds, preflight off) : reset des fonds natifs des
+   boutons + bordures `solid` largeur 0 par défaut. EN @layer base → les
+   utilitaires Tailwind (border-b des lignes, border de la case) gagnent et
+   posent la largeur ; sinon (règle plaine) elles forceraient 0 = invisible. */
+@layer base {
+  .sahla-ds-grid [data-slot^="sidebar"] button,
+  .sahla-ds-grid [data-slot^="table"] button {
+    appearance: none;
+    background-color: transparent;
+    background-image: none;
+    border: 0 solid var(--border);
+  }
+  .sahla-ds-grid [data-slot^="table"] {
+    border: 0 solid var(--border);
+    box-sizing: border-box;
+  }
+  .sahla-ds-grid [data-slot="checkbox"] {
+    border: 0 solid var(--input);
+    box-sizing: border-box;
+  }
+}
+
+/* La grille Cunningham `.c__datagrid` est `flex-col; align-items:flex-end` → ses
+   enfants ne s'étirent pas (table rétrécie + alignée à droite). En DS on étire
+   pour que la data table prenne toute la largeur. */
+.sahla-ds-grid .explorer__grid {
+  align-items: stretch;
+}
+
+/* EmbeddedExplorer.scss masque la 1re colonne (colonne « mobile » ui-kit) sur
+   desktop. Dans la data table DS, la 1re colonne est la CASE À COCHER → on la
+   ré-affiche (les colonnes 2–5 = titre/infos/actions coïncident avec l'ancienne
+   structure, donc rien d'autre à corriger sur desktop). */
+.sahla-ds-grid [data-slot="table"] th:first-child,
+.sahla-ds-grid [data-slot="table"] td:first-child {
+  display: table-cell !important;
+}
+
+/* ---- Rayons cohérents (harmonisation enterprise) ------------------------
+ * Les surfaces Cunningham repeintes utilisent des rayons hérités (carte = 4px)
+ * incohérents avec les contrôles DS (~10px). On aligne tout sur l'échelle DS :
+ * cartes = radius-xl, contrôles/boutons/menus = radius-md/lg. */
+.sahla-ds-grid .explorer__content {
+  border-radius: var(--radius-xl);
+}
+.sahla-ds-grid .explorer__filters .c__button,
+.sahla-ds-grid .explorer__grid__header__sort-btn,
+.sahla-ds-grid .explorer__grid__header__column-btn,
+.sahla-ds-grid .explorer__selection-bar,
+.sahla-ds-grid .explorer__tree__actions .c__button {
+  border-radius: var(--radius-md);
+}
+.sahla-ds-grid .c__dropdown-menu,
+.sahla-ds-grid .c__menu,
+.sahla-ds-grid .c__popover {
+  border-radius: var(--radius-lg);
+}
+
+/* Espacement vertical entre lignes légèrement aéré. */
+.sahla-ds-grid .explorer__grid table {
+  border-spacing: 0 4px;
+}
+
+/* ---- En-têtes de colonnes (style « tableau enterprise ») ----------------- */
+.sahla-ds-grid .explorer__grid__header__label,
+.sahla-ds-grid .explorer__grid .c__datagrid__header {
+  color: var(--muted-foreground);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Colonnes « info » (Dernière modification / Créé par) : le libellé est porté
+   par un bouton neutre Cunningham qui RÉINITIALISE text-transform → on le
+   recible explicitement pour l'aligner sur l'en-tête « Nom ». */
+.sahla-ds-grid .explorer__grid__th--info-col-1 .c__button--neutral,
+.sahla-ds-grid .explorer__grid__th--info-col-2 .c__button--neutral {
+  color: var(--muted-foreground);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sahla-ds-grid .explorer__grid__header__sort-btn {
+  color: var(--muted-foreground);
+}
+
+.sahla-ds-grid .explorer__grid__header__sort-btn--active {
+  color: var(--primary);
+}
+
+.sahla-ds-grid .explorer__grid__header__sort-btn:hover,
+.sahla-ds-grid .explorer__grid__header__column-btn:hover {
+  background-color: var(--muted);
+}
+
+/* ---- Lignes : surface + bordures portées par les td (cf. mixin Cunningham) -
+ * La 1re colonne (mobile) est masquée sur desktop, donc la bordure gauche
+ * visible vit sur td:first-child ET td:nth-child(2) : on traite les deux. */
+.sahla-ds-grid .explorer__grid table tbody tr td {
+  background-color: transparent;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr td:first-child,
+.sahla-ds-grid .explorer__grid table tbody tr td:nth-child(2),
+.sahla-ds-grid .explorer__grid table tbody tr td:last-child {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr td:first-child,
+.sahla-ds-grid .explorer__grid table tbody tr td:nth-child(2) {
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr td:last-child {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+/* Survol : surface neutre DS. */
+.sahla-ds-grid .explorer__grid table tbody tr:hover td {
+  background-color: var(--muted);
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr:hover td:first-child,
+.sahla-ds-grid .explorer__grid table tbody tr:hover td:nth-child(2),
+.sahla-ds-grid .explorer__grid table tbody tr:hover td:last-child {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+/* Sélection : teinte + bordure brand (primary). */
+.sahla-ds-grid .explorer__grid table tbody tr.selected td {
+  background-color: color-mix(in oklab, var(--primary) 12%, transparent);
+  border-top-color: color-mix(in oklab, var(--primary) 35%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr.selected td:first-child,
+.sahla-ds-grid .explorer__grid table tbody tr.selected td:nth-child(2) {
+  border-left-color: color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr.selected td:last-child {
+  border-right-color: color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+/* Cible de drop (DnD survolé) : teinte plus marquée + bordure pleine primary. */
+.sahla-ds-grid .explorer__grid table tbody tr.over td {
+  background-color: color-mix(in oklab, var(--primary) 16%, transparent);
+  border-top-color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr.over td:first-child,
+.sahla-ds-grid .explorer__grid table tbody tr.over td:nth-child(2) {
+  border-left-color: var(--primary);
+}
+
+.sahla-ds-grid .explorer__grid table tbody tr.over td:last-child {
+  border-right-color: var(--primary);
+}
+
+/* ---- Typographie des cellules ------------------------------------------- */
+.sahla-ds-grid .explorer__grid__item__name__text {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.sahla-ds-grid .explorer__grid__item__cell-value,
+.sahla-ds-grid .explorer__grid__item__mobile__info__meta {
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
+/* Icône/tuile d'item : léger espacement avec le nom. */
+.sahla-ds-grid .explorer__grid__item__name {
+  gap: 10px;
+}
+
+/* État « en cours de duplication » : texte atténué cohérent DS. */
+.sahla-ds-grid .explorer__grid__item__name--duplicating-text,
+.sahla-ds-grid .explorer__grid__item__name__duplicating-label {
+  color: var(--muted-foreground);
+}

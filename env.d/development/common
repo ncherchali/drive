@@ -91,6 +91,12 @@ SEARCH_INDEXER_QUERY_URL="http://find:8000/api/v1.0/documents/search/"
 # Enables the search of indexed files through the API
 FEATURES_INDEXED_SEARCH=True
 
+# Bascule progressive du Design System Sahla (cf. docs/ds-migration-plan.md).
+# DS_APP_SHELL = coquille + en-tête ; DS_EXPLORER_GRID = grille de fichiers ET
+# repeinture token-only de l'arbre/sidebar (classe marqueur .sahla-ds-grid).
+FEATURES_DS_APP_SHELL=True
+FEATURES_DS_EXPLORER_GRID=True
+
 # Store OIDC tokens in the session
 # OIDC_STORE_ACCESS_TOKEN = True
 # OIDC_STORE_REFRESH_TOKEN = True # Store the encrypted refresh token in the session.

@@ -8,6 +8,7 @@
 // portalée hors de l'en-tête, donc non affectée par le reset scopé.
 import { useMemo } from "react";
 import { AppHeader } from "@/components/layout/app-header";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserMenu } from "@/components/layout/user-menu";
 import { useAuth, logout } from "@/features/auth/Auth";
 import { ExplorerSearchButtonDs } from "@/features/explorer/components/app-view/ExplorerSearchButtonDs";
@@ -16,7 +17,6 @@ import { ItemFilters } from "@/features/drivers/Driver";
 import { useIsMinimalLayout } from "@/utils/useLayout";
 
 export function DsExplorerHeader({
-  displaySearch,
   currentItem,
 }: {
   displaySearch?: boolean;
@@ -35,20 +35,17 @@ export function DsExplorerHeader({
 
   return (
     <AppHeader className="sahla-ds">
-      {/* Marque Sahla (DS) */}
-      <div className="flex items-center gap-2">
-        <div className="flex size-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-          S
-        </div>
-        <span className="hidden text-sm font-semibold text-foreground sm:inline">
-          Sahla
-        </span>
-      </div>
+      {/* Bascule de la sidebar (la marque Sahla vit désormais dans le SidebarHeader). */}
+      <SidebarTrigger className="text-foreground/70" />
 
-      {/* Actions à droite */}
+      {/* Actions à droite : recherche (toujours visible, ⌘K) + menu utilisateur.
+          La recherche est désormais ICI (et non plus dupliquée dans la sidebar). */}
       <div className="ms-auto flex items-center gap-2">
-        {user && displaySearch && (
-          <ExplorerSearchButtonDs defaultFilters={defaultFilters} />
+        {user && (
+          <ExplorerSearchButtonDs
+            keyboardShortcut
+            defaultFilters={defaultFilters}
+          />
         )}
         {user && <UserMenu name={user.email} onLogout={logout} />}
       </div>

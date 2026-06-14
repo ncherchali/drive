@@ -43,6 +43,22 @@ import { ColumnHeader } from "./headers/ColumnHeader";
 import { CustomizableColumnHeader } from "./headers/CustomizableColumnHeader";
 import { useDuplicatingItemsPoller } from "../../hooks/useDuplicatingItemsPoller";
 import { EmbeddedExplorerGridRow } from "./EmbeddedExplorerGridRow";
+import {
+  DsExplorerGridRow,
+  DsSelectAllCheckbox,
+} from "./DsExplorerGridRow";
+import { DsGridSortHeader } from "./headers/DsGridSortHeader";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  useFeatureFlag,
+  FLAG_DS_EXPLORER_GRID,
+} from "@/features/flags/useFeatureFlag";
 import posthog from "posthog-js";
 
 const POSTHOG_EVENT_COLUMN_TYPE_CHANGED = "column_type_changed";
@@ -114,6 +130,9 @@ export const useEmbeddedExplorerGirdContext = () => {
  */
 export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
   const { t } = useTranslation();
+  // Bascule data table shadcn (markup shadcn + cases + en-têtes triables) ; le
+  // moteur (TanStack, sélection, DnD, menu contextuel, clavier) est partagé.
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
 
   const [moveItem, setMoveItem] = useState<Item | null>(null);
   const moveModal = useModal();
@@ -378,6 +397,104 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
     },
     [setOveredItemIds],
   );
+
+  const rows = table.getRowModel().rows;
+
+  // ----- Data table shadcn (derrière DS_EXPLORER_GRID) ----------------------
+  // Même moteur (rows/handlers ci-dessus) ; markup shadcn + colonne de cases +
+  // en-têtes triables. La grille ui-kit d'origine (ci-dessous) reste le repli.
+  if (useDs) {
+    return (
+      <EmbeddedExplorerGridContext.Provider value={contextValue}>
+        <Table
+          ref={tableRef}
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+          className={clsx({ explorer__compact: props.isCompact })}
+        >
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-9 ps-3 pe-0">
+                <DsSelectAllCheckbox rows={rows} selectionStore={selectionStore} />
+              </TableHead>
+              <TableHead className="w-full">
+                <DsGridSortHeader
+                  label={t("explorer.grid.name")}
+                  columnId="title"
+                  sortState={props.sortState ?? null}
+                  onSort={handleSortTitle}
+                  sortable={props.viewSortable !== false}
+                />
+              </TableHead>
+              {!props.isCompact && (
+                <>
+                  <TableHead>
+                    {props.prefs && props.column1Config ? (
+                      <CustomizableColumnHeader
+                        slot="column1"
+                        currentType={props.prefs.column1}
+                        defaultType={DEFAULT_COLUMN_PREFERENCES.column1}
+                        sortState={props.sortState ?? null}
+                        onSort={handleSortColumn}
+                        onChangeColumn={handleChangeCol1}
+                        otherColumnType={props.prefs.column2}
+                        sortable={props.viewSortable !== false}
+                      />
+                    ) : (
+                      <DsGridSortHeader
+                        label={t("explorer.grid.last_update")}
+                        columnId={ColumnType.LAST_MODIFIED}
+                        sortState={props.sortState ?? null}
+                        onSort={handleSortColumn}
+                        sortable={false}
+                      />
+                    )}
+                  </TableHead>
+                  <TableHead>
+                    {props.prefs && props.column2Config ? (
+                      <CustomizableColumnHeader
+                        slot="column2"
+                        currentType={props.prefs.column2}
+                        defaultType={DEFAULT_COLUMN_PREFERENCES.column2}
+                        sortState={props.sortState ?? null}
+                        onSort={handleSortColumn}
+                        onChangeColumn={handleChangeCol2}
+                        otherColumnType={props.prefs.column1}
+                        sortable={props.viewSortable !== false}
+                      />
+                    ) : null}
+                  </TableHead>
+                  <TableHead className="w-12" />
+                </>
+              )}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <DsExplorerGridRow
+                key={row.original.id}
+                row={row}
+                isOvered={!!overedItemIds[row.original.id]}
+                onClickRow={handleRowClick}
+                onContextMenuRow={handleRowContextMenu}
+                onOver={handleRowOver}
+                onToggleSelect={toggleRowSelection}
+              />
+            ))}
+          </TableBody>
+        </Table>
+        {moveModal.isOpen && moveItem && (
+          <ExplorerMoveFolder
+            {...moveModal}
+            onClose={handleCloseMoveModal}
+            itemsToMove={[moveItem]}
+            initialFolderId={props.parentItem?.id}
+          />
+        )}
+        {itemActionModals}
+      </EmbeddedExplorerGridContext.Provider>
+    );
+  }
 
   return (
     <>

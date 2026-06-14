@@ -177,7 +177,12 @@ $xl: map.get($themes, "default", "globals", "breakpoints", "xl");
       align-items: center;
       gap: 8px;
       text-decoration: none;
-      color: red;
+      // Placeholder `red` historique, jusqu'ici masqué (icône dossier = <img>,
+      // icônes MIME ui-kit fixent leur propre couleur, texte = token primary).
+      // Les icônes lucide DS héritent de `currentColor` → on pose le token neutre
+      // pour que dossiers/espaces adoptent la couleur de texte (remappée DS sous
+      // `.sahla-ds-grid`).
+      color: var(--c--contextuals--content--semantic--neutral--primary);
 
       .c__tooltip {
         max-width: 100%;

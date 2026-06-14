@@ -2094,6 +2094,7 @@ class ConfigView(drf.views.APIView):
     FEATURE_FLAGS = (
         "DS_CONFIRM_MODALS",
         "DS_APP_SHELL",
+        "DS_EXPLORER_GRID",
     )
 
     def get(self, request):

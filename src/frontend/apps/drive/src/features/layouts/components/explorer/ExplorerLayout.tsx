@@ -122,7 +122,6 @@ export const ExplorerPanelsLayout = ({
             currentItem={item}
           />
         }
-        leftPanelContent={leftPanelContent}
         rightPanelContent={rightPanelContent}
         rightPanelIsOpen={rightPanelOpen}
         hideLeftPanelOnDesktop={hideLeftPanelOnDesktop}

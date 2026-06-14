@@ -1046,6 +1046,9 @@ class Base(Configuration):
     FEATURES_DS_APP_SHELL = values.BooleanValue(
         default=False, environ_name="FEATURES_DS_APP_SHELL", environ_prefix=None
     )
+    FEATURES_DS_EXPLORER_GRID = values.BooleanValue(
+        default=False, environ_name="FEATURES_DS_EXPLORER_GRID", environ_prefix=None
+    )
     THEME_CUSTOMIZATION_FILE_PATH = values.Value(
         os.path.join(BASE_DIR, "drive/configuration/theme/default.json"),
         environ_name="THEME_CUSTOMIZATION_FILE_PATH",

@@ -33,3 +33,10 @@ export const FLAG_DS_CONFIRM_MODALS = "DS_CONFIRM_MODALS";
 
 /** Nom du flag pilotant la bascule de la coquille d'application vers le DS. */
 export const FLAG_DS_APP_SHELL = "DS_APP_SHELL";
+
+/**
+ * Nom du flag repeignant la grille de l'explorateur (liste de fichiers) aux
+ * tokens DS. N'a d'effet qu'avec le shell DS actif (la classe marqueur est
+ * posée sur la racine du DsExplorerShell).
+ */
+export const FLAG_DS_EXPLORER_GRID = "DS_EXPLORER_GRID";

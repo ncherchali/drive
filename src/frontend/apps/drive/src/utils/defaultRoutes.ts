@@ -5,6 +5,8 @@ import { StarredIcon } from "@/features/ui/components/icon/StarredIcon";
 import { TrashIcon } from "@/features/ui/components/icon/TrashIcon";
 import { JSX } from "react";
 import { IconProps } from "@gouvfr-lasuite/ui-kit";
+import { History, House, Share2, Star, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export enum DefaultRoute {
   MY_FILES = "my-files",
@@ -13,6 +15,18 @@ export enum DefaultRoute {
   FAVORITES = "favorites",
   TRASH = "trash",
 }
+
+/**
+ * Icônes lucide (DS) des routes par défaut, rendues dans l'arbre derrière le flag
+ * DS_EXPLORER_GRID en remplacement des SVG ui-kit (cf. repeinture DS de l'arbre).
+ */
+export const DS_ROUTE_ICONS: Record<DefaultRoute, LucideIcon> = {
+  [DefaultRoute.RECENT]: History,
+  [DefaultRoute.MY_FILES]: House,
+  [DefaultRoute.SHARED_WITH_ME]: Share2,
+  [DefaultRoute.FAVORITES]: Star,
+  [DefaultRoute.TRASH]: Trash2,
+};
 export type DefaultRouteData = {
   id: DefaultRoute;
   label: string;

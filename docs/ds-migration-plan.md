@@ -215,6 +215,99 @@ le partage. Le contenu de nœud est notre markup (`ExplorerTreeItem` →
 > Une réécriture en composant Tree DS natif (récursion + scroll-area + DnD) reste
 > possible plus tard si besoin, mais non prioritaire vu le coût/risque.
 
+### Phase 12b — Icônes lucide + identité enterprise `[DS_EXPLORER_GRID]`
+
+Extension de la repeinture token-only : icônes en **lucide-react** (adaptateur
+`components/ui/icon.tsx`), accent de marque **unifié sur le violet `#7C3AED`** et
+**typographie de tableau enterprise**. Tout gated `DS_EXPLORER_GRID`.
+
+- **Icônes (`ItemIcon.tsx`, composant central)** : espaces partagés/publics →
+  **tuile carrée teintée** (`WorkspaceTile` : carré arrondi, couleur dérivée du
+  nom via hash → 7 teintes, glyphe `Building2`) ; espace principal → `House` ;
+  dossier imbriqué → `Folder` ; suspect → `ShieldAlert`. **Type MIME des
+  fichiers** : conservé sur le set ui-kit (hors périmètre).
+- **Arbre** : favoris → `Star`, dossier imbriqué → `Folder` (`ExplorerTreeItem`) ;
+  routes par défaut → `DS_ROUTE_ICONS` (`House`/`History`/`Share2`/`Star`/`Trash2`).
+- **Accent violet** : `ds.css` → `--primary`/`--ring`/`--sidebar-primary`/
+  `--brand-primary` en violet (hue 296, ~#7C3AED) ; IA décalée en fuchsia (hue 330)
+  pour rester distincte. **Remap Cunningham** dans `ds-explorer-grid.css` sous
+  `.sahla-ds-grid` : la rampe `--c--globals--colors--brand-*` ET surtout les tokens
+  contextuels `--c--contextuals--{background,content,border}--semantic--brand--*`
+  (que le thème DSFR APLATIT en littéraux → le remap de la rampe seule ne suffit
+  pas) → boutons « Nouveau »/« Importer »/recherche en violet.
+- **Typographie** : en-têtes de colonnes en petites capitales + tracking + 11px
+  (y compris le libellé porté par un `c__button--neutral` dans les colonnes info,
+  qui réinitialise `text-transform`) ; nom de fichier `font-weight:500` ; méta en
+  `muted-foreground`.
+- **Bug corrigé** : `EmbeddedExplorer.scss` `.explorer__grid__item__name{color:red}`
+  (placeholder) faisait sortir les icônes lucide en rouge → token neutre.
+- **Validé en live** (next dev natif + backend Docker, flags actifs).
+
+### Phase 12c — Sidebar portée sur le composant shadcn `[DS_APP_SHELL]`
+
+Remplacement du conteneur + nav historiques par le **composant `sidebar` shadcn**
+(Radix) : `SidebarProvider`/`Sidebar`/`SidebarInset`, collapsible `offcanvas`
+(rail + ⌘B + sheet mobile). Ajout manuel des primitives (pas via le CLI shadcn,
+qui reconfigurerait le projet) : `components/ui/sidebar.tsx`, `ui/skeleton.tsx`,
+`hooks/use-mobile.ts`.
+
+- **Composition** (`DsExplorerSidebar.tsx`) : SidebarHeader = marque Sahla + trigger
+  (retirée du `DsExplorerHeader`, qui garde recherche + menu utilisateur + un
+  trigger) ; nav plate (routes par défaut, espaces, corbeille) reconstruite en
+  `SidebarMenu`/`SidebarMenuButton` (icônes lucide + tuiles d'espaces) ; l'**arbre
+  de dossiers dépliable est CONSERVÉ** via `ExplorerFolderTree` (extrait de
+  `ExplorerTree`, TreeView ui-kit + DnD intacts — décision D2).
+- **Intégration** : `DsExplorerShell` = `SidebarProvider` + `DsExplorerSidebar` +
+  `SidebarInset`(header + main + MetaPanel). `ExplorerTree` (chemin non-DS) délègue
+  désormais aussi à `ExplorerFolderTree` (source unique).
+- **Cohabitation** : la sidebar héberge du Cunningham (bouton « Nouveau », TreeView)
+  → PAS enveloppée dans `.sahla-ds`. Le preflight global étant off, on ajoute dans
+  `ds-explorer-grid.css` un reset CIBLÉ `.sahla-ds-grid [data-slot^="sidebar"]`
+  (`border: 0 solid var(--sidebar-border)` + `box-sizing` + `list-style:none` sur
+  les `<ul>` de menu) — sinon bordures noires UA + puces de liste.
+- **Validé en live** (sidebar shadcn, 11 items de menu, arbre + tuiles OK).
+
+### Phase 12d — Polish enterprise (rayons, typo, placement, sidebar réglable) `[DS_APP_SHELL]`
+
+Passe de finition guidée par le skill `ui-ux-pro-max` (échelle typo, rayons/
+élévation cohérents, une seule CTA primaire, recherche en barre haute).
+
+- **Rayons** : `--radius` 0.625→**0.75rem** (échelle sm 8 / md 10 / lg 12 / xl 16).
+  Harmonisation des surfaces Cunningham sous `.sahla-ds-grid` : carte
+  `.explorer__content` = radius-xl ; filtres/tri/boutons = radius-md ; menus = radius-lg.
+- **Placement** : « + Nouveau » devient une **CTA primaire pleine largeur** en tête
+  de sidebar (`DsCreateButton`, lucide `Plus` + menu de création) ; la **recherche
+  n'est plus dupliquée** dans la sidebar — elle est **toujours visible dans le header**
+  (lucide `Search`, ⌘K). `ExplorerTreeActions` (material-icons `add`/`search`) n'est
+  plus utilisé par le shell DS (conservé pour le chemin non-DS).
+- **Sidebar réglable** : poignée de drag au bord droit (`SidebarResizeHandle`) →
+  `--sidebar-width` (clamp 220–460px), **persistée** (`localStorage` `sahla_sidebar_w`)
+  via l'état dans `DsExplorerShell` (passé à `SidebarProvider style`). `SidebarRail` retiré.
+- **Typo** : en-têtes de colonnes en petites capitales (déjà fait), noms 500, méta muted.
+- **Reste (passe dédiée)** : les icônes INTERNES à la grille (tri, « … » par ligne,
+  breadcrumb) sont encore en `material-icons` (19 fichiers) — sweep lucide à part.
+
+### Phase 12e — Data table shadcn (rebuild fidèle du moteur) `[DS_EXPLORER_GRID]`
+
+La grille de fichiers devient une **vraie data table shadcn** (TanStack + `ui/table`)
+DERRIÈRE le flag, l'ancienne grille en repli. Le moteur est RÉUTILISÉ : la grille
+était déjà du `useReactTable` ; seul le markup change.
+
+- **Branche DS dans `EmbeddedExplorerGrid`** (`if (useDs) return <shadcn>`) : même
+  state/handlers (sélection multi, DnD, menu contextuel, clavier, tri serveur,
+  navigation, scroll infini conservé via `EmbeddedExplorer`/`InfiniteScroll`).
+- **Nouveaux** : `DsExplorerGridRow` (TableRow/TableCell shadcn + `Droppable` DnD +
+  `flexRender` + case à cocher par ligne + `DsSelectAllCheckbox`),
+  `headers/DsGridSortHeader` (en-tête triable shadcn : libellé + flèche/chevrons).
+  `ui/table.tsx` : forward `ref` (React 19) pour la nav clavier.
+- **Correctifs preflight off** (`ds-explorer-grid.css`, `@layer base`) : bordures /
+  fonds boutons / case rendus visibles ; `.c__datagrid` (`align-items:flex-end`)
+  forcé `stretch` (table pleine largeur) ; 1re colonne (case) ré-affichée car
+  `EmbeddedExplorer.scss` masque `th/td:nth-child(1)` (colonne mobile) sur desktop.
+- **Restes** : tri col1/col2 = encore `SortColumnButton` ui-kit ; responsive mobile
+  de la data table à retravailler.
+- **Validé en live** (table shadcn pleine largeur, cases select-all + par ligne, tri NOM).
+
 ---
 
 ## Phase 13 — Dépose de Cunningham (endgame) 🔴

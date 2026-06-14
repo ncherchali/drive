@@ -23,12 +23,19 @@ import { useRouter } from "next/router";
 import { DefaultRoute } from "@/utils/defaultRoutes";
 import { setFromRoute } from "../../utils/utils";
 import folderIconTree from "@/assets/tree/folder.svg";
+import { Folder as FolderIcon, Star } from "lucide-react";
+import { Icon as DsIcon } from "@/components/ui/icon";
+import {
+  useFeatureFlag,
+  FLAG_DS_EXPLORER_GRID,
+} from "@/features/flags/useFeatureFlag";
 
 type ExplorerTreeItemProps = NodeRendererProps<TreeDataItem<TreeItem>>;
 
 export const ExplorerTreeItem = ({ ...props }: ExplorerTreeItemProps) => {
   const { onNavigate, setPreviewItem, setPreviewItems } = useGlobalExplorer();
   const router = useRouter();
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
 
   const item: TreeViewDataType<TreeItemData> = props.node.data.value;
 
@@ -74,11 +81,15 @@ export const ExplorerTreeItem = ({ ...props }: ExplorerTreeItemProps) => {
               )}
               {item.nodeType === TreeViewNodeTypeEnum.SIMPLE_NODE && (
                 <>
-                  <Icon
-                    size={IconSize.SMALL}
-                    name={"star_border"}
-                    color="var(--c--contextuals--content--semantic--neutral--tertiary)"
-                  />
+                  {useDs ? (
+                    <DsIcon icon={Star} size="small" />
+                  ) : (
+                    <Icon
+                      size={IconSize.SMALL}
+                      name={"star_border"}
+                      color="var(--c--contextuals--content--semantic--neutral--tertiary)"
+                    />
+                  )}
                   <span className="explorer__tree__item__title">
                     {item.label}
                   </span>
@@ -102,7 +113,11 @@ export const ExplorerTreeItemIcon = ({
   item: TreeViewDataType<TreeItem>;
   size?: IconSize;
 }) => {
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   if (item.nodeType === TreeViewNodeTypeEnum.NODE) {
+    if (useDs) {
+      return <DsIcon icon={FolderIcon} size="small" />;
+    }
     return (
       <img
         className="c__file-icon icon--small"
