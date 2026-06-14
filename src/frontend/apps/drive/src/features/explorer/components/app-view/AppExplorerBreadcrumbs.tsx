@@ -11,7 +11,7 @@ import {
 } from "@gouvfr-lasuite/ui-kit";
 import { ItemIcon } from "@/features/explorer/components/icons/ItemIcon";
 import { Button as DsButton } from "@/components/ui/button";
-import { FolderPlus, Upload } from "lucide-react";
+import { ChevronLeft, FolderPlus, MoreVertical, Upload } from "lucide-react";
 import {
   useFeatureFlag,
   FLAG_DS_EXPLORER_GRID,
@@ -175,7 +175,7 @@ export const ExplorerBreadcrumbsMobile = () => {
             >
               <Button
                 variant="tertiary"
-                icon={<span className="material-icons">more_vert</span>}
+                icon={<MoreVertical className="size-4" />}
                 onClick={() => setIsCreateMenuOpen(true)}
               />
             </DropdownMenu>
@@ -216,7 +216,7 @@ export const ExplorerBreadcrumbsMobile = () => {
             <Button
               variant="bordered"
               color="neutral"
-              icon={<span className="material-icons">chevron_left</span>}
+              icon={<ChevronLeft className="size-4" />}
               onClick={() => {
                 if (parent?.id === DefaultRoute.SHARED_WITH_ME) {
                   router.push("/explorer/items/shared-with-me");
@@ -262,7 +262,7 @@ export const ExplorerBreadcrumbsMobile = () => {
           trigger={
             <Button
               variant="tertiary"
-              icon={<span className="material-icons">more_vert</span>}
+              icon={<MoreVertical className="size-4" />}
               onClick={() => setIsActionMenuOpen(true)}
             />
           }

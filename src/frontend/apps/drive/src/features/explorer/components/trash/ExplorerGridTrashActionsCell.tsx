@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MenuDropdown } from "@/components/ds-menu";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { Button, Decision, useModal } from "@gouvfr-lasuite/cunningham-react";
 import undoIcon from "@/assets/icons/undo.svg";
 import cancelIcon from "@/assets/icons/cancel.svg";
@@ -29,7 +30,7 @@ export const ExplorerGridTrashActionsCell = (
   const handleRestore = async () => {
     addToast(
       <ToasterItem>
-        <span className="material-icons">delete</span>
+        <Trash2 className="size-4" />
         <span>{t("explorer.actions.restore.toast", { count: 1 })}</span>
       </ToasterItem>
     );
@@ -42,7 +43,7 @@ export const ExplorerGridTrashActionsCell = (
     }
     addToast(
       <ToasterItem>
-        <span className="material-icons">delete</span>
+        <Trash2 className="size-4" />
         <span>{t("explorer.actions.hard_delete.toast", { count: 1 })}</span>
       </ToasterItem>
     );
@@ -75,7 +76,7 @@ export const ExplorerGridTrashActionsCell = (
           onClick={() => setIsOpen(!isOpen)}
           variant="tertiary"
           className="c__language-picker"
-          icon={<span className="material-icons">more_horiz</span>}
+          icon={<MoreHorizontal className="size-4" />}
         ></Button>
       </MenuDropdown>
       {hardDeleteConfirmationModal.isOpen && (
