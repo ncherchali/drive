@@ -1,18 +1,15 @@
 // Déclencheur de recherche DS — variante Design System d'ExplorerSearchButton.
 // Pages Router : pas de "use client".
 //
-// Rend un bouton DS (loupe lucide) qui ouvre la modale de recherche existante.
-// La modale (ExplorerSearchModal, Cunningham) est portalée hors du header par
-// react-aria : elle reste donc stylée Cunningham même si ce bouton vit sous
-// `.sahla-ds`. La réécriture de la modale en palette `command` est planifiée
-// APRÈS la migration DS des filtres (cf. docs/ds-migration-plan.md, phase 8) —
-// envelopper des filtres Cunningham dans `.sahla-ds` casserait leur style.
+// Rend un bouton DS (loupe lucide) qui ouvre la palette de recherche DS
+// (ExplorerSearchModalDs, palette `command`). Depuis la phase 8b, les filtres
+// étant DS, la palette est intégralement DS.
 import { useEffect } from "react";
 import { useModal } from "@gouvfr-lasuite/cunningham-react";
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { ExplorerSearchModal } from "@/features/explorer/components/modals/search/ExplorerSearchModal";
+import { ExplorerSearchModalDs } from "@/features/explorer/components/modals/search/ExplorerSearchModalDs";
 import { ItemFilters } from "@/features/drivers/Driver";
 
 export const ExplorerSearchButtonDs = ({
@@ -42,7 +39,11 @@ export const ExplorerSearchButtonDs = ({
 
   return (
     <>
-      <ExplorerSearchModal {...searchModal} defaultFilters={defaultFilters} />
+      <ExplorerSearchModalDs
+        isOpen={searchModal.isOpen}
+        onClose={searchModal.onClose}
+        defaultFilters={defaultFilters}
+      />
       <Button
         variant="ghost"
         size="icon"
