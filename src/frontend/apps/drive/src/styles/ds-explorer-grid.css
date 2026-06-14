@@ -70,6 +70,14 @@
   box-sizing: border-box;
 }
 
+/* Bordure droite NETTE de la sidebar : le reset ci-dessus met les bordures à 0
+   (donc le `border-r` utilitaire du conteneur ne s'affiche pas) ; on rétablit
+   explicitement le bord (logique RTL). Combiné au fond `--sidebar` gris, cela
+   sépare clairement la barre de navigation du contenu. */
+.sahla-ds-grid [data-slot="sidebar-inner"] {
+  border-inline-end: 1px solid var(--sidebar-border);
+}
+
 /* Les <ul> shadcn comptent sur le preflight (list-style:none, pas de marge/
    indentation). Preflight global off → on neutralise puces + indentation UA. */
 .sahla-ds-grid [data-slot="sidebar-menu"],

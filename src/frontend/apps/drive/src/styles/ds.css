@@ -54,14 +54,15 @@
   --input: oklch(0.92 0.008 286);
   --ring: oklch(0.54 0.24 296);
 
-  /* Sidebar EFSS (explorateur) */
-  --sidebar: oklch(0.985 0.004 286);
+  /* Sidebar EFSS (explorateur) — fond gris distinct du contenu (blanc) pour
+     séparer clairement la zone de navigation, + bordure droite nette. */
+  --sidebar: oklch(0.966 0.005 286);
   --sidebar-foreground: oklch(0.21 0.03 286);
   --sidebar-primary: oklch(0.54 0.24 296);
   --sidebar-primary-foreground: oklch(0.98 0.01 296);
-  --sidebar-accent: oklch(0.965 0.025 296);
+  --sidebar-accent: oklch(0.95 0.03 296);
   --sidebar-accent-foreground: oklch(0.42 0.16 296);
-  --sidebar-border: oklch(0.92 0.008 286);
+  --sidebar-border: oklch(0.9 0.01 286);
   --sidebar-ring: oklch(0.54 0.24 296);
 }
 

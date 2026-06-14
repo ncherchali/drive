@@ -11,14 +11,16 @@
 import * as React from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { useMemo } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Plus, Settings, Trash2 } from "lucide-react";
 import { useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -31,6 +33,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icon as DsIcon } from "@/components/ui/icon";
 import { MenuDropdown } from "@/components/ds-menu";
+import { ExplorerCreateWorkspaceModal } from "@/features/explorer/components/modals/ExplorerCreateWorkspaceModal";
+import { DsSettingsDialog } from "./DsSettingsDialog";
 import {
   DS_ROUTE_ICONS,
   ORDERED_DEFAULT_ROUTES,
@@ -57,6 +61,8 @@ export function DsExplorerSidebar({
   const { setOpenMobile } = useSidebar();
   const { itemId } = useGlobalExplorer();
   const { data: firstLevelItems } = useFirstLevelItems();
+  const [createSpaceOpen, setCreateSpaceOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const workspaces = useMemo(
     () => firstLevelItems?.filter(itemIsWorkspace) ?? [],
@@ -96,7 +102,7 @@ export function DsExplorerSidebar({
           <DsCreateButton />
         </SidebarGroup>
 
-        {/* Navigation principale (routes par défaut). */}
+        {/* Navigation principale (routes par défaut + Corbeille remontée). */}
         <SidebarGroup className="py-1">
           <SidebarMenu>
             {navRoutes.map((route) => (
@@ -111,6 +117,16 @@ export function DsExplorerSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={currentPath === TRASH_ROUTE_DATA.route}
+                tooltip={t("explorer.tree.trash")}
+                onClick={() => navigate(TRASH_ROUTE_DATA.route)}
+              >
+                <DsIcon icon={Trash2} size="small" />
+                <span>{t("explorer.tree.trash")}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
 
@@ -119,12 +135,22 @@ export function DsExplorerSidebar({
           <ExplorerFolderTree />
         </SidebarGroup>
 
-        {/* Espaces (workspaces) — tuiles teintées via ItemIcon. */}
-        {workspaces.length > 0 && (
-          <SidebarGroup>
-            <SidebarGroupLabel>
-              {t("explorer.tree.workspaces.title")}
-            </SidebarGroupLabel>
+        {/* Espaces (workspaces) — toujours affiché ; action « + » pour en créer
+            (gestion de plusieurs espaces), tuiles teintées via ItemIcon. */}
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            {t("explorer.tree.workspaces.title")}
+          </SidebarGroupLabel>
+          <SidebarGroupAction
+            title={t("explorer.actions.createWorkspace.modal.title", "Créer un espace")}
+            onClick={() => setCreateSpaceOpen(true)}
+          >
+            <Plus />
+            <span className="sr-only">
+              {t("explorer.actions.createWorkspace.modal.title", "Créer un espace")}
+            </span>
+          </SidebarGroupAction>
+          {workspaces.length > 0 && (
             <SidebarGroupContent>
               <SidebarMenu>
                 {workspaces.map((workspace) => (
@@ -143,27 +169,33 @@ export function DsExplorerSidebar({
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {/* Corbeille. */}
-        <SidebarGroup className="mt-auto">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                isActive={currentPath === TRASH_ROUTE_DATA.route}
-                tooltip={t("explorer.tree.trash")}
-                onClick={() => navigate(TRASH_ROUTE_DATA.route)}
-              >
-                <DsIcon icon={Trash2} size="small" />
-                <span>{t("explorer.tree.trash")}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+          )}
         </SidebarGroup>
       </SidebarContent>
 
+      {/* Accès aux paramètres de l'application (pinned en bas). */}
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip={t("settings.title", "Paramètres")}
+              onClick={() => setSettingsOpen(true)}
+            >
+              <Settings className="size-4" />
+              <span>{t("settings.title", "Paramètres")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+
       {onResize && <SidebarResizeHandle onResize={onResize} />}
+
+      <ExplorerCreateWorkspaceModal
+        isOpen={createSpaceOpen}
+        onClose={() => setCreateSpaceOpen(false)}
+        redirectAfterCreate
+      />
+      <DsSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </Sidebar>
   );
 }
