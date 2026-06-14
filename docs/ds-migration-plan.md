@@ -79,23 +79,43 @@ le double toggle face au `onClick` d'ouverture résiduel des boutons).
 
 ---
 
-## Phase 7 — En-tête 100 % DS : recherche 🟡 `[DS_APP_SHELL]`
+## Phase 7 — En-tête 100 % DS : déclencheur de recherche DS 🟢 `[DS_APP_SHELL]`
 
-Dernier îlot Cunningham du header → primitive `command`.
+Le dernier îlot Cunningham du header était le **bouton** de recherche. Il devient
+un déclencheur DS (`ExplorerSearchButtonDs`) ; tout l'en-tête porte désormais
+`.sahla-ds`. La **modale** ouverte (`ExplorerSearchModal`, Cunningham) reste
+inchangée et pleinement fonctionnelle (filtres inclus) : portalée hors de
+l'en-tête, elle n'est pas affectée par le reset scopé.
 
-- `✨(frontend) DS phase 7 : recherche explorateur sur primitive command (header full DS)`
-- **Fichiers** : `ExplorerSearchButton`, `DsExplorerHeader` (envelopper tout le header dans `.sahla-ds`).
-- **Validation** : recherche, filtres de recherche, navigation résultats. **Jalon : en-tête entièrement DS.**
+- `✨(frontend) DS phase 7 : déclencheur de recherche DS (en-tête 100 % DS)`
+- **Fichiers** : `ExplorerSearchButtonDs.tsx` (nouveau), `DsExplorerHeader.tsx`.
+- **Validation** : ouverture de la recherche depuis le header, recherche/filtres
+  intacts. **Jalon : en-tête entièrement DS.**
+
+> **Resequencing** : la réécriture de la recherche en **palette `command`** est
+> déplacée en **phase 8**. Raison : les primitives DS dépendent du reset
+> `.sahla-ds` pour le style de bordure (`border-solid`), or les 3 filtres de
+> recherche sont Cunningham et seraient cassés par ce reset. La palette `command`
+> est donc construite APRÈS la migration DS des filtres (phase 8), pour
+> envelopper une palette 100 % DS sans casser les filtres.
 
 ---
 
-## Phase 8 — Filtres & barre d'outils 🟡 `[DS_EXPLORER_GRID]`
+## Phase 8 — Filtres, barre d'outils & palette de recherche 🟡 `[DS_EXPLORER_GRID]` / `[DS_APP_SHELL]`
 
-Remplace le repeint SCSS par de vrais composants (`popover` + `dropdown-menu` + `button`).
+Remplace le repeint SCSS par de vrais composants (`popover` + `dropdown-menu` +
+`button`), puis construit la palette de recherche `command` (resequencée depuis
+la phase 7) sur des filtres désormais DS.
 
-- `✨(frontend) DS phase 8 : barre de filtres et de tri de l'explorateur en DS`
-- **Fichiers** : `ExplorerFilters.tsx` (+ suppression de `ExplorerFilters.scss`).
-- **Validation** : filtres, tri, sélecteur de colonnes ; parité avec `Filter` / `FilterOption`.
+- `✨(frontend) DS phase 8a : barre de filtres et de tri de l'explorateur en DS`
+  - **Fichiers** : `ExplorerFilters.tsx` (+ suppression de `ExplorerFilters.scss`).
+  - **Validation** : filtres, tri, sélecteur de colonnes ; parité avec `Filter` / `FilterOption`.
+- `✨(frontend) DS phase 8b : palette de recherche command DS`
+  - **Fichiers** : `ExplorerSearchModalDs.tsx` (palette `CommandDialog`, réutilise
+    `driver.searchItems`/debounce/navigation/preview/wopi), `ExplorerSearchButtonDs`
+    routé dessus.
+  - **Validation** : saisie, résultats serveur (`shouldFilter={false}`), filtres DS,
+    navigation clavier, ⌘K, ouverture WOPI/preview/dossier.
 
 ---
 
