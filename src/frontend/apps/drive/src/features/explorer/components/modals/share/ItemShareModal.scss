@@ -17,3 +17,62 @@
     }
   }
 }
+
+/* ============================================================================
+ * Phase 10b (option A) — repeinture DS de la modale de partage ui-kit.
+ *
+ * Le `<ShareModal>` de @gouvfr-lasuite/ui-kit est un composite (membres, rôles,
+ * invitations, recherche, réglages de lien). On ne le réécrit pas : on override
+ * son apparence avec les tokens DS (ds.css : --popover, --border, --radius…),
+ * disponibles sur :root et commutables `.dark`. Repeinture GLOBALE (la modale
+ * est portalée hors de tout sous-arbre `.sahla-ds`) — cohabitation, comme la
+ * grille. Conservateur : couleurs / bordures / rayons / espacements seulement.
+ * ========================================================================== */
+.c__share-modal {
+  color: var(--foreground);
+
+  /* Titres de section */
+  &__members-title,
+  &__invitations-title,
+  &__link-settings__title {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  &__link-settings__content__description,
+  &__cannot-view__content {
+    color: var(--muted-foreground);
+  }
+
+  /* Bloc « réglages de lien » : surface douce encadrée DS */
+  &__link-settings {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--muted);
+    padding: 0.75rem;
+  }
+
+  /* Footer copie-lien : séparateur DS */
+  &__copy-link-footer,
+  &__footer {
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* Lignes de membres : survol + rayon DS */
+.c__share-member-item {
+  border-radius: calc(var(--radius) - 2px);
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+}
+
+/* Pastilles d'utilisateurs sélectionnés (recherche d'invitation) */
+.c__share-modal__selected-users {
+  .c__share-member-item:hover {
+    background-color: transparent;
+  }
+}

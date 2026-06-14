@@ -150,16 +150,23 @@ SANS wrapper `.sahla-ds` (composants auto-suffisants), pour laisser `ItemInfo`
 - `✨(frontend) DS phase 10a : panneau de droite (infos) en DS`
   - **Fichiers** : `ExplorerRightPanelContentDs.tsx` (nouveau) + pont à flag dans
     `ExplorerRightPanelContent.tsx`. Couvre les états vide / sélection multiple /
-    item (en-tête, avertissement, ligne de partage). `ItemInfo` (métadonnées)
-    reste Cunningham, non enveloppé.
-  - **Validation** : états du panneau, fermeture, CTA partage, RTL.
+    item (en-tête, avertissement, ligne de partage).
+- `✨(frontend) DS phase 10a+ : métadonnées (ItemInfo) en DS` → `ItemInfoDs.tsx`.
+  Le panneau de droite est alors **100 % DS**.
 
-> **Reporté en phase dédiée (10b)** : la **modale de partage** (`ItemShareModal`,
-> ~540 lignes, RBAC : rôles, liens, invitations) est le composant le plus
-> volumineux et critique de la migration. Sa réécriture DS (avatar / select /
-> badge) est sortie de la phase 10 — trop risquée à mener sans validation
-> runtime intermédiaire. Elle reste Cunningham (overlay portalé, comme la
-> recherche en phase 7) jusqu'à sa phase dédiée.
+### Phase 10b — Modale de partage : repeinture DS (option A)
+
+Constat : `ItemShareModal` enrobe le composite **`<ShareModal>` de ui-kit** (membres,
+rôles, invitations, recherche, réglages de lien, RBAC). Une réécriture DS = refaire
+toute l'UX → trop gros/risqué à l'aveugle (décision : **repeinture CSS**, comme la grille).
+
+- `🎨(frontend) DS phase 10b : repeinture DS de la modale de partage ui-kit`
+- **Fichiers** : `ItemShareModal.scss` — override des classes `c__share-modal*` /
+  `c__share-member-item` avec les tokens DS. **Globale** (modale portalée, pas de
+  `className` sur ShareModal). Conservateur : couleurs / bordures / rayons / espacements.
+- **Validation** : **à l'œil** (ouvrir le partage sur un item avec accès) — la repeinture
+  d'un composite ui-kit est fragile (dépend des classes internes). Une réécriture DS
+  complète reste possible plus tard (option B), avec validation runtime.
 
 ---
 
