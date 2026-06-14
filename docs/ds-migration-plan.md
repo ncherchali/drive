@@ -141,16 +141,25 @@ formulaire mono-champ via un composant réutilisable `DsPromptDialog`
 
 ---
 
-## Phase 10 — Panneau de droite (méta / infos / partage) 🔴 `[DS_APP_SHELL]`
+## Phase 10 — Panneau de droite (méta / infos) 🔴 `[DS_APP_SHELL]`
 
-Vraie réécriture (pas un override SCSS). Le partage porte la logique RBAC → tester finement.
+Réécriture de la coquille du panneau en DS (Tailwind + Button + ScrollArea),
+SANS wrapper `.sahla-ds` (composants auto-suffisants), pour laisser `ItemInfo`
+(InfoRow/UserRow Cunningham) et la modale de partage intacts.
 
-| Commit | Contenu |
-|--------|---------|
-| `✨(frontend) DS phase 10a : panneau méta/infos en DS (tabs + scroll-area)` | `ExplorerRightPanelContent`, `InfoRow` |
-| `✨(frontend) DS phase 10b : modale de partage en DS (rôles, liens)` | `ItemShareModal` (`avatar` / `select` / `badge` DS) |
+- `✨(frontend) DS phase 10a : panneau de droite (infos) en DS`
+  - **Fichiers** : `ExplorerRightPanelContentDs.tsx` (nouveau) + pont à flag dans
+    `ExplorerRightPanelContent.tsx`. Couvre les états vide / sélection multiple /
+    item (en-tête, avertissement, ligne de partage). `ItemInfo` (métadonnées)
+    reste Cunningham, non enveloppé.
+  - **Validation** : états du panneau, fermeture, CTA partage, RTL.
 
-**Validation** : onglets infos/activité, rôles & liens de partage (RBAC), responsive via `sheet` mobile.
+> **Reporté en phase dédiée (10b)** : la **modale de partage** (`ItemShareModal`,
+> ~540 lignes, RBAC : rôles, liens, invitations) est le composant le plus
+> volumineux et critique de la migration. Sa réécriture DS (avatar / select /
+> badge) est sortie de la phase 10 — trop risquée à mener sans validation
+> runtime intermédiaire. Elle reste Cunningham (overlay portalé, comme la
+> recherche en phase 7) jusqu'à sa phase dédiée.
 
 ---
 

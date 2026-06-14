@@ -11,12 +11,31 @@ import emptySelection from "@/assets/empty-selection.png";
 import { IconSize } from "@gouvfr-lasuite/ui-kit";
 import { ItemShareModal } from "../modals/share/ItemShareModal";
 import { ItemInfo } from "@/features/items/components/ItemInfo";
+import {
+  FLAG_DS_APP_SHELL,
+  useFeatureFlag,
+} from "@/features/flags/useFeatureFlag";
+import { ExplorerRightPanelContentDs } from "./ExplorerRightPanelContentDs";
 
 type ExplorerRightPanelContentProps = {
   item?: Item;
 };
 
-export const ExplorerRightPanelContent = ({
+/**
+ * Point de bascule : rend le panneau DS si le flag DS_APP_SHELL est actif, sinon
+ * la version Cunningham. Interface publique identique → call sites inchangés.
+ */
+export const ExplorerRightPanelContent = (
+  props: ExplorerRightPanelContentProps,
+) => {
+  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
+  if (useDs) {
+    return <ExplorerRightPanelContentDs item={props.item} />;
+  }
+  return <ExplorerRightPanelContentCunningham {...props} />;
+};
+
+const ExplorerRightPanelContentCunningham = ({
   item,
 }: ExplorerRightPanelContentProps) => {
   const { setRightPanelOpen } = useGlobalExplorer();
