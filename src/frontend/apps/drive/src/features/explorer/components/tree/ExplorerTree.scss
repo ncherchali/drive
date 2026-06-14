@@ -102,6 +102,24 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
   }
 }
 
+/* ============================================================================
+ * Phase 12 — repeinture DS de l'arbre (cohabitation, scopée full-DS).
+ *
+ * Plutôt que de cibler chaque sélecteur du TreeView ui-kit (fragile), on
+ * REMAPPE les tokens contextuels Cunningham que l'arbre consomme déjà (texte,
+ * fond hover/sélection, droppable) vers les tokens SIDEBAR du DS (ds.css). Les
+ * custom properties héritent : tout l'arbre (notre markup + le TreeView ui-kit)
+ * adopte les couleurs DS d'un coup. Scopé `.sahla-ds-grid` → actif uniquement en
+ * mode full-DS (shell DS + DS_EXPLORER_GRID), comme la repeinture de la grille.
+ * ========================================================================== */
+.sahla-ds-grid .explorer__tree {
+  --c--contextuals--content--semantic--neutral--primary: var(--sidebar-foreground);
+  --c--contextuals--content--semantic--neutral--tertiary: var(--muted-foreground);
+  --c--contextuals--background--semantic--contextual--primary: var(--sidebar-accent);
+  --c--contextuals--background--semantic--brand--tertiary: var(--sidebar-accent);
+  --c--contextuals--border--semantic--brand--primary: var(--sidebar-primary);
+}
+
 .explorer__tree {
   @apply flex flex-col h-full;
 

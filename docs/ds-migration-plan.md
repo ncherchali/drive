@@ -196,16 +196,24 @@ livré.
 
 ---
 
-## Phase 12 — Arbre latéral 🔴 `[DS_APP_SHELL]` — décision **D2**
+## Phase 12 — Arbre latéral : repeinture DS (D2 = garder + repeindre) `[DS_APP_SHELL]` + `[DS_EXPLORER_GRID]`
 
-Seul endroit au coût disproportionné (`useTreeContext` = contexte propre ui-kit,
-pas de Tree shadcn standard).
+Décision **D2 = garder** le `TreeView` ui-kit (`useTreeContext` = contexte propre,
+coût disproportionné à réécrire), **mais le repeindre en DS** — comme la grille et
+le partage. Le contenu de nœud est notre markup (`ExplorerTreeItem` →
+`.explorer__tree__item*`) ; la structure (chevrons, DnD) reste ui-kit.
 
-- **D2 = construire** : `✨(frontend) DS phase 12 : composant arbre DS (récursion + scroll-area + DnD)` → `components/layout/tree/*`.
-- **D2 = garder** (recommandé) : phase **sautée** — le Tree ui-kit reste, encapsulé
-  dans la `Sidebar` DS et stylé via `ExplorerTree.scss` (exception assumée).
+- `🎨(frontend) DS phase 12 : repeinture DS de l'arbre (remap tokens → sidebar DS)`
+- **Fichiers** : `ExplorerTree.scss`. Astuce : on **remappe les tokens contextuels
+  Cunningham** que l'arbre consomme (texte / fond hover-sélection / droppable) vers
+  les tokens **sidebar** du DS (`--sidebar*`). Les custom properties héritent → tout
+  l'arbre adopte le DS sans cibler de sélecteur ui-kit (robuste). Scopé
+  `.sahla-ds-grid` (mode full-DS).
+- **Validation** : à l'œil (sidebar avec arbre, deux flags actifs) — texte, survol,
+  nœud sélectionné, droppable, expand/collapse, DnD inchangés (token-only).
 
-**Validation** (si construit) : expand/collapse, DnD inter-nœuds, sélection, scroll, RTL.
+> Une réécriture en composant Tree DS natif (récursion + scroll-area + DnD) reste
+> possible plus tard si besoin, mais non prioritaire vu le coût/risque.
 
 ---
 
