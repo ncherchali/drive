@@ -2,11 +2,17 @@ import { CellContext } from "@tanstack/react-table";
 import { Item, ItemUploadState } from "@/features/drivers/types";
 import { memo, useState } from "react";
 import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
 import { Draggable } from "@/features/explorer/components/Draggable";
 import { useDisableDragGridItem } from "./hooks";
 import { ItemActionDropdown } from "../item-actions/ItemActionDropdown";
 import { useTranslation } from "react-i18next";
 import { useEmbeddedExplorerGirdContext } from "./EmbeddedExplorerGrid";
+import {
+  useFeatureFlag,
+  FLAG_DS_EXPLORER_GRID,
+} from "@/features/flags/useFeatureFlag";
 
 export type EmbeddedExplorerGridActionsCellProps = CellContext<Item, unknown>;
 
@@ -17,6 +23,7 @@ const EmbeddedExplorerGridActionsCellComponent = (
   const { t } = useTranslation();
   const disableDrag = useDisableDragGridItem(item);
   const [isOpen, setIsOpen] = useState(false);
+  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
 
   const { setIsActionModalOpen, isActionModalOpen } =
     useEmbeddedExplorerGirdContext();
@@ -47,15 +54,29 @@ const EmbeddedExplorerGridActionsCellComponent = (
           setIsOpen={setIsOpen}
           onModalOpenChange={handleModalOpenChange}
           trigger={
-            <Button
-              variant="tertiary"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label={t("explorer.grid.actions.button_aria_label", {
-                name: item.title,
-              })}
-              icon={<span className="material-icons">more_horiz</span>}
-              size="nano"
-            />
+            useDs ? (
+              <DsButton
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label={t("explorer.grid.actions.button_aria_label", {
+                  name: item.title,
+                })}
+              >
+                <MoreHorizontal className="size-4" />
+              </DsButton>
+            ) : (
+              <Button
+                variant="tertiary"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label={t("explorer.grid.actions.button_aria_label", {
+                  name: item.title,
+                })}
+                icon={<span className="material-icons">more_horiz</span>}
+                size="nano"
+              />
+            )
           }
         />
       </Draggable>
