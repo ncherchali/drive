@@ -10,6 +10,11 @@ import { RhfInput } from "@/features/forms/components/RhfInput";
 import { useMutationCreateFolder } from "../../hooks/useMutations";
 import { useRouter } from "next/router";
 import { useSetSelectedItems } from "../../stores/selectionStore";
+import {
+  FLAG_DS_APP_SHELL,
+  useFeatureFlag,
+} from "@/features/flags/useFeatureFlag";
+import { ExplorerCreateFolderModalDs } from "./ExplorerCreateFolderModalDs";
 
 type Inputs = {
   title: string;
@@ -20,7 +25,28 @@ type ExplorerCreateFolderModalProps = Pick<ModalProps, "isOpen" | "onClose"> & {
   redirectAfterCreate?: boolean;
 };
 
-export const ExplorerCreateFolderModal = ({
+/**
+ * Point de bascule : rend la version DS si le flag DS_APP_SHELL est actif, sinon
+ * la version Cunningham. Interface publique identique → call sites inchangés.
+ */
+export const ExplorerCreateFolderModal = (
+  props: ExplorerCreateFolderModalProps,
+) => {
+  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
+  if (useDs) {
+    return (
+      <ExplorerCreateFolderModalDs
+        isOpen={props.isOpen}
+        onClose={props.onClose}
+        parentId={props.parentId}
+        redirectAfterCreate={props.redirectAfterCreate}
+      />
+    );
+  }
+  return <ExplorerCreateFolderModalCunningham {...props} />;
+};
+
+const ExplorerCreateFolderModalCunningham = ({
   ...props
 }: ExplorerCreateFolderModalProps) => {
   const { t } = useTranslation();

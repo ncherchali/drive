@@ -14,15 +14,40 @@ import { useTreeUtils } from "../../hooks/useTreeUtils";
 import { useGlobalExplorer } from "../GlobalExplorerContext";
 import { useSelectionStore } from "../../stores/selectionStore";
 import { removeFileExtension } from "@gouvfr-lasuite/ui-kit";
+import {
+  FLAG_DS_APP_SHELL,
+  useFeatureFlag,
+} from "@/features/flags/useFeatureFlag";
+import { ExplorerRenameItemModalDs } from "./ExplorerRenameItemModalDs";
 
 type Inputs = {
   title: string;
 };
 
-export const ExplorerRenameItemModal = (
-  props: Pick<ModalProps, "isOpen" | "onClose"> & {
-    item: Item;
-  },
+type ExplorerRenameItemModalProps = Pick<ModalProps, "isOpen" | "onClose"> & {
+  item: Item;
+};
+
+/**
+ * Point de bascule : rend la version DS si le flag DS_APP_SHELL est actif, sinon
+ * la version Cunningham. Interface publique identique → call sites inchangés.
+ */
+export const ExplorerRenameItemModal = (props: ExplorerRenameItemModalProps) => {
+  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
+  if (useDs) {
+    return (
+      <ExplorerRenameItemModalDs
+        isOpen={props.isOpen}
+        onClose={props.onClose}
+        item={props.item}
+      />
+    );
+  }
+  return <ExplorerRenameItemModalCunningham {...props} />;
+};
+
+const ExplorerRenameItemModalCunningham = (
+  props: ExplorerRenameItemModalProps,
 ) => {
   const treeUtils = useTreeUtils();
   const { rightPanelOpen, rightPanelForcedItem, setRightPanelForcedItem } =

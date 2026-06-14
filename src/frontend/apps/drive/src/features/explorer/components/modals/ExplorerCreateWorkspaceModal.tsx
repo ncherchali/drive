@@ -10,6 +10,11 @@ import { RhfInput } from "@/features/forms/components/RhfInput";
 import { useMutationCreateWorskpace } from "../../hooks/useMutations";
 import { useRouter } from "next/router";
 import { useSetSelectedItems } from "../../stores/selectionStore";
+import {
+  FLAG_DS_APP_SHELL,
+  useFeatureFlag,
+} from "@/features/flags/useFeatureFlag";
+import { ExplorerCreateWorkspaceModalDs } from "./ExplorerCreateWorkspaceModalDs";
 
 type Inputs = {
   title: string;
@@ -22,7 +27,27 @@ type ExplorerCreateWorkspaceModalProps = Pick<
   redirectAfterCreate?: boolean;
 };
 
-export const ExplorerCreateWorkspaceModal = ({
+/**
+ * Point de bascule : rend la version DS si le flag DS_APP_SHELL est actif, sinon
+ * la version Cunningham. Interface publique identique → call sites inchangés.
+ */
+export const ExplorerCreateWorkspaceModal = (
+  props: ExplorerCreateWorkspaceModalProps,
+) => {
+  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
+  if (useDs) {
+    return (
+      <ExplorerCreateWorkspaceModalDs
+        isOpen={props.isOpen}
+        onClose={props.onClose}
+        redirectAfterCreate={props.redirectAfterCreate}
+      />
+    );
+  }
+  return <ExplorerCreateWorkspaceModalCunningham {...props} />;
+};
+
+const ExplorerCreateWorkspaceModalCunningham = ({
   ...props
 }: ExplorerCreateWorkspaceModalProps) => {
   const { t } = useTranslation();

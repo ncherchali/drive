@@ -119,13 +119,25 @@ la phase 7) sur des filtres désormais DS.
 
 ---
 
-## Phase 9 — Compléter le set de modales 🟡 `[DS_CONFIRM_MODALS]`
+## Phase 9 — Modales de formulaire en DS 🟡 `[DS_APP_SHELL]`
 
-Étend le pattern doublon `*Ds` + flag (amorcé en phase 3) au reste des modales.
+Étend le pattern doublon `*Ds` + flag (amorcé en phase 3) aux modales de
+formulaire mono-champ via un composant réutilisable `DsPromptDialog`
+(`src/components/ds-prompt-dialog.tsx`, Dialog DS + Input + footer, portail
+`.sahla-ds` + RTL, valeur réinitialisée à l'ouverture par remontage).
 
-- `✨(frontend) DS phase 9 : modales création workspace/dossier, renommage, déplacement en DS`
-- **Fichiers** : `ExplorerCreateWorkspaceModal` (encore `cunningham-react`), création de dossier, renommage, déplacement folder → doublons `*Ds`.
-- **Validation** : chaque modale derrière le flag, parité formulaire (RHF + `input` / `button` DS). **Jalon : chantier modales clos.**
+- `✨(frontend) DS phase 9 : modales de formulaire en DS (DsPromptDialog)`
+- **Fichiers** : `DsPromptDialog` + `*Ds` pour création dossier, création
+  workspace, renommage ; les 3 fichiers d'origine deviennent des ponts à flag.
+- **Flag** : `DS_APP_SHELL` (et non `DS_CONFIRM_MODALS`) — ce sont des
+  formulaires, pas des confirmations ; cohérent avec « shell DS ⇒ formulaires DS »
+  et évite d'ajouter un flag backend.
+- **Validation** : ouverture, focus (+ sélection au renommage), validation
+  non-vide, submit/mutation, RTL.
+
+> **Hors scope** : la modale de **déplacement** (`ExplorerMoveFolderModal`, 303 l.,
+> `useTreeContext`) est un tree-picker couplé à l'arbre → traitée avec l'arbre
+> (phase 12), pas ici.
 
 ---
 
