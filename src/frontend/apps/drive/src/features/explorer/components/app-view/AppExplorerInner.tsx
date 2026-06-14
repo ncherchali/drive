@@ -4,7 +4,8 @@ import clsx from "clsx";
 import { Item } from "@/features/drivers/types";
 import { useEffect, useRef } from "react";
 import { useAppExplorer } from "./AppExplorer";
-import { ContextMenu, useResponsive } from "@gouvfr-lasuite/ui-kit";
+import { useResponsive } from "@gouvfr-lasuite/ui-kit";
+import { MenuContext } from "@/components/ds-menu";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 import { useSetSelectedItems } from "@/features/explorer/stores/selectionStore";
 import { AppExplorerSelectionBarGate } from "./AppExplorerSelectionBarGate";
@@ -149,7 +150,7 @@ export const AppExplorerInner = () => {
 
   const renderContent = () => {
     return (
-      <ContextMenu options={contextMenuItems}>
+      <MenuContext options={contextMenuItems}>
         {displayMode === "app" && <ExplorerBreadcrumbsMobile />}
         <div
           {...dropZone.getRootProps({
@@ -176,7 +177,7 @@ export const AppExplorerInner = () => {
             </div>
           </div>
         </div>
-      </ContextMenu>
+      </MenuContext>
     );
   };
 

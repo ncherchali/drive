@@ -163,25 +163,29 @@ SANS wrapper `.sahla-ds` (composants auto-suffisants), pour laisser `ItemInfo`
 
 ---
 
-## Phase 11 — Grille de fichiers 🟡 `[DS_EXPLORER_GRID]` — décision **D1**
+## Phase 11 — Menu contextuel de zone (tranche sûre) 🟡 `[DS_APP_SHELL]`
 
-**Recommandé (D1 = a)** : habiller le moteur TanStack avec la primitive `table` DS,
-**sans toucher** sélection / tri / DnD / clavier ; supprimer la couche de
-coexistence `ds-explorer-grid.css`.
+Arbitrage de risque (décision utilisateur) : la grille est le **moteur** de l'app
+(sélection / DnD / clavier) et son apparence DS est **déjà couverte par la
+repeinture CSS** `ds-explorer-grid.css` (WIP, approche sans risque moteur). On ne
+réécrit donc PAS le markup de la grille. Seul le morceau **data-driven sûr** est
+livré.
 
-- `✨(frontend) DS phase 11 : grille de fichiers sur primitive table DS (moteur TanStack inchangé)`
-- **Fichiers** : `AppExplorer` (rendu), suppression de `ds-explorer-grid.css` + repeint `AppExplorer.scss`.
-- **Validation** : sélection multiple, tri, drag-and-drop, navigation clavier, virtualisation — **non-régression du moteur** (priorité absolue).
+- `✨(frontend) DS phase 11 : menu contextuel de zone en DS (pont data-driven)`
+- **Fichiers** : `MenuContext` ajouté à `ds-menu.tsx` (pont DS/ui-kit pour
+  `<ContextMenu options>`), câblé dans `AppExplorerInner`. Trigger en
+  `display:contents` (layout inchangé). Coexistence sûre avec le menu par ligne
+  (qui fait `stopPropagation`).
+- **Validation** : clic droit zone vide → menu créer/importer DS ; clic droit sur
+  une ligne → menu d'actions (toujours ui-kit) ; pas de double menu.
 
-**Menu contextuel** (reporté de la phase 6) : remplacer le `ContextMenuProvider`
-global position-based (`_app.tsx`) et `useContextMenuContext`
-(`EmbeddedExplorerGrid`) ainsi que le `<ContextMenu options>` de zone
-(`AppExplorerInner`) par les primitives DS `context-menu`. Couplé au flux de clic
-droit par ligne, d'où son traitement avec la grille.
-
-> Alternative (D1 = b) : reconstruire la ligne en `file-row` DS (déjà écrit). Plus
-> « pur » mais réimplémente sélection multiple / DnD / clavier → risque élevé pour
-> un gain surtout cosmétique. Non recommandé.
+> **Reporté (à faire AVEC validation runtime, app sous les yeux)** :
+> - **Markup de la grille** en primitive `table` DS — risqué (sélection / DnD /
+>   clavier), faible valeur ajoutée vs la repeinture CSS existante (`D1 = b`,
+>   reconstruction de la ligne en `file-row`, encore moins recommandé).
+> - **Menu contextuel par ligne** : `useContextMenuContext` +
+>   `ContextMenuProvider` global position-based (`_app.tsx`) → migration
+>   architecturale (provider DS impératif positionné).
 
 ---
 

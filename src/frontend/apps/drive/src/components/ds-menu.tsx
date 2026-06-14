@@ -13,7 +13,10 @@
 // souvent un `onClick` d'ouverture sur leur bouton : il devient inoffensif (il
 // met à jour un état parent que Radix n'écoute pas), évitant tout double toggle.
 import * as React from "react";
-import { DropdownMenu as UiKitDropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import {
+  DropdownMenu as UiKitDropdownMenu,
+  ContextMenu as UiKitContextMenu,
+} from "@gouvfr-lasuite/ui-kit";
 import { Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -22,6 +25,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/ui/context-menu";
 import {
   FLAG_DS_APP_SHELL,
   useFeatureFlag,
@@ -118,4 +128,91 @@ export function MenuDropdown(props: MenuDropdownProps) {
     return <MenuDropdownDs {...props} />;
   }
   return <UiKitDropdownMenu {...props} />;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Menu contextuel (clic droit) — pont data-driven, même type MenuItem.       */
+/* -------------------------------------------------------------------------- */
+
+type MenuContextProps = React.ComponentProps<typeof UiKitContextMenu>;
+
+/** Rendu DS des items pour le menu contextuel (parallèle de DsMenuItems). */
+function DsContextItems({ options }: { options: Entry[] }) {
+  return (
+    <>
+      {options.map((entry, index) => {
+        if (isSeparator(entry)) {
+          return <ContextMenuSeparator key={`sep-${index}`} />;
+        }
+        if (entry.isHidden) {
+          return null;
+        }
+        return (
+          <ContextMenuItem
+            key={entry.id ?? `${entry.label}-${index}`}
+            variant={entry.variant === "danger" ? "destructive" : "default"}
+            disabled={entry.isDisabled}
+            data-testid={entry.testId}
+            onSelect={(event) => {
+              if (entry.keepOpen) {
+                event.preventDefault();
+              }
+              void entry.callback?.();
+            }}
+          >
+            {entry.icon != null && (
+              <span className="flex size-4 shrink-0 items-center justify-center [&_img]:size-4 [&_svg]:size-4">
+                {entry.icon}
+              </span>
+            )}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate">{entry.label}</span>
+              {entry.subText && (
+                <span className="block truncate text-xs text-muted-foreground">
+                  {entry.subText}
+                </span>
+              )}
+            </span>
+            {entry.isChecked && <Check className="ms-auto size-4" aria-hidden />}
+          </ContextMenuItem>
+        );
+      })}
+    </>
+  );
+}
+
+function MenuContextDs({
+  options,
+  context,
+  disabled,
+  children,
+}: MenuContextProps) {
+  // `options` peut être un tableau ou une fonction (context) => MenuItem[].
+  const items = (
+    typeof options === "function" ? options(context as never) : (options ?? [])
+  ) as Entry[];
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild disabled={disabled}>
+        {/* `display:contents` : zone de clic droit SANS boîte ajoutée (layout
+            inchangé) ; les événements des enfants remontent au trigger. */}
+        <div style={{ display: "contents" }}>{children}</div>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="sahla-ds">
+        <DsContextItems options={items} />
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
+
+/**
+ * Menu contextuel déclaratif à API ui-kit (`options`, `context`, `disabled`,
+ * children). Rend le DS derrière le flag DS_APP_SHELL, sinon le ui-kit.
+ */
+export function MenuContext(props: MenuContextProps) {
+  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
+  if (useDs) {
+    return <MenuContextDs {...props} />;
+  }
+  return <UiKitContextMenu {...props} />;
 }
