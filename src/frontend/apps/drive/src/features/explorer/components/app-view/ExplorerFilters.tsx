@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import folderIcon from "@/assets/folder/folder.svg";
 import mimeOther from "@/assets/files/icons/mime-other.svg";
-import { Key } from "react-aria-components";
+import type { Key } from "react";
 import { useAppExplorer } from "./AppExplorer";
 import { ItemType } from "@/features/drivers/types";
 import { ItemFilters, ItemFiltersScope } from "@/features/drivers/Driver";

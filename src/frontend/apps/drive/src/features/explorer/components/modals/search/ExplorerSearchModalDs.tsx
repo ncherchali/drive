@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDsModals } from "@/components/ds-modals";
 import { CornerDownLeft } from "lucide-react";
-import { Key } from "react-aria-components";
+import type { Key } from "react";
 import { Item, ItemType } from "@/features/drivers/types";
 import { ItemFilters } from "@/features/drivers/Driver";
 import { getDriver } from "@/features/config/Config";

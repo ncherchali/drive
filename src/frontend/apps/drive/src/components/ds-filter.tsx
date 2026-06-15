@@ -10,7 +10,7 @@
 // contenu portalé porte `.sahla-ds`, pour un rendu correct même hors d'un
 // sous-arbre `.sahla-ds` (barre de grille, modale de recherche…).
 import * as React from "react";
-import type { Key } from "react-aria-components";
+import type { Key } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import {
   Popover,
