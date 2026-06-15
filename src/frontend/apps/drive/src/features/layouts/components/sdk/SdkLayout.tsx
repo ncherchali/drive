@@ -1,6 +1,7 @@
 import { Auth } from "@/features/auth/Auth";
 import { GlobalExplorerProvider } from "@/features/explorer/components/GlobalExplorerContext";
-import { HorizontalSeparator, Spinner } from "@gouvfr-lasuite/ui-kit";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -35,7 +36,7 @@ export const SdkLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="sdk__explorer__header">
           {t("sdk.explorer.picker_caption")}
         </div>
-        <HorizontalSeparator />
+        <Separator />
         {children}
       </GlobalExplorerProvider>
     </Auth>
@@ -62,7 +63,7 @@ export const SdkPickerLayout = ({
   }, [token]);
 
   if (!token) {
-    return <Spinner size="xl" />;
+    return <Spinner className="size-8" />;
   }
 
   return (

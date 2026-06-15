@@ -1,7 +1,4 @@
 import { useAuth } from "@/features/auth/Auth";
-import { ExplorerTree } from "@/features/explorer/components/tree/ExplorerTree";
-import { MainLayout } from "@gouvfr-lasuite/ui-kit";
-import { HeaderIcon, HeaderRight } from "../header/Header";
 import {
   GlobalExplorerProvider,
   NavigationEvent,
@@ -9,7 +6,6 @@ import {
 } from "@/features/explorer/components/GlobalExplorerContext";
 import { ExplorerRightPanelContent } from "@/features/explorer/components/right-panel/ExplorerRightPanelContent";
 import { GlobalLayout } from "../global/GlobalLayout";
-import { LeftPanelMobile } from "../left-panel/LeftPanelMobile";
 import { useRouter } from "next/router";
 import { useSyncUserLanguage } from "../../hooks/useSyncUserLanguage";
 import { Item } from "@/features/drivers/types";
@@ -17,10 +13,6 @@ import { ReleaseNoteAuto } from "@/features/ui/components/release-note";
 import { setManualNavigationItemId } from "@/features/explorer/utils/utils";
 import { ColumnPreferencesProvider } from "@/features/explorer/hooks/useColumnPreferences";
 import { EntitlementDisclaimers } from "@/features/entitlement-disclaimers/EntitlementDisclaimers";
-import {
-  useFeatureFlag,
-  FLAG_DS_APP_SHELL,
-} from "@/features/flags/useFeatureFlag";
 import { DsExplorerShell } from "./DsExplorerShell";
 import { DsExplorerHeader } from "./DsExplorerHeader";
 
@@ -85,6 +77,9 @@ export const ExplorerLayout = ({
   );
 };
 
+// Coquille de l'explorateur — Design System (AppShell shadcn). Le chemin
+// MainLayout/ui-kit (non-DS) a été retiré (dépose totale) : la coquille DS est
+// désormais l'unique rendu.
 export const ExplorerPanelsLayout = ({
   children,
   isMinimalLayout,
@@ -94,57 +89,25 @@ export const ExplorerPanelsLayout = ({
 }) => {
   const {
     rightPanelOpen,
-    setRightPanelOpen,
     item,
     rightPanelForcedItem: rightPanelItem,
-    isLeftPanelOpen,
-    setIsLeftPanelOpen,
   } = useGlobalExplorer();
 
   const { user } = useAuth();
-  const useDsShell = useFeatureFlag(FLAG_DS_APP_SHELL);
 
-  const leftPanelContent = user ? <ExplorerTree /> : <LeftPanelMobile />;
   const rightPanelContent = <ExplorerRightPanelContent item={rightPanelItem} />;
   const hideLeftPanelOnDesktop = !user || isMinimalLayout;
-  const icon = <HeaderIcon />;
-  const rightHeaderContent = (
-    <HeaderRight displaySearch={isMinimalLayout} currentItem={item} />
-  );
-
-  // Bascule de coquille derrière le flag DS_APP_SHELL (cf. DsExplorerShell).
-  if (useDsShell) {
-    return (
-      <DsExplorerShell
-        header={
-          <DsExplorerHeader
-            displaySearch={isMinimalLayout}
-            currentItem={item}
-          />
-        }
-        rightPanelContent={rightPanelContent}
-        rightPanelIsOpen={rightPanelOpen}
-        hideLeftPanelOnDesktop={hideLeftPanelOnDesktop}
-      >
-        {children}
-      </DsExplorerShell>
-    );
-  }
 
   return (
-    <MainLayout
-      enableResize
+    <DsExplorerShell
+      header={
+        <DsExplorerHeader displaySearch={isMinimalLayout} currentItem={item} />
+      }
       rightPanelContent={rightPanelContent}
       rightPanelIsOpen={rightPanelOpen}
-      onToggleRightPanel={() => setRightPanelOpen(!rightPanelOpen)}
-      leftPanelContent={leftPanelContent}
-      isLeftPanelOpen={isLeftPanelOpen}
       hideLeftPanelOnDesktop={hideLeftPanelOnDesktop}
-      setIsLeftPanelOpen={() => setIsLeftPanelOpen(!isLeftPanelOpen)}
-      icon={icon}
-      rightHeaderContent={rightHeaderContent}
     >
       {children}
-    </MainLayout>
+    </DsExplorerShell>
   );
 };
