@@ -24,12 +24,10 @@ import {
 } from "@/features/explorer/hooks/useQueries";
 import { useUsers } from "@/features/users/hooks/useUserQueries";
 import { useClipboard } from "@/hooks/useCopyToClipboard";
-import {
-  HorizontalSeparator,
-  removeFileExtension,
-  ShareModal,
-  ShareModalCopyLinkFooter,
-} from "@gouvfr-lasuite/ui-kit";
+import { removeFileExtension } from "@/features/explorer/utils/fileTypes";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { DsShareModal } from "./DsShareModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -69,8 +67,7 @@ export const ItemShareModal = ({
   const previousSearchResult = useRef<User[]>([]);
   const { data } = useItemAccesses(itemId);
 
-  const { data: invitations, hasNextPage: hasNextInvitations } =
-    useInfiniteItemInvitations(itemId);
+  const { data: invitations } = useInfiniteItemInvitations(itemId);
   const { mutateAsync: createAccess } = useMutationCreateAccess();
   const { mutateAsync: createInvitation } = useMutationCreateInvitation();
   const { mutateAsync: updateAccess } = useMutationUpdateAccess();
@@ -308,14 +305,12 @@ export const ItemShareModal = ({
   const updateLinkConfiguration = useMutationUpdateLinkConfiguration();
 
   return (
-    <ShareModal
+    <DsShareModal
       isOpen={isOpen}
       loading={isLoadingUsers ?? false}
       onClose={onClose}
-      aria-label="Share modal"
       modalTitle={`${t("explorer.actions.share.modal.title")} ${removeFileExtension(item?.title ?? "")}`}
       canUpdate={item?.abilities.accesses_manage}
-      canView={item?.abilities.accesses_view}
       accesses={accessesData}
       invitations={invitationsData}
       invitationRoles={rolesOptions}
@@ -356,8 +351,6 @@ export const ItemShareModal = ({
         }
       }}
       onSearchUsers={onSearch}
-      hasNextMembers={false}
-      hasNextInvitations={hasNextInvitations}
       searchUsersResult={queryValue === "" ? undefined : users}
       onInviteUser={(users, role) => onInviteUser(users, role as Role)}
       accessRoleTopMessage={(access) => {
@@ -440,9 +433,10 @@ export const ItemShareModal = ({
         ];
       }}
       outsideSearchContent={
-        <>
-          <ShareModalCopyLinkFooter
-            onCopyLink={() => {
+        <div className="flex items-center justify-between gap-2 border-t border-solid border-border px-5 py-3">
+          <Button
+            variant="outline"
+            onClick={() => {
               if (item?.type === ItemType.FILE) {
                 copyToClipboard(
                   `${window.location.origin}/explorer/items/files/${itemId}`,
@@ -462,11 +456,11 @@ export const ItemShareModal = ({
                 item_link_role: item?.computed_link_role ?? item?.link_role,
               });
             }}
-            onOk={() => {
-              onClose();
-            }}
-          />
-        </>
+          >
+            {t("share_modal.copy_link", "Copier le lien")}
+          </Button>
+          <Button onClick={() => onClose()}>{t("common.ok", "OK")}</Button>
+        </div>
       }
       linkSettings={true}
       accessRoleKey="max_role"
@@ -499,8 +493,8 @@ export const ItemShareModal = ({
         });
       }}
     >
-      {!item?.abilities.accesses_manage && <HorizontalSeparator />}
-    </ShareModal>
+      {!item?.abilities.accesses_manage && <Separator />}
+    </DsShareModal>
   );
 };
 
