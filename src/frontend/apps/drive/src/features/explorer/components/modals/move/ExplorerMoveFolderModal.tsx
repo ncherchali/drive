@@ -1,12 +1,24 @@
+// Modale de déplacement — Design System (Dialog DS). Réutilise toute la logique
+// métier (EmbeddedExplorer compact comme sélecteur de cible, mutation de
+// déplacement, confirmation inter-espaces) ; le shell Cunningham (Modal +
+// leftActions/rightActions) a été porté sur Dialog/DialogFooter et l'ui-kit
+// (HorizontalSeparator/useResponsive) sur Separator DS / useIsMobile.
 import { Item, ItemType, Role } from "@/features/drivers/types";
+import { Button as DsButton } from "@/components/ui/button";
 import {
-  Button,
-  Modal,
-  ModalSize,
-  useModal,
-} from "@gouvfr-lasuite/cunningham-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { useModal } from "@/components/use-modal";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/utils/cn";
+import { FolderPlus } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { HorizontalSeparator, useResponsive } from "@gouvfr-lasuite/ui-kit";
 import { useTreeContext } from "@/components/tree";
 import { Trans, useTranslation } from "react-i18next";
 import { useMoveItems } from "@/features/explorer/api/useMoveItem";
@@ -17,7 +29,6 @@ import {
   EmbeddedExplorer,
   useEmbeddedExplorer,
 } from "@/features/explorer/components/embedded-explorer/EmbeddedExplorer";
-import { AddFolderButton } from "./AddFolderButton";
 import { useGlobalExplorer } from "../../GlobalExplorerContext";
 import { useRef, useSyncExternalStore } from "react";
 import { useItem } from "@/features/explorer/hooks/useQueries";
@@ -35,7 +46,7 @@ export const ExplorerMoveFolder = ({
   initialFolderId,
   itemsToMove,
 }: ExplorerMoveFolderProps) => {
-  const { isDesktop } = useResponsive();
+  const isMobile = useIsMobile();
   const isMoveToRoot = useRef(false);
   const { itemId: currentItemId } = useGlobalExplorer();
   const queryClient = useQueryClient();
@@ -72,12 +83,14 @@ export const ExplorerMoveFolder = ({
       return filteredItems;
     },
     breadcrumbsRight: () => (
-      <Button
-        size="small"
-        variant="tertiary"
-        icon={<AddFolderButton />}
+      <DsButton
+        variant="ghost"
+        size="icon"
+        aria-label={t("explorer.actions.createFolder.modal.title")}
         onClick={createFolderModal.open}
-      />
+      >
+        <FolderPlus className="size-4 text-primary" />
+      </DsButton>
     ),
   });
 
@@ -111,8 +124,7 @@ export const ExplorerMoveFolder = ({
       selected.length === 1
         ? selected[0].id
         : (itemsExplorer.currentItemId ?? undefined);
-    const newParentItem =
-      selected.length === 1 ? selected[0] : item;
+    const newParentItem = selected.length === 1 ? selected[0] : item;
 
     const newRootId = newParentItem?.path.split(".")[0];
     return {
@@ -197,16 +209,24 @@ export const ExplorerMoveFolder = ({
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        aria-label={t("explorer.modal.move.aria_label")}
-        closeOnClickOutside
-        title={
-          <div className="modal__move__header">
-            <span className="modal__move__title">
-              {t("explorer.modal.move.title")}
-            </span>
-            <span className="modal__move__description">
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) onCloseModal();
+        }}
+      >
+        <DialogContent
+          aria-label={t("explorer.modal.move.aria_label")}
+          className={cn(
+            "sahla-ds gap-0 overflow-hidden p-0",
+            isMobile
+              ? "h-[100dvh] max-w-full rounded-none"
+              : "max-w-2xl",
+          )}
+        >
+          <DialogHeader className="px-4 pt-4">
+            <DialogTitle>{t("explorer.modal.move.title")}</DialogTitle>
+            <DialogDescription>
               <Trans
                 i18nKey={
                   itemsToMove.length === 1
@@ -218,51 +238,38 @@ export const ExplorerMoveFolder = ({
                   name: itemsToMove[0].title,
                 }}
               />
-            </span>
-          </div>
-        }
-        onClose={onCloseModal}
-        size={isDesktop ? ModalSize.MEDIUM : ModalSize.FULL}
-        leftActions={
-          <>
-            {showMoveToRootButton && (
-              <Button
-                variant="tertiary"
-                onClick={onMoveToRoot}
-                className="move-to-root-button"
-                fullWidth={true}
-              >
-                {t("explorer.modal.move.move_to_root")}
-              </Button>
-            )}
-          </>
-        }
-        rightActions={
-          <>
-            <Button variant="tertiary" onClick={onCloseModal} fullWidth={true}>
-              {t("common.cancel")}
-            </Button>
-            <Button
-              disabled={
-                !itemsExplorer.currentItemId &&
-                localSelectedItems.length === 0
-              }
-              onClick={onMove}
-              fullWidth={true}
-            >
-              {t("explorer.modal.move.move_button")}
-            </Button>
-          </>
-        }
-      >
-        <div className="noPadding">
-          <HorizontalSeparator withPadding={false} />
-          <div className="modal__move__explorer">
+            </DialogDescription>
+          </DialogHeader>
+          <Separator />
+          <div className="max-h-[55vh] overflow-y-auto px-4 py-2">
             <EmbeddedExplorer {...itemsExplorer} showSearch={true} />
           </div>
-          <HorizontalSeparator withPadding={false} />
-        </div>
-      </Modal>
+          <Separator />
+          <DialogFooter className="px-4 py-3 sm:justify-between">
+            <div>
+              {showMoveToRootButton && (
+                <DsButton variant="ghost" onClick={onMoveToRoot}>
+                  {t("explorer.modal.move.move_to_root")}
+                </DsButton>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <DsButton variant="outline" onClick={onCloseModal}>
+                {t("common.cancel")}
+              </DsButton>
+              <DsButton
+                disabled={
+                  !itemsExplorer.currentItemId &&
+                  localSelectedItems.length === 0
+                }
+                onClick={onMove}
+              >
+                {t("explorer.modal.move.move_button")}
+              </DsButton>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {createFolderModal.isOpen && (
         <ExplorerCreateFolderModal
           {...createFolderModal}

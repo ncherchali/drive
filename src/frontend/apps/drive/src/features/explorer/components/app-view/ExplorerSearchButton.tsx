@@ -1,6 +1,6 @@
 import { Button as DsButton } from "@/components/ui/button";
 import { useModal } from "@/components/use-modal";
-import { ExplorerSearchModal } from "@/features/explorer/components/modals/search/ExplorerSearchModal";
+import { ExplorerSearchModalDs } from "@/features/explorer/components/modals/search/ExplorerSearchModalDs";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Search } from "lucide-react";
@@ -33,7 +33,7 @@ export const ExplorerSearchButton = ({
 
   return (
     <>
-      <ExplorerSearchModal {...searchModal} defaultFilters={defaultFilters} />
+      <ExplorerSearchModalDs {...searchModal} defaultFilters={defaultFilters} />
 
       <DsButton
         variant="ghost"
