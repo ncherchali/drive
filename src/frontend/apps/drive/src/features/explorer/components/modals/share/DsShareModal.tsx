@@ -89,7 +89,7 @@ const RoleSelect = ({
     >
       <SelectValue />
     </SelectTrigger>
-    <SelectContent className="sahla-ds">
+    <SelectContent>
       {options.map((option) => (
         <SelectItem
           key={option.value}
@@ -139,7 +139,7 @@ export const DsShareModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sahla-ds max-w-xl gap-0 overflow-hidden p-0">
+      <DialogContent className="max-w-xl gap-0 overflow-hidden p-0">
         <DialogHeader className="px-5 pb-3 pt-5">
           <DialogTitle>{modalTitle}</DialogTitle>
         </DialogHeader>

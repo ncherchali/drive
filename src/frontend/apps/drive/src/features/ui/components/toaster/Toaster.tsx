@@ -37,7 +37,7 @@ export const ToasterItem = ({
       onDrop={(event) => onDrop?.(event)}
       className={cn(
         // `.sahla-ds` : reset scopé sur le contenu portalé (toast hors du DS).
-        "sahla-ds flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground shadow-lg",
+        "flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground shadow-lg",
         type === "error" && "border-destructive/40",
         className,
       )}

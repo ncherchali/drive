@@ -240,7 +240,7 @@ const HomeFooter = ({
 
 const HomePageLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="sahla-ds flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <AppHeader className="justify-between">
         <div className="flex items-center gap-2">
           <div className="drive__header__logo" />

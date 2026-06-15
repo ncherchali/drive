@@ -71,7 +71,7 @@ export const WopiEditorFrame = ({
 
   if (isError || !wopiInfo) {
     return (
-      <div className="sahla-ds flex h-full flex-col items-center justify-center gap-3 p-8 text-center text-muted-foreground">
+      <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center text-muted-foreground">
         <FileWarning className="size-10" aria-hidden />
         <p className="max-w-sm text-sm">
           {t(

@@ -99,7 +99,7 @@ export const DsFilePreview = ({
 
   return (
     <div
-      className="sahla-ds dark fixed inset-0 z-50 flex flex-col bg-background text-foreground"
+      className="dark fixed inset-0 z-50 flex flex-col bg-background text-foreground"
       role="dialog"
       aria-modal="true"
       aria-label={current.title}

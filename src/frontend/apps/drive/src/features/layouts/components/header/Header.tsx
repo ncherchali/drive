@@ -129,7 +129,7 @@ export const LanguagePickerUserMenu = () => {
           <ChevronDown className="size-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="sahla-ds min-w-40">
+      <DropdownMenuContent align="end" className="min-w-40">
         {LANGUAGES.map((language) => (
           <DropdownMenuItem
             key={language.value}

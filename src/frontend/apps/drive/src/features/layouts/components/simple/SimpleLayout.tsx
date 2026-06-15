@@ -15,7 +15,7 @@ export const SimpleLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <GlobalLayout>
       <div className="flex min-h-dvh flex-col bg-background text-foreground">
-        <header className="sahla-ds flex h-14 shrink-0 items-center justify-end gap-2 border-b border-solid border-border px-4">
+        <header className="flex h-14 shrink-0 items-center justify-end gap-2 border-b border-solid border-border px-4">
           <HeaderRight />
         </header>
         <main className="flex-1">{children}</main>

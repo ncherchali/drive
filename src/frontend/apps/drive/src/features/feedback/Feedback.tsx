@@ -86,7 +86,7 @@ export const Feedback = (props: { buttonProps?: Partial<ButtonProps> }) => {
     <>
       <Button
         variant="secondary"
-        className={cn("sahla-ds gap-2 c__feedback__button", buttonClassName)}
+        className={cn("gap-2 c__feedback__button", buttonClassName)}
         onClick={onClick}
         {...restButtonProps}
       >
@@ -100,7 +100,7 @@ export const Feedback = (props: { buttonProps?: Partial<ButtonProps> }) => {
           if (!open) modal.close();
         }}
       >
-        <DialogContent className="sahla-ds">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("feedback.modal.title")}</DialogTitle>
             <DialogDescription>

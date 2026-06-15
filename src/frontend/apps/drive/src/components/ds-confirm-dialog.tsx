@@ -51,7 +51,7 @@ export function DsConfirmDialog({
   return (
     <DirectionProvider dir={dir}>
       <AlertDialog open={open} onOpenChange={onOpenChange}>
-        <AlertDialogContent className="sahla-ds" dir={dir}>
+        <AlertDialogContent dir={dir}>
           <AlertDialogHeader>
             <AlertDialogTitle>{title}</AlertDialogTitle>
             <AlertDialogDescription>{description}</AlertDialogDescription>

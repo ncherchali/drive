@@ -12,7 +12,7 @@ export default function UnauthorizedPage() {
       message={t("403.title")}
       imageSrc="/assets/403-background.png"
     >
-      <Button asChild className="sahla-ds">
+      <Button asChild>
         <Link href="/">
           <Icon name="home" />
           {t("403.button")}

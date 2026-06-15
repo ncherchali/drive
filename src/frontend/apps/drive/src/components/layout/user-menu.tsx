@@ -52,7 +52,7 @@ export function UserMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="sahla-ds min-w-56"
+          className="min-w-56"
           style={{ direction: dir }}
         >
           {(name || email) && (

@@ -29,7 +29,7 @@ export const EntitlementDisclaimerModal = ({
   return (
     <DirectionProvider dir={dir}>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sahla-ds" dir={dir}>
+        <DialogContent dir={dir}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription asChild>

@@ -29,7 +29,7 @@ export default function FilePage() {
         message={t("explorer.files.not_found.description")}
         imageSrc="/assets/403-background.png"
       >
-        <Button asChild className="sahla-ds">
+        <Button asChild>
           <Link href="/">
             <Icon name="home" />
             {t("403.button")}

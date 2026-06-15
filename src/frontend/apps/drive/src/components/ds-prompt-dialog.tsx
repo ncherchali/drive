@@ -109,7 +109,7 @@ export function DsPromptDialog({
   return (
     <DirectionProvider dir={dir}>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sahla-ds" dir={dir}>
+        <DialogContent dir={dir}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             {/* Description a11y (sr-only) : le libellé du champ décrit la saisie

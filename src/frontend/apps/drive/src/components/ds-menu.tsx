@@ -153,7 +153,7 @@ function MenuDropdownDs({ options, onOpenChange, children }: MenuDropdownProps) 
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       {/* `.sahla-ds` : reset scopé sur le contenu portalé (hors du sous-arbre DS). */}
-      <DropdownMenuContent className="sahla-ds">
+      <DropdownMenuContent>
         <DsMenuItems options={(options ?? []) as Entry[]} />
       </DropdownMenuContent>
     </DropdownMenu>
@@ -244,7 +244,7 @@ function MenuContextDs({
             inchangé) ; les événements des enfants remontent au trigger. */}
         <div style={{ display: "contents" }}>{children}</div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="sahla-ds">
+      <ContextMenuContent>
         <DsContextItems options={items} />
       </ContextMenuContent>
     </ContextMenu>

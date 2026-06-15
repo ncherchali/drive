@@ -138,7 +138,7 @@ export const ContextMenuProvider = ({
           />
         </DropdownMenuTrigger>
         {/* `.sahla-ds` : reset scopé sur le contenu portalé (hors sous-arbre DS). */}
-        <DropdownMenuContent className="sahla-ds" align="start" sideOffset={2}>
+        <DropdownMenuContent align="start" sideOffset={2}>
           <ContextMenuItems items={items} />
         </DropdownMenuContent>
       </DropdownMenu>

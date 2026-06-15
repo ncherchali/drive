@@ -30,7 +30,7 @@ export function DsProvider({
   return (
     <DirectionProvider dir={dir}>
       <TooltipProvider>
-        <div dir={dir} className={cn("sahla-ds", className)} {...props}>
+        <div dir={dir} className={cn(className)} {...props}>
           {children}
         </div>
       </TooltipProvider>

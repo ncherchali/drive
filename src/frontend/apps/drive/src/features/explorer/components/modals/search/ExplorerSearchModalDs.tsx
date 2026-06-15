@@ -123,7 +123,7 @@ export const ExplorerSearchModalDs = ({
         }
       }}
     >
-      <DialogContent className="sahla-ds max-w-2xl gap-0 overflow-hidden p-0">
+      <DialogContent className="max-w-2xl gap-0 overflow-hidden p-0">
         <DialogTitle className="sr-only">
           {t("explorer.search.modal.title")}
         </DialogTitle>

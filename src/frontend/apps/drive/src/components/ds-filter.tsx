@@ -68,7 +68,7 @@ function DsFilter({
           <ChevronDown className="opacity-70" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="sahla-ds w-56 p-1">
+      <PopoverContent align="start" className="w-56 p-1">
         {list.map((option, index) => {
           const isSelected =
             option.value != null &&

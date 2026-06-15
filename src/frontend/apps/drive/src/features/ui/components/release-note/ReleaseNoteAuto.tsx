@@ -52,7 +52,7 @@ export const ReleaseNoteAuto = () => {
           if (!open) void handleClose();
         }}
       >
-        <DialogContent className="sahla-ds" dir={dir}>
+        <DialogContent dir={dir}>
           <DialogHeader>
             <DialogTitle>{mainTitle}</DialogTitle>
             <DialogDescription className="sr-only">

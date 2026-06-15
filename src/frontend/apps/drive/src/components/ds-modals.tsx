@@ -103,7 +103,7 @@ export const DsModalsProvider = ({
           }}
         >
           {active && (
-            <AlertDialogContent className="sahla-ds" dir={dir}>
+            <AlertDialogContent dir={dir}>
               <AlertDialogHeader>
                 {active.options.title && (
                   <AlertDialogTitle>{active.options.title}</AlertDialogTitle>

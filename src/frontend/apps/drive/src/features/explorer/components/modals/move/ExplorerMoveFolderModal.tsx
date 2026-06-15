@@ -218,7 +218,7 @@ export const ExplorerMoveFolder = ({
         <DialogContent
           aria-label={t("explorer.modal.move.aria_label")}
           className={cn(
-            "sahla-ds gap-0 overflow-hidden p-0",
+            "gap-0 overflow-hidden p-0",
             isMobile
               ? "h-[100dvh] max-w-full rounded-none"
               : "max-w-2xl",

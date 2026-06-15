@@ -53,7 +53,7 @@ export function DsSettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sahla-ds sm:max-w-md">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("settings.title", "Paramètres")}</DialogTitle>
           <DialogDescription>

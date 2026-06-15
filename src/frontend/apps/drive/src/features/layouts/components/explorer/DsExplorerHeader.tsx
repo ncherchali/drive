@@ -33,7 +33,7 @@ export function DsExplorerHeader({
   }, [currentItem, isMinimalLayout]);
 
   return (
-    <AppHeader className="sahla-ds">
+    <AppHeader>
       {/* Bascule de la sidebar (la marque Sahla vit désormais dans le SidebarHeader). */}
       <SidebarTrigger className="text-foreground/70" />
 
