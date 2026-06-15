@@ -39,10 +39,8 @@ import {
   DEFAULT_COLUMN_PREFERENCES,
   SortState,
 } from "../../types/columns";
-import { ColumnHeader } from "./headers/ColumnHeader";
 import { CustomizableColumnHeader } from "./headers/CustomizableColumnHeader";
 import { useDuplicatingItemsPoller } from "../../hooks/useDuplicatingItemsPoller";
-import { EmbeddedExplorerGridRow } from "./EmbeddedExplorerGridRow";
 import {
   DsExplorerGridRow,
   DsSelectAllCheckbox,
@@ -55,10 +53,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
 import posthog from "posthog-js";
 
 const POSTHOG_EVENT_COLUMN_TYPE_CHANGED = "column_type_changed";
@@ -130,9 +124,6 @@ export const useEmbeddedExplorerGirdContext = () => {
  */
 export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
   const { t } = useTranslation();
-  // Bascule data table shadcn (markup shadcn + cases + en-têtes triables) ; le
-  // moteur (TanStack, sélection, DnD, menu contextuel, clavier) est partagé.
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
 
   const [moveItem, setMoveItem] = useState<Item | null>(null);
   const moveModal = useModal();
@@ -400,12 +391,10 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
 
   const rows = table.getRowModel().rows;
 
-  // ----- Data table shadcn (derrière DS_EXPLORER_GRID) ----------------------
-  // Même moteur (rows/handlers ci-dessus) ; markup shadcn + colonne de cases +
-  // en-têtes triables. La grille ui-kit d'origine (ci-dessous) reste le repli.
-  if (useDs) {
-    return (
-      <EmbeddedExplorerGridContext.Provider value={contextValue}>
+  // Data table shadcn : markup shadcn + colonne de cases + en-têtes triables ;
+  // le moteur (TanStack, sélection, DnD, menu contextuel, clavier) est partagé.
+  return (
+    <EmbeddedExplorerGridContext.Provider value={contextValue}>
         <Table
           ref={tableRef}
           tabIndex={0}
@@ -494,101 +483,6 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
         {itemActionModals}
       </EmbeddedExplorerGridContext.Provider>
     );
-  }
-
-  return (
-    <>
-      {/* The context is only here to avoid the rerendering of react table cells
-      when passing props to cells, with a context // we avoid that by passing
-      props via context, but it's quite overkill, unfortunatly we did not find a
-      better solution. */}
-      <EmbeddedExplorerGridContext.Provider value={contextValue}>
-        <div
-          className={clsx("c__datagrid__table__container", {
-            explorer__compact: props.isCompact,
-          })}
-        >
-          <table ref={tableRef} tabIndex={0} onKeyDown={onKeyDown}>
-            <thead>
-              <tr>
-                {/* This one stands for the mobile column */}
-                <th></th>
-                <th className="explorer__grid__th--title">
-                  <ColumnHeader
-                    label={t("explorer.grid.name")}
-                    columnId="title"
-                    sortState={props.sortState ?? null}
-                    onSort={handleSortTitle}
-                    sortable={props.viewSortable !== false}
-                  />
-                </th>
-                {!props.isCompact && (
-                  <>
-                    <th className="explorer__grid__th--info-col-1">
-                      {props.prefs && props.column1Config ? (
-                        <CustomizableColumnHeader
-                          slot="column1"
-                          currentType={props.prefs.column1}
-                          defaultType={DEFAULT_COLUMN_PREFERENCES.column1}
-                          sortState={props.sortState ?? null}
-                          onSort={handleSortColumn}
-                          onChangeColumn={handleChangeCol1}
-                          otherColumnType={props.prefs.column2}
-                          sortable={props.viewSortable !== false}
-                        />
-                      ) : (
-                        <div className="c__datagrid__header fs-h5 c__datagrid__header--sortable">
-                          {t("explorer.grid.last_update")}
-                        </div>
-                      )}
-                    </th>
-                    <th className="explorer__grid__th--info-col-2">
-                      {props.prefs && props.column2Config ? (
-                        <CustomizableColumnHeader
-                          slot="column2"
-                          currentType={props.prefs.column2}
-                          defaultType={DEFAULT_COLUMN_PREFERENCES.column2}
-                          sortState={props.sortState ?? null}
-                          onSort={handleSortColumn}
-                          onChangeColumn={handleChangeCol2}
-                          otherColumnType={props.prefs.column1}
-                          sortable={props.viewSortable !== false}
-                        />
-                      ) : null}
-                    </th>
-                  </>
-                )}
-                {!props.isCompact && (
-                  <th className="explorer__grid__th--actions"></th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <EmbeddedExplorerGridRow
-                  key={row.original.id}
-                  row={row}
-                  isOvered={!!overedItemIds[row.original.id]}
-                  onClickRow={handleRowClick}
-                  onContextMenuRow={handleRowContextMenu}
-                  onOver={handleRowOver}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {moveModal.isOpen && moveItem && (
-          <ExplorerMoveFolder
-            {...moveModal}
-            onClose={handleCloseMoveModal}
-            itemsToMove={[moveItem]}
-            initialFolderId={props.parentItem?.id}
-          />
-        )}
-        {itemActionModals}
-      </EmbeddedExplorerGridContext.Provider>
-    </>
-  );
 };
 
 export type EmbeddedExplorerGridTypeCellProps = CellContext<Item, string> & {

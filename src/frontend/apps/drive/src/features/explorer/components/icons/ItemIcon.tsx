@@ -19,11 +19,6 @@ import {
   ICON_SIZE_PX,
   type IconSizeToken,
 } from "@/components/ui/icon";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
-
 type ItemIconProps = {
   item: Item;
   size?: IconSize;
@@ -37,22 +32,18 @@ export const ItemIcon = ({
   size = IconSize.MEDIUM,
   type = "normal",
 }: ItemIconProps) => {
-  // Repeinture DS (phase 12+) : derrière DS_EXPLORER_GRID, les icônes d'espaces /
-  // dossiers / éléments suspects passent en lucide. Les icônes de TYPE MIME des
-  // fichiers restent sur le set ui-kit (set complet, hors périmètre).
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
-  if (useDs) {
-    // Les valeurs de l'enum IconSize sont identiques aux jetons de l'adaptateur.
-    const token = size as unknown as IconSizeToken;
-    // Espace partagé/public → tuile teintée (couleur dérivée du nom), façon
-    // Linear/Notion : différencie chaque espace et le distingue d'un dossier.
-    if (isTiledWorkspace(item)) {
-      return <WorkspaceTile name={item.title || "?"} px={ICON_SIZE_PX[token]} />;
-    }
-    const dsIcon = getItemDsIcon(item);
-    if (dsIcon) {
-      return <DsIcon icon={dsIcon} size={token} />;
-    }
+  // Icônes DS : espaces / dossiers / éléments suspects en lucide ; les fichiers
+  // (dsIcon === null) retombent sur les icônes de TYPE MIME locales (FileIcon).
+  // Les valeurs de l'enum IconSize sont identiques aux jetons de l'adaptateur.
+  const token = size as unknown as IconSizeToken;
+  // Espace partagé/public → tuile teintée (couleur dérivée du nom), façon
+  // Linear/Notion : différencie chaque espace et le distingue d'un dossier.
+  if (isTiledWorkspace(item)) {
+    return <WorkspaceTile name={item.title || "?"} px={ICON_SIZE_PX[token]} />;
+  }
+  const dsIcon = getItemDsIcon(item);
+  if (dsIcon) {
+    return <DsIcon icon={dsIcon} size={token} />;
   }
 
   const extendedIcon = getItemExtendedIcon(item, type);

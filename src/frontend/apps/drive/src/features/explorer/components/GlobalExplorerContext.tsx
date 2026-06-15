@@ -20,16 +20,11 @@ import {
 } from "@/components/tree";
 import { ExplorerDndProvider } from "./ExplorerDndProvider";
 import { useFirstLevelItems } from "../hooks/useQueries";
-import { useTranslation } from "react-i18next";
 import { getItemTitle } from "../utils/utils";
 import { SpinnerPage } from "@/features/ui/components/spinner/SpinnerPage";
 
 import { useAuth } from "@/features/auth/Auth";
 import { DefaultRoute } from "@/utils/defaultRoutes";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
 import { CustomFilesPreview } from "@/features/ui/preview/CustomFilesPreview";
 import {
   SelectionStoreContext,
@@ -308,41 +303,13 @@ const TreeProviderInitializer = ({
   children: React.ReactNode;
 }) => {
   const { setTreeIsInitialized } = useGlobalExplorer();
-  const { t } = useTranslation();
   const { user } = useAuth();
-  // En mode DS, « Favoris » est une entrée de nav DS (DsExplorerSidebar), pas un
-  // nœud de l'arbre → on n'injecte plus le nœud favoris ici (évite le doublon et
-  // l'indentation désalignée). En non-DS, comportement inchangé.
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
-
   const treeContext = useTreeContext<TreeItem>();
 
   const initialTree = async () => {
-    const items: TreeViewDataType<TreeItem>[] = [];
-
-    if (!useDs) {
-      const response = await getDriver().getFavoriteItems({
-        page: 1,
-        type: ItemType.FOLDER,
-      });
-
-      const favorites = response.children.map((item) =>
-        itemToTreeItem(item, DefaultRoute.FAVORITES, true),
-      );
-
-      const favoritesNode: TreeViewDataType<TreeItem> = {
-        id: DefaultRoute.FAVORITES,
-        nodeType: TreeViewNodeTypeEnum.SIMPLE_NODE,
-        childrenCount: favorites.length,
-        children: favorites,
-        label: t("explorer.tree.favorites"),
-        pagination: response.pagination,
-      };
-
-      items.push(favoritesNode);
-    }
-
-    treeContext?.treeData.resetTree(items);
+    // L'arbre démarre vide : les espaces et « Favoris » sont des entrées de la
+    // nav DS (DsExplorerSidebar), pas des nœuds d'arbre.
+    treeContext?.treeData.resetTree([]);
     setTreeIsInitialized(true);
   };
 

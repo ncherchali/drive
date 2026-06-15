@@ -8,10 +8,6 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
 
 export type BreadcrumbItem = {
   content: ReactNode;
@@ -29,12 +25,12 @@ export const Breadcrumbs = ({
   displayBack = false,
 }: BreadcrumbsProps) => {
   const { t } = useTranslation();
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
 
   // Fil d'Ariane DS : structure shadcn (nav/ol/li) + séparateur chevron lucide.
   // Les boutons (`.c__breadcrumbs__button`) sont conservés comme contenu et
-  // repeints en liens DS (cf. ds-explorer-grid.css).
-  if (useDs && !displayBack) {
+  // repeints en liens DS (cf. ds-explorer-grid.css). La branche `displayBack`
+  // ci-dessous (bouton retour) reste le seul cas non-DS.
+  if (!displayBack) {
     return (
       <Breadcrumb data-testid="explorer-breadcrumbs">
         <BreadcrumbList>

@@ -5,12 +5,7 @@ import {
   ORDERED_DEFAULT_ROUTES,
 } from "@/utils/defaultRoutes";
 import { Icon as DsIcon } from "@/components/ui/icon";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
 import { Separator } from "@/components/ui/separator";
-import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useCallback, useEffect, useState } from "react";
 import { ExplorerTreeActions } from "./ExplorerTreeActions";
 import { ExplorerTreeWorkspaces } from "./ExplorerTreeWorkspaces";
@@ -50,7 +45,6 @@ type ExplorerTreeNavNode = {
 export const ExplorerTreeNavDefault = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   const [nodes, setNodes] = useState<ExplorerTreeNavNode[]>([]);
 
   const initTree = useCallback(async () => {
@@ -64,15 +58,11 @@ export const ExplorerTreeNavDefault = () => {
       id: route.id,
       label: t(route.label),
       route: route.route,
-      icon: useDs ? (
-        <DsIcon icon={DS_ROUTE_ICONS[route.id]} size="small" />
-      ) : (
-        <route.icon size={IconSize.SMALL} />
-      ),
+      icon: <DsIcon icon={DS_ROUTE_ICONS[route.id]} size="small" />,
     }));
 
     setNodes(nodes);
-  }, [user, t, useDs]);
+  }, [user, t]);
 
   useEffect(() => {
     initTree();

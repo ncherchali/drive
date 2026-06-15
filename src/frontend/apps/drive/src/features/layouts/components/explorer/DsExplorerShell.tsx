@@ -8,14 +8,9 @@
 // les couleurs marchent sans le reset ; les bordures des primitives sidebar sont
 // forcées `solid` via ds-explorer-grid.css (preflight global off).
 import * as React from "react";
-import clsx from "clsx";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { MetaPanel } from "@/components/layout/app-shell";
 import { DsExplorerSidebar } from "./DsExplorerSidebar";
-import {
-  FLAG_DS_EXPLORER_GRID,
-  useFeatureFlag,
-} from "@/features/flags/useFeatureFlag";
 
 export interface DsExplorerShellProps {
   children: React.ReactNode;
@@ -36,11 +31,6 @@ export function DsExplorerShell({
   rightPanelIsOpen = false,
   hideLeftPanelOnDesktop = false,
 }: DsExplorerShellProps) {
-  // Repeinture DS de la grille de l'explorateur, derrière son propre flag : la
-  // classe marqueur posée ici (ancêtre de tout le contenu) fait gagner les
-  // sélecteurs `.sahla-ds-grid …` en spécificité sur Cunningham.
-  const dsGrid = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
-
   // Largeur de sidebar réglable (poignée de redimensionnement), persistée.
   const [sidebarWidth, setSidebarWidth] = React.useState(DEFAULT_SIDEBAR_WIDTH);
   React.useEffect(() => {
@@ -53,11 +43,7 @@ export function DsExplorerShell({
   }, []);
 
   return (
-    <div
-      className={clsx("h-dvh w-full bg-background text-foreground", {
-        "sahla-ds-grid": dsGrid,
-      })}
-    >
+    <div className="sahla-ds-grid h-dvh w-full bg-background text-foreground">
       <SidebarProvider
         className="h-full min-h-0"
         style={{ "--sidebar-width": sidebarWidth } as React.CSSProperties}
