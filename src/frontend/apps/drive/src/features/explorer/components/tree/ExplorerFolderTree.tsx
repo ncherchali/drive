@@ -2,7 +2,7 @@
 // pour être réutilisable hors du markup de nav historique — notamment dans la
 // sidebar shadcn (DsExplorerSidebar), où la nav plate est reconstruite mais où
 // l'arbre (contexte propre + drag-and-drop) est CONSERVÉ tel quel (décision D2).
-import { useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useModal } from "@/components/use-modal";
 import { useGlobalExplorer } from "../GlobalExplorerContext";
 import { Item, TreeItem } from "@/features/drivers/types";
 import { getDefaultRoute } from "@/utils/defaultRoutes";

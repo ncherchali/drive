@@ -1,4 +1,5 @@
-import { Button, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { useModal } from "@/components/use-modal";
 import { ArrowRight, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
@@ -42,13 +43,14 @@ export const ExplorerSelectionBar = () => {
         </div>
       </div>
       <div className="explorer__selection-bar__actions">
-        <Button
+        <DsButton
           onClick={handleClearSelection}
-          icon={<X className="size-4" />}
-          variant="tertiary"
-          size="small"
+          variant="ghost"
+          size="icon"
           aria-label={t("explorer.selectionBar.reset_selection")}
-        />
+        >
+          <X className="size-4" />
+        </DsButton>
       </div>
     </div>
   );
@@ -119,20 +121,22 @@ export const ExplorerSelectionBarActions = () => {
         size="small"
         aria-label={t("explorer.selectionBar.download")}
       /> */}
-      <Button
+      <DsButton
         onClick={handleDelete}
-        icon={<Trash2 className="size-4" />}
-        variant="tertiary"
-        size="small"
+        variant="ghost"
+        size="icon"
         aria-label={t("explorer.selectionBar.delete")}
-      />
-      <Button
+      >
+        <Trash2 className="size-4" />
+      </DsButton>
+      <DsButton
         onClick={moveModal.open}
-        icon={<ArrowRight className="size-4" />}
-        variant="tertiary"
-        size="small"
+        variant="ghost"
+        size="icon"
         aria-label={t("explorer.selectionBar.move")}
-      />
+      >
+        <ArrowRight className="size-4" />
+      </DsButton>
 
       {moveModal.isOpen && (
         <ExplorerMoveFolder

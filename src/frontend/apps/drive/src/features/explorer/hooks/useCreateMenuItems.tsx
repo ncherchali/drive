@@ -14,7 +14,7 @@ import {
 } from "../components/modals/ExplorerCreateFileModal";
 import { ExplorerCreateFolderModal } from "../components/modals/ExplorerCreateFolderModal";
 import { ExplorerCreateWorkspaceModal } from "../components/modals/ExplorerCreateWorkspaceModal";
-import { useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useModal } from "@/components/use-modal";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { isMyFilesRoute } from "@/utils/defaultRoutes";

@@ -8,7 +8,7 @@
 // intacts. La modale de partage (ItemShareModal) reste Cunningham — sa réécriture
 // DS (RBAC) est une phase dédiée (cf. docs/ds-migration-plan.md, phase 10b).
 import { X, Users } from "lucide-react";
-import { useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useModal } from "@/components/use-modal";
 import { useTranslation } from "react-i18next";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import { Item, ItemUploadState } from "@/features/drivers/types";

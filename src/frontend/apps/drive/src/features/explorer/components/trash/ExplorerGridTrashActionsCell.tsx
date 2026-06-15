@@ -10,7 +10,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MenuDropdown } from "@/components/ds-menu";
 import { MoreHorizontal, Trash2 } from "lucide-react";
-import { Button, Decision, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { useModal } from "@/components/use-modal";
 import undoIcon from "@/assets/icons/undo.svg";
 import cancelIcon from "@/assets/icons/cancel.svg";
 
@@ -37,7 +38,7 @@ export const ExplorerGridTrashActionsCell = (
     await restoreItem.mutateAsync([item.id]);
   };
 
-  const handleHardDelete = async (decision: Decision) => {
+  const handleHardDelete = async (decision: "yes" | null) => {
     if (!decision) {
       return;
     }
@@ -72,12 +73,13 @@ export const ExplorerGridTrashActionsCell = (
         isOpen={isOpen}
         onOpenChange={setIsOpen}
       >
-        <Button
+        <DsButton
           onClick={() => setIsOpen(!isOpen)}
-          variant="tertiary"
-          className="c__language-picker"
-          icon={<MoreHorizontal className="size-4" />}
-        ></Button>
+          variant="ghost"
+          size="icon"
+        >
+          <MoreHorizontal className="size-4" />
+        </DsButton>
       </MenuDropdown>
       {hardDeleteConfirmationModal.isOpen && (
         <HardDeleteConfirmationModal

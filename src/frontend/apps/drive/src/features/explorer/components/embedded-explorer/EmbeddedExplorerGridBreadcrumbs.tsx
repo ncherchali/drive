@@ -13,17 +13,14 @@ import {
 import { useTranslation } from "react-i18next";
 import { Icon, IconSize } from "@/features/ui/components/icon/Icon";
 import { ChevronDown } from "lucide-react";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
 import { NavigationItem } from "../GlobalExplorerContext";
 import { ItemActionDropdown } from "../item-actions/ItemActionDropdown";
 import clsx from "clsx";
 import { useBreadcrumbQuery } from "../../hooks/useBreadcrumb";
 import { useItem } from "../../hooks/useQueries";
 import { useRouter } from "next/router";
-import { Button, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { useModal } from "@/components/use-modal";
 import { ItemShareModal } from "../modals/share/ItemShareModal";
 import {
   clearFromRoute,
@@ -292,7 +289,6 @@ export const BreadcrumbItemButton = ({
 export const LastItemBreadcrumb = ({ item }: { item: Item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const shareModal = useModal();
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   const icon = useMemo(() => {
     if (item.computed_link_reach === LinkReach.PUBLIC) {
       return (
@@ -327,25 +323,20 @@ export const LastItemBreadcrumb = ({ item }: { item: Item }) => {
             isActive={true}
             item={item}
             onClick={() => setIsOpen(true)}
-            rightIcon={
-              useDs ? (
-                <ChevronDown className="size-4 opacity-70" />
-              ) : (
-                <span className="material-icons">arrow_drop_down</span>
-              )
-            }
+            rightIcon={<ChevronDown className="size-4 opacity-70" />}
           />
         }
       />
       {icon && (
         <>
-          <Button
-            variant="tertiary"
-            size="small"
-            icon={icon}
+          <DsButton
+            variant="ghost"
+            size="icon"
             onClick={() => shareModal.open()}
             data-testid="share-button"
-          />
+          >
+            {icon}
+          </DsButton>
           {shareModal.isOpen && <ItemShareModal {...shareModal} item={item} />}
         </>
       )}

@@ -28,7 +28,7 @@ import { useTableKeyboardNavigation } from "@/features/explorer/hooks/useTableKe
 import clsx from "clsx";
 import { isTablet } from "@/features/ui/components/responsive/ResponsiveDivs";
 import { useDragItemContext } from "@/features/explorer/components/ExplorerDndProvider";
-import { useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useModal } from "@/components/use-modal";
 import { ExplorerMoveFolder } from "@/features/explorer/components/modals/move/ExplorerMoveFolderModal";
 import { useContextMenuContext } from "@/components/ds-context-menu";
 import { useItemActionMenuItems } from "../../hooks/useItemActionMenuItems";

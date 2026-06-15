@@ -1,22 +1,14 @@
-import { Button, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useModal } from "@/components/use-modal";
 import {
   NavigationEventType,
   useGlobalExplorer,
 } from "@/features/explorer/components/GlobalExplorerContext";
-import {
-  DropdownMenu,
-  HorizontalSeparator,
-  IconSize,
-  useDropdownMenu,
-} from "@gouvfr-lasuite/ui-kit";
+import { MenuDropdown, useDropdownMenu } from "@/components/ds-menu";
+import { Separator } from "@/components/ui/separator";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { ItemIcon } from "@/features/explorer/components/icons/ItemIcon";
 import { Button as DsButton } from "@/components/ui/button";
 import { ChevronLeft, FolderPlus, MoreVertical, Upload } from "lucide-react";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
-import createFolderSvg from "@/assets/icons/add_folder.svg";
 import { EmbeddedExplorerGridBreadcrumbs } from "@/features/explorer/components/embedded-explorer/EmbeddedExplorerGridBreadcrumbs";
 import { ExplorerCreateFolderModal } from "../modals/ExplorerCreateFolderModal";
 import { ImportDropdown } from "../item-actions/ImportDropdown";
@@ -40,7 +32,6 @@ export const AppExplorerBreadcrumbs = () => {
   const { t } = useTranslation();
   const createFolderModal = useModal();
   const importDropdown = useDropdownMenu();
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   const onDefaultRoute = isDefaultRoute(router.pathname);
   const defaultRouteId = getDefaultRouteId(router.pathname);
 
@@ -72,55 +63,31 @@ export const AppExplorerBreadcrumbs = () => {
             <ImportDropdown
               importMenu={importDropdown}
               trigger={
-                useDs ? (
-                  <DsButton
-                    variant="ghost"
-                    size="sm"
-                    className="gap-1.5"
-                    onClick={() => importDropdown.setIsOpen(true)}
-                  >
-                    <Upload className="size-4" />
-                    {t("explorer.tree.import.label")}
-                  </DsButton>
-                ) : (
-                  <Button
-                    variant="tertiary"
-                    size="small"
-                    onClick={() => {
-                      importDropdown.setIsOpen(true);
-                    }}
-                  >
-                    {t("explorer.tree.import.label")}
-                  </Button>
-                )
+                <DsButton
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => importDropdown.setIsOpen(true)}
+                >
+                  <Upload className="size-4" />
+                  {t("explorer.tree.import.label")}
+                </DsButton>
               }
             />
-            {useDs ? (
-              <DsButton
-                variant="ghost"
-                size="icon"
-                data-testid="create-folder-button"
-                aria-label={t("explorer.tree.create.folder", "Créer un dossier")}
-                onClick={() => createFolderModal.open()}
-              >
-                <FolderPlus className="size-4" />
-              </DsButton>
-            ) : (
-              <Button
-                icon={<img src={createFolderSvg.src} alt="Create Folder" />}
-                variant="tertiary"
-                data-testid="create-folder-button"
-                size="small"
-                onClick={() => {
-                  createFolderModal.open();
-                }}
-              />
-            )}
+            <DsButton
+              variant="ghost"
+              size="icon"
+              data-testid="create-folder-button"
+              aria-label={t("explorer.tree.create.folder", "Créer un dossier")}
+              onClick={() => createFolderModal.open()}
+            >
+              <FolderPlus className="size-4" />
+            </DsButton>
           </div>
         )}
       </div>
       <div className="explorer__content__separator">
-        <HorizontalSeparator withPadding={false} />
+        <Separator />
       </div>
       <ExplorerCreateFolderModal {...createFolderModal} parentId={item?.id} />
     </>
@@ -168,17 +135,19 @@ export const ExplorerBreadcrumbsMobile = () => {
             {t(defaultRouteData.label)}
           </div>
           {defaultRouteId === DefaultRoute.MY_FILES && (
-            <DropdownMenu
+            <MenuDropdown
               options={menuItems}
               isOpen={isCreateMenuOpen}
               onOpenChange={setIsCreateMenuOpen}
             >
-              <Button
-                variant="tertiary"
-                icon={<MoreVertical className="size-4" />}
+              <DsButton
+                variant="ghost"
+                size="icon"
                 onClick={() => setIsCreateMenuOpen(true)}
-              />
-            </DropdownMenu>
+              >
+                <MoreVertical className="size-4" />
+              </DsButton>
+            </MenuDropdown>
           )}
         </div>
         {defaultRouteId === DefaultRoute.MY_FILES && createModals}
@@ -213,10 +182,9 @@ export const ExplorerBreadcrumbsMobile = () => {
       ) : (
         <div className="explorer__content__breadcrumbs--mobile__container">
           <div className="explorer__content__breadcrumbs--mobile__container__actions">
-            <Button
-              variant="bordered"
-              color="neutral"
-              icon={<ChevronLeft className="size-4" />}
+            <DsButton
+              variant="outline"
+              size="icon"
               onClick={() => {
                 if (parent?.id === DefaultRoute.SHARED_WITH_ME) {
                   router.push("/explorer/items/shared-with-me");
@@ -233,7 +201,9 @@ export const ExplorerBreadcrumbsMobile = () => {
                   });
                 }
               }}
-            />
+            >
+              <ChevronLeft className="size-4" />
+            </DsButton>
           </div>
           <div className="explorer__content__breadcrumbs--mobile__container__info">
             <div className="explorer__content__breadcrumbs--mobile__container__info__title">
@@ -260,11 +230,13 @@ export const ExplorerBreadcrumbsMobile = () => {
           setIsOpen={setIsActionMenuOpen}
           allowCreate={!!item.abilities?.children_create}
           trigger={
-            <Button
-              variant="tertiary"
-              icon={<MoreVertical className="size-4" />}
+            <DsButton
+              variant="ghost"
+              size="icon"
               onClick={() => setIsActionMenuOpen(true)}
-            />
+            >
+              <MoreVertical className="size-4" />
+            </DsButton>
           }
         />
       )}

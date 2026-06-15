@@ -1,7 +1,9 @@
-import { Button, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { useModal } from "@/components/use-modal";
 import { ExplorerSearchModal } from "@/features/explorer/components/modals/search/ExplorerSearchModal";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { Search } from "lucide-react";
 import { ItemFilters } from "@/features/drivers/Driver";
 export const ExplorerSearchButton = ({
   keyboardShortcut,
@@ -33,12 +35,14 @@ export const ExplorerSearchButton = ({
     <>
       <ExplorerSearchModal {...searchModal} defaultFilters={defaultFilters} />
 
-      <Button
-        variant="tertiary"
+      <DsButton
+        variant="ghost"
+        size="icon"
         aria-label={t("explorer.tree.search")}
-        icon={<span className="material-icons">search</span>}
         onClick={searchModal.open}
-      />
+      >
+        <Search className="size-4" />
+      </DsButton>
     </>
   );
 };
