@@ -1,19 +1,18 @@
 // Sidebar de l'explorateur portée sur le composant shadcn (Sidebar/Radix).
 // Remplace le conteneur + la nav historiques quand le flag DS_APP_SHELL est actif.
 //
-// Périmètre : nav PLATE (routes par défaut, espaces, corbeille) reconstruite en
-// `SidebarMenu` ; ARBRE de dossiers dépliable CONSERVÉ via <ExplorerFolderTree/>.
-// Mode `offcanvas` (contenu riche non réductible en icônes). La largeur est
-// RÉGLABLE par une poignée de redimensionnement (drag → `onResize`).
+// Périmètre : nav PLATE (routes par défaut + « Espaces » + Corbeille) en
+// `SidebarMenu`. L'arbre de dossiers (vide en mode DS) a été retiré : les espaces
+// passent par le lien « Espaces » (vue centrale /explorer/spaces) et les tuiles.
+// Mode `offcanvas`. Largeur RÉGLABLE par une poignée de redimensionnement.
 //
-// Placement (revu) : « + Nouveau » = CTA primaire pleine largeur en tête ; la
-// RECHERCHE n'est plus dupliquée ici (elle vit dans la barre du haut, DS).
+// Pied : profil utilisateur (avatar + menu) avec Paramètres + Déconnexion.
 import * as React from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { Plus, Settings, Trash2 } from "lucide-react";
-import { useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
+import { useDropdownMenu } from "@/components/ds-menu";
 
 import {
   Sidebar,
@@ -22,7 +21,6 @@ import {
   SidebarGroup,
   SidebarGroupAction,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -31,8 +29,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Icon as DsIcon } from "@/components/ui/icon";
 import { MenuDropdown } from "@/components/ds-menu";
+import { UserMenu } from "@/components/layout/user-menu";
+import { cn } from "@/utils/cn";
 import { ExplorerCreateWorkspaceModal } from "@/features/explorer/components/modals/ExplorerCreateWorkspaceModal";
 import { DsSettingsDialog } from "./DsSettingsDialog";
 import {
@@ -45,11 +46,12 @@ import { useCreateMenuItems } from "@/features/explorer/hooks/useCreateMenuItems
 import { itemIsWorkspace } from "@/features/drivers/utils";
 import { ItemIcon } from "@/features/explorer/components/icons/ItemIcon";
 import { IconSize } from "@/features/ui/components/icon/Icon";
-import { ExplorerFolderTree } from "@/features/explorer/components/tree/ExplorerFolderTree";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
+import { useAuth, logout } from "@/features/auth/Auth";
 
 const MIN_W = 220;
 const MAX_W = 460;
+const SPACES_ROUTE = "/explorer/spaces";
 
 export function DsExplorerSidebar({
   onResize,
@@ -60,6 +62,7 @@ export function DsExplorerSidebar({
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
   const { itemId } = useGlobalExplorer();
+  const { user } = useAuth();
   const { data: firstLevelItems } = useFirstLevelItems();
   const [createSpaceOpen, setCreateSpaceOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -76,8 +79,7 @@ export function DsExplorerSidebar({
   };
 
   // Toutes les routes par défaut, Favoris INCLUS : en mode DS, le nœud Favoris
-  // n'est plus injecté dans l'arbre (cf. GlobalExplorerContext) → il vit ici,
-  // aligné avec les autres entrées de nav.
+  // n'est plus injecté dans l'arbre → il vit ici, aligné avec les autres entrées.
   const navRoutes = ORDERED_DEFAULT_ROUTES;
 
   return (
@@ -97,12 +99,12 @@ export function DsExplorerSidebar({
       </SidebarHeader>
 
       <SidebarContent>
-        {/* CTA primaire : + Nouveau (pleine largeur). */}
+        {/* CTA primaire : + Nouveau. */}
         <SidebarGroup className="pb-1">
           <DsCreateButton />
         </SidebarGroup>
 
-        {/* Navigation principale (routes par défaut + Corbeille remontée). */}
+        {/* Navigation principale (routes par défaut + Espaces + Corbeille). */}
         <SidebarGroup className="py-1">
           <SidebarMenu>
             {navRoutes.map((route) => (
@@ -130,24 +132,34 @@ export function DsExplorerSidebar({
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Arbre de dossiers dépliable — TreeView ui-kit conservé. */}
-        <SidebarGroup className="py-0">
-          <ExplorerFolderTree />
-        </SidebarGroup>
-
-        {/* Espaces (workspaces) — toujours affiché ; action « + » pour en créer
-            (gestion de plusieurs espaces), tuiles teintées via ItemIcon. */}
+        {/* Espaces : titre = LIEN vers la vue centrale des espaces ; action « + »
+            pour en créer ; tuiles teintées d'accès rapide. */}
         <SidebarGroup>
-          <SidebarGroupLabel>
+          <button
+            type="button"
+            onClick={() => navigate(SPACES_ROUTE)}
+            className={cn(
+              "flex h-7 w-full items-center rounded-md px-2 text-xs font-medium outline-none ring-sidebar-ring transition hover:text-sidebar-foreground focus-visible:ring-2",
+              currentPath === SPACES_ROUTE
+                ? "text-sidebar-foreground"
+                : "text-sidebar-foreground/70",
+            )}
+          >
             {t("explorer.tree.workspaces.title")}
-          </SidebarGroupLabel>
+          </button>
           <SidebarGroupAction
-            title={t("explorer.actions.createWorkspace.modal.title", "Créer un espace")}
+            title={t(
+              "explorer.actions.createWorkspace.modal.title",
+              "Créer un espace",
+            )}
             onClick={() => setCreateSpaceOpen(true)}
           >
             <Plus />
             <span className="sr-only">
-              {t("explorer.actions.createWorkspace.modal.title", "Créer un espace")}
+              {t(
+                "explorer.actions.createWorkspace.modal.title",
+                "Créer un espace",
+              )}
             </span>
           </SidebarGroupAction>
           {workspaces.length > 0 && (
@@ -173,19 +185,21 @@ export function DsExplorerSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Accès aux paramètres de l'application (pinned en bas). */}
+      {/* Pied : profil utilisateur (avatar + menu Paramètres / Déconnexion). */}
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip={t("settings.title", "Paramètres")}
-              onClick={() => setSettingsOpen(true)}
-            >
-              <Settings className="size-4" />
-              <span>{t("settings.title", "Paramètres")}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        {user && (
+          <div className="flex items-center gap-2 px-1 py-1">
+            <UserMenu name={user.email} onLogout={logout}>
+              <DropdownMenuItem onSelect={() => setSettingsOpen(true)}>
+                <Settings />
+                {t("settings.title", "Paramètres")}
+              </DropdownMenuItem>
+            </UserMenu>
+            <span className="min-w-0 flex-1 truncate text-sm text-sidebar-foreground/80">
+              {user.email}
+            </span>
+          </div>
+        )}
       </SidebarFooter>
 
       {onResize && <SidebarResizeHandle onResize={onResize} />}
@@ -200,8 +214,8 @@ export function DsExplorerSidebar({
   );
 }
 
-/** Bouton « + Nouveau » : CTA primaire DS pleine largeur ouvrant le menu de
- *  création (dossier / espace / fichier / import) — pont data-driven ds-menu. */
+/** Bouton « + Nouveau » : CTA primaire DS ouvrant le menu de création
+ *  (dossier / espace / fichier / import) — pont data-driven ds-menu. */
 function DsCreateButton() {
   const { t } = useTranslation();
   const { treeIsInitialized } = useGlobalExplorer();

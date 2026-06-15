@@ -9,8 +9,7 @@
 import { useMemo } from "react";
 import { AppHeader } from "@/components/layout/app-header";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { UserMenu } from "@/components/layout/user-menu";
-import { useAuth, logout } from "@/features/auth/Auth";
+import { useAuth } from "@/features/auth/Auth";
 import { ExplorerSearchButtonDs } from "@/features/explorer/components/app-view/ExplorerSearchButtonDs";
 import { Item } from "@/features/drivers/types";
 import { ItemFilters } from "@/features/drivers/Driver";
@@ -38,8 +37,8 @@ export function DsExplorerHeader({
       {/* Bascule de la sidebar (la marque Sahla vit désormais dans le SidebarHeader). */}
       <SidebarTrigger className="text-foreground/70" />
 
-      {/* Actions à droite : recherche (toujours visible, ⌘K) + menu utilisateur.
-          La recherche est désormais ICI (et non plus dupliquée dans la sidebar). */}
+      {/* Actions à droite : recherche (toujours visible, ⌘K). Le menu utilisateur
+          est désormais dans le pied de la sidebar. */}
       <div className="ms-auto flex items-center gap-2">
         {user && (
           <ExplorerSearchButtonDs
@@ -47,7 +46,6 @@ export function DsExplorerHeader({
             defaultFilters={defaultFilters}
           />
         )}
-        {user && <UserMenu name={user.email} onLogout={logout} />}
       </div>
     </AppHeader>
   );
