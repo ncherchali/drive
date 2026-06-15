@@ -11,7 +11,7 @@ import {
   Breadcrumbs,
 } from "@/features/ui/components/breadcrumbs/Breadcrumbs";
 import { useTranslation } from "react-i18next";
-import { Icon, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { Icon, IconSize } from "@/features/ui/components/icon/Icon";
 import { ChevronDown } from "lucide-react";
 import {
   useFeatureFlag,

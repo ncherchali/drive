@@ -10,7 +10,7 @@
 import { X, Users } from "lucide-react";
 import { useModal } from "@gouvfr-lasuite/cunningham-react";
 import { useTranslation } from "react-i18next";
-import { IconSize } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { Item, ItemUploadState } from "@/features/drivers/types";
 import { ItemIcon } from "../icons/ItemIcon";
 import { useGlobalExplorer } from "../GlobalExplorerContext";

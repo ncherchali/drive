@@ -6,7 +6,7 @@ import { timeAgo } from "@/features/explorer/utils/utils";
 import { LoadingRing } from "@/features/ui/components/loading-ring/LoadingRing";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
-import { removeFileExtension } from "@gouvfr-lasuite/ui-kit";
+import { removeFileExtension } from "@/features/explorer/utils/fileTypes";
 
 type EmbeddedExplorerGridMobileCellProps = CellContext<Item, unknown>;
 

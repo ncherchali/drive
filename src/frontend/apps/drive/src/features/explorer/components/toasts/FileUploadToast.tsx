@@ -14,7 +14,8 @@ import {
   FileUploadMeta,
   FileUploadStatus,
 } from "@/features/explorer/hooks/useUpload";
-import { IconSize, Spinner } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
+import { Spinner } from "@/components/ui/spinner";
 import { CancelUploadConfirmationModal } from "@/features/explorer/components/modals/CancelUploadConfirmationModal";
 import { ErrorIcon } from "@/features/ui/components/icon/ErrorIcon";
 import { CheckIcon } from "@/features/ui/components/icon/CheckIcon";

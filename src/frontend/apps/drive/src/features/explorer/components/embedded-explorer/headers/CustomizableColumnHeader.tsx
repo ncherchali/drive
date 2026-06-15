@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@gouvfr-lasuite/cunningham-react";
-import { IconSize, MenuItem } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
+import type { MenuItem } from "@/components/ds-menu";
 import { MenuDropdown } from "@/components/ds-menu";
 import { ColumnType, SortState } from "@/features/explorer/types/columns";
 import { COLUMN_REGISTRY } from "@/features/explorer/config/columnRegistry";

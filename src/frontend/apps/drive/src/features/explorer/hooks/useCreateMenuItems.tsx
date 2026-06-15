@@ -1,4 +1,5 @@
-import { MenuItem, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
+import type { MenuItem } from "@/components/ds-menu";
 import { useTranslation } from "react-i18next";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 import createFolderSvg from "@/assets/icons/create_folder.svg";

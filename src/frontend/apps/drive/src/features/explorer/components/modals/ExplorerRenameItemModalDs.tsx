@@ -3,7 +3,7 @@
 // de droite ; rendue derrière le flag DS_APP_SHELL par le pont
 // ExplorerRenameItemModal.
 import { useTranslation } from "react-i18next";
-import { removeFileExtension } from "@gouvfr-lasuite/ui-kit";
+import { removeFileExtension } from "@/features/explorer/utils/fileTypes";
 import { DsPromptDialog } from "@/components/ds-prompt-dialog";
 import { Item } from "@/features/drivers/types";
 import { useMutationRenameItem } from "../../hooks/useMutations";

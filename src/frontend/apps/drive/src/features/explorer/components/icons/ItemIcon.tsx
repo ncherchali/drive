@@ -7,13 +7,9 @@ import {
 import folderIcon from "@/assets/folder/folder.svg";
 import folderPublicIcon from "@/assets/folder/folder-tiny-public.svg";
 import folderSharedIcon from "@/assets/folder/folder-tiny-shared.svg";
-import {
-  FileIcon,
-  FileIconContent,
-  ICONS,
-  IconSize,
-  MimeCategory,
-} from "@gouvfr-lasuite/ui-kit";
+import { FileIcon, FileIconContent, ICONS } from "./fileIcons";
+import { IconSize } from "@/features/ui/components/icon/Icon";
+import { MimeCategory } from "@/features/explorer/utils/fileTypes";
 import { Building2, Folder, House, ShieldAlert } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { itemToPreviewFile, getWorkspaceType } from "../../utils/utils";

@@ -30,7 +30,7 @@ import { isTablet } from "@/features/ui/components/responsive/ResponsiveDivs";
 import { useDragItemContext } from "@/features/explorer/components/ExplorerDndProvider";
 import { useModal } from "@gouvfr-lasuite/cunningham-react";
 import { ExplorerMoveFolder } from "@/features/explorer/components/modals/move/ExplorerMoveFolderModal";
-import { useContextMenuContext } from "@gouvfr-lasuite/ui-kit";
+import { useContextMenuContext } from "@/components/ds-context-menu";
 import { useItemActionMenuItems } from "../../hooks/useItemActionMenuItems";
 import {
   ColumnConfig,

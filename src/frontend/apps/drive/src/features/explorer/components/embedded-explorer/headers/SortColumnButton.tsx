@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Button, Tooltip } from "@gouvfr-lasuite/cunningham-react";
-import { IconSize } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { Button as DsButton } from "@/components/ui/button";
 import { cn } from "@/utils/cn";

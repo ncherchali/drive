@@ -1,4 +1,4 @@
-import { Icon, IconType } from "@gouvfr-lasuite/ui-kit";
+import { Icon, IconType } from "@/features/ui/components/icon/Icon";
 import {
   Button,
   ButtonProps,

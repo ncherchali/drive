@@ -9,7 +9,8 @@ import {
   useFeatureFlag,
   FLAG_DS_EXPLORER_GRID,
 } from "@/features/flags/useFeatureFlag";
-import { HorizontalSeparator, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useCallback, useEffect, useState } from "react";
 import { ExplorerTreeActions } from "./ExplorerTreeActions";
 import { ExplorerTreeWorkspaces } from "./ExplorerTreeWorkspaces";

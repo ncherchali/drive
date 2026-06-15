@@ -9,10 +9,8 @@ import {
 import { useSyncDarkClass } from "@/features/theme/ThemeProvider";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
-import {
-  ContextMenuProvider,
-  CunninghamProvider,
-} from "@gouvfr-lasuite/ui-kit";
+import { CunninghamProvider } from "@gouvfr-lasuite/ui-kit";
+import { ContextMenuProvider } from "@/components/ds-context-menu";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   MutationCache,

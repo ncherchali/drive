@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { FilePreviewType, Icon } from "@gouvfr-lasuite/ui-kit";
+import { Icon } from "@/features/ui/components/icon/Icon";
+import type { FilePreviewType } from "@/features/ui/preview/filePreviewType";
 import { Button } from "@gouvfr-lasuite/cunningham-react";
 
 import { GenericDisclaimer } from "@/features/ui/components/generic-disclaimer/GenericDisclaimer";

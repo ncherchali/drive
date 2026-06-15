@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { HorizontalSeparator, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useFirstLevelItems } from "../../hooks/useQueries";
 import { itemIsWorkspace } from "@/features/drivers/utils";
 import { ItemIcon } from "../icons/ItemIcon";

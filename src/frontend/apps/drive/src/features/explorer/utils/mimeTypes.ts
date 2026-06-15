@@ -1,5 +1,5 @@
 import { Item, ItemUploadState } from "@/features/drivers/types";
-import { getMimeCategory, MimeCategory } from "@gouvfr-lasuite/ui-kit";
+import { getMimeCategory, MimeCategory } from "./fileTypes";
 import { getExtension } from "../utils/utils";
 
 /**

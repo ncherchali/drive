@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import multipleSelection from "@/assets/mutliple-selection.png";
 import emptySelection from "@/assets/empty-selection.png";
-import { IconSize } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { ItemShareModal } from "../modals/share/ItemShareModal";
 import { ItemInfo } from "@/features/items/components/ItemInfo";
 import {

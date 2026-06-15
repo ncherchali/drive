@@ -44,7 +44,7 @@ import { useFirstLevelItems } from "@/features/explorer/hooks/useQueries";
 import { useCreateMenuItems } from "@/features/explorer/hooks/useCreateMenuItems";
 import { itemIsWorkspace } from "@/features/drivers/utils";
 import { ItemIcon } from "@/features/explorer/components/icons/ItemIcon";
-import { IconSize } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { ExplorerFolderTree } from "@/features/explorer/components/tree/ExplorerFolderTree";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { ExplorerTreeNavItem } from "./ExplorerTreeNavItem";
-import { HorizontalSeparator, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { TrashIcon } from "@/features/ui/components/icon/TrashIcon";
 import { Trash2 } from "lucide-react";
 import { Icon as DsIcon } from "@/components/ui/icon";

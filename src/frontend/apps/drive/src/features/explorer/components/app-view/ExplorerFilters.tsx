@@ -1,4 +1,5 @@
-import { FilterOption, IconSize } from "@gouvfr-lasuite/ui-kit";
+import { FilterOption } from "@gouvfr-lasuite/ui-kit";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { RotateCcw } from "lucide-react";
 import { FilterControl } from "@/components/ds-filter";
 import { useMemo } from "react";
