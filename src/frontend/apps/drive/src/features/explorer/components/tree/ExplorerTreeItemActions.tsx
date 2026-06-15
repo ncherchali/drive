@@ -1,4 +1,4 @@
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { Item } from "@/features/drivers/types";
 import clsx from "clsx";
@@ -27,13 +27,14 @@ export const ExplorerTreeItemActions = ({
           setIsOpen={setIsOpen}
           trigger={
             <Button
-              size="nano"
-              variant="tertiary"
+              variant="ghost"
+              size="icon"
               onClick={() => setIsOpen(!isOpen)}
               aria-label="more_actions"
               className="explorer__tree__item__actions__button-more"
-              icon={<MoreHorizontal className="size-4" />}
-            />
+            >
+              <MoreHorizontal className="size-4" />
+            </Button>
           }
         />
       </div>

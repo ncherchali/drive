@@ -1,7 +1,7 @@
-import { useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
-import { MenuDropdown } from "@/components/ds-menu";
+import { MenuDropdown, useDropdownMenu } from "@/components/ds-menu";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ExplorerSearchButton } from "@/features/explorer/components/app-view/ExplorerSearchButton";
 import { useCreateMenuItems } from "../../hooks/useCreateMenuItems";
@@ -26,10 +26,8 @@ export const ExplorerTreeActions = () => {
             {...createMenu}
             onOpenChange={createMenu.setIsOpen}
           >
-            <Button
-              icon={<span className="material-icons">add</span>}
-              onClick={() => createMenu.setIsOpen(true)}
-            >
+            <Button onClick={() => createMenu.setIsOpen(true)}>
+              <Plus className="size-4" />
               {t("explorer.tree.create.label")}
             </Button>
           </MenuDropdown>

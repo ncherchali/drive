@@ -4,7 +4,7 @@ import { SharedWithMeIcon } from "@/features/ui/components/icon/SharedWithMeIcon
 import { StarredIcon } from "@/features/ui/components/icon/StarredIcon";
 import { TrashIcon } from "@/features/ui/components/icon/TrashIcon";
 import { JSX } from "react";
-import { IconProps } from "@gouvfr-lasuite/ui-kit";
+import type { IconProps } from "@/features/ui/components/icon/Icon";
 import { History, House, Share2, Star, Trash2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 

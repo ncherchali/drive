@@ -1,4 +1,5 @@
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import React, { ReactElement, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -64,13 +65,12 @@ export const Breadcrumbs = ({
     <div className="c__breadcrumbs" data-testid="explorer-breadcrumbs">
       {displayBack && (
         <Button
-          icon={<span className="material-icons">arrow_back</span>}
-          color="neutral"
-          variant="tertiary"
+          variant="ghost"
           className="mr-t"
           onClick={onBack}
           disabled={items.length <= 1}
         >
+          <ArrowLeft className="size-4" />
           {t("Précédent")}
         </Button>
       )}

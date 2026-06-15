@@ -1,5 +1,4 @@
-import { useDropdownMenu } from "@gouvfr-lasuite/ui-kit";
-import { MenuDropdown } from "@/components/ds-menu";
+import { MenuDropdown, useDropdownMenu } from "@/components/ds-menu";
 import uploadFileSvg from "@/assets/icons/upload_file.svg";
 import uploadFolderSvg from "@/assets/icons/upload_folder.svg";
 import { useTranslation } from "react-i18next";

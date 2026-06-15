@@ -1,4 +1,4 @@
-import { Spinner } from "@gouvfr-lasuite/ui-kit";
+import { Spinner } from "@/components/ui/spinner";
 import Head from "next/head";
 import Script from "next/script";
 import { useApiConfig } from "./useApiConfig";
@@ -37,7 +37,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
   if (!config) {
     return (
       <div className="global-loader">
-        <Spinner size="xl" />
+        <Spinner className="size-8" />
       </div>
     );
   }

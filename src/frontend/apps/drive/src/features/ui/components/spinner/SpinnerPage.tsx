@@ -1,9 +1,9 @@
-import { Spinner } from "@gouvfr-lasuite/ui-kit";
+import { Spinner } from "@/components/ui/spinner";
 
 export const SpinnerPage = () => {
   return (
     <div className="drive__spinner-page">
-      <Spinner size="xl" />
+      <Spinner className="size-8" />
     </div>
   );
 };

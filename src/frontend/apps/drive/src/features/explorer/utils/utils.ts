@@ -7,7 +7,7 @@ import {
   WorkspaceType,
 } from "@/features/drivers/types";
 import i18n from "@/features/i18n/initI18n";
-import { FilePreviewType } from "@gouvfr-lasuite/ui-kit";
+import type { FilePreviewType } from "@/features/ui/preview/filePreviewType";
 import { DefaultRoute } from "@/utils/defaultRoutes";
 
 /**

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, ReactNode } from "react";
-import { Loader, useCunningham } from "@gouvfr-lasuite/cunningham-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface InfiniteScrollProps {
   /** Whether there are more items to load */
@@ -37,7 +37,6 @@ export const InfiniteScroll = ({
   threshold = 1,
   className,
 }: InfiniteScrollProps) => {
-  const { t: tc } = useCunningham();
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const handleIntersection = useCallback(
@@ -70,7 +69,7 @@ export const InfiniteScroll = ({
 
   const defaultLoadingComponent = (
     <div className="infinite-scroll__loading-component">
-      <Loader size="small" aria-label={tc("components.datagrid.loader_aria")} />
+      <Spinner />
     </div>
   );
 

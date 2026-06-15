@@ -1,4 +1,4 @@
-import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { Separator } from "@/components/ui/separator";
 import { useHasSelection } from "@/features/explorer/stores/selectionStore";
 import { ExplorerSelectionBar } from "@/features/explorer/components/app-view/ExplorerSelectionBar";
 import { ExplorerFilters } from "@/features/explorer/components/app-view/ExplorerFilters";
@@ -23,5 +23,5 @@ export const AppExplorerSelectionBarGate = ({
   if (showFilters) {
     return <ExplorerFilters />;
   }
-  return <HorizontalSeparator withPadding={false} />;
+  return <Separator />;
 };

@@ -1,4 +1,4 @@
-import { Spinner } from "@gouvfr-lasuite/ui-kit";
+import { Spinner } from "@/components/ui/spinner";
 import { useEffect } from "react";
 import { login, useAuth } from "@/features/auth/Auth";
 import { GlobalLayout } from "@/features/layouts/components/global/GlobalLayout";
@@ -35,7 +35,7 @@ export default function SDKPage() {
 
   return (
     <div className="sdk__page">
-      <Spinner size="xl" />
+      <Spinner className="size-8" />
     </div>
   );
 }

@@ -1,22 +1,18 @@
-// Adaptateur de menu DS — pont data-driven ui-kit → Design System.
+// Menu DS data-driven — Design System (anciennement pont vers l'ui-kit DINUM).
 // Pages Router : pas de "use client".
 //
-// Le `DropdownMenu` de @gouvfr-lasuite/ui-kit est piloté par DONNÉES
-// (`options={MenuItem[]}`), alimenté par les hooks métier (useItemActionMenuItems,
-// useCreateMenuItems, useItemActionMenuItems…). Ce pont expose EXACTEMENT la même
-// API mais rend, derrière le flag DS_APP_SHELL, les primitives DS (dropdown-menu).
-// Flag éteint, il délègue au composant ui-kit d'origine. Les hooks restent donc
-// inchangés ; seul l'import du call site bascule.
+// Menu piloté par DONNÉES (`options={MenuItem[]}`), alimenté par les hooks métier
+// (useItemActionMenuItems, useCreateMenuItems…). Depuis la dépose totale d'ui-kit,
+// ce composant rend TOUJOURS les primitives DS (dropdown-menu / context-menu) ;
+// l'ancien repli ui-kit derrière le flag DS_APP_SHELL a été retiré (le DS est la
+// seule cible). Les types de menu, jadis importés d'ui-kit, sont définis ici (forme
+// identique → compat structurelle avec les hooks qui produisent encore `MenuItem[]`).
 //
-// Contrôle d'ouverture : la version DS est NON contrôlée côté Radix (le trigger
-// gère l'état), et `onOpenChange` informe le parent. Les call sites conservent
-// souvent un `onClick` d'ouverture sur leur bouton : il devient inoffensif (il
-// met à jour un état parent que Radix n'écoute pas), évitant tout double toggle.
+// Contrôle d'ouverture : non contrôlé côté Radix (le trigger gère l'état), et
+// `onOpenChange` informe le parent. Les call sites conservent souvent un `onClick`
+// d'ouverture sur leur bouton : il devient inoffensif (état parent que Radix
+// n'écoute pas), évitant tout double toggle.
 import * as React from "react";
-import {
-  DropdownMenu as UiKitDropdownMenu,
-  ContextMenu as UiKitContextMenu,
-} from "@gouvfr-lasuite/ui-kit";
 import { Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -32,12 +28,58 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
-import {
-  FLAG_DS_APP_SHELL,
-  useFeatureFlag,
-} from "@/features/flags/useFeatureFlag";
 
-type MenuDropdownProps = React.ComponentProps<typeof UiKitDropdownMenu>;
+/* -------------------------------------------------------------------------- */
+/* Types de menu — locaux (forme identique aux ex-types ui-kit MenuItem/…).   */
+/* -------------------------------------------------------------------------- */
+
+/** Action de menu, partagée entre menu déroulant et menu contextuel. */
+export type MenuItemAction = {
+  id?: string;
+  label: string;
+  subText?: string;
+  icon?: React.ReactNode;
+  callback?: () => void | Promise<unknown>;
+  isDisabled?: boolean;
+  isHidden?: boolean;
+  variant?: "default" | "danger";
+  keepOpen?: boolean;
+  testId?: string;
+  children?: MenuItem[];
+};
+/** Séparateur de menu. */
+export type MenuItemSeparator = { type: "separator" };
+export type MenuItem = MenuItemAction | MenuItemSeparator;
+
+/** Option de menu déroulant : ajoute la sélection (`isChecked`/`value`). */
+export type DropdownMenuOption = MenuItemAction & {
+  isChecked?: boolean;
+  value?: string;
+  /** @deprecated utiliser un MenuItemSeparator */
+  showSeparator?: boolean;
+};
+export type DropdownMenuItem = DropdownMenuOption | MenuItemSeparator;
+
+/** Remplace le `useDropdownMenu` d'ui-kit (état d'ouverture du menu). */
+export function useDropdownMenu() {
+  const [isOpen, setIsOpen] = React.useState(false);
+  return { isOpen, setIsOpen };
+}
+
+/* -------------------------------------------------------------------------- */
+/* Menu déroulant.                                                            */
+/* -------------------------------------------------------------------------- */
+
+type MenuDropdownProps = React.PropsWithChildren<{
+  options: DropdownMenuItem[];
+  onOpenChange?: (isOpen: boolean) => void;
+  isOpen?: boolean;
+  selectedValues?: string[];
+  onSelectValue?: (value: string) => void;
+  topMessage?: React.ReactNode;
+  shouldCloseOnInteractOutside?: (element: Element) => boolean;
+  variant?: "default" | "tiny";
+}>;
 
 /** Vue permissive d'un item : superset réellement passé par les call sites. */
 type ActionEntry = {
@@ -119,22 +161,26 @@ function MenuDropdownDs({ options, onOpenChange, children }: MenuDropdownProps) 
 }
 
 /**
- * Menu déroulant à API ui-kit (`options`, `isOpen`, `onOpenChange`, children).
- * Rend le DS derrière le flag DS_APP_SHELL, sinon le composant ui-kit d'origine.
+ * Menu déroulant data-driven (`options`, `isOpen`, `onOpenChange`, children).
+ * Rend les primitives DS.
  */
 export function MenuDropdown(props: MenuDropdownProps) {
-  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
-  if (useDs) {
-    return <MenuDropdownDs {...props} />;
-  }
-  return <UiKitDropdownMenu {...props} />;
+  return <MenuDropdownDs {...props} />;
 }
 
 /* -------------------------------------------------------------------------- */
-/* Menu contextuel (clic droit) — pont data-driven, même type MenuItem.       */
+/* Menu contextuel (clic droit) — même type MenuItem.                         */
 /* -------------------------------------------------------------------------- */
 
-type MenuContextProps = React.ComponentProps<typeof UiKitContextMenu>;
+type MenuContextProps = {
+  children: React.ReactNode;
+  options: MenuItem[] | ((context: unknown) => MenuItem[]);
+  context?: unknown;
+  disabled?: boolean;
+  asChild?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
+};
 
 /** Rendu DS des items pour le menu contextuel (parallèle de DsMenuItems). */
 function DsContextItems({ options }: { options: Entry[] }) {
@@ -206,13 +252,9 @@ function MenuContextDs({
 }
 
 /**
- * Menu contextuel déclaratif à API ui-kit (`options`, `context`, `disabled`,
- * children). Rend le DS derrière le flag DS_APP_SHELL, sinon le ui-kit.
+ * Menu contextuel déclaratif data-driven (`options`, `context`, `disabled`,
+ * children). Rend les primitives DS.
  */
 export function MenuContext(props: MenuContextProps) {
-  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
-  if (useDs) {
-    return <MenuContextDs {...props} />;
-  }
-  return <UiKitContextMenu {...props} />;
+  return <MenuContextDs {...props} />;
 }

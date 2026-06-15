@@ -354,8 +354,161 @@ Phase 5 (kit) ──┬─> 6 (menus) ──> 7 (recherche) ─┐
 
 ## Décisions à figer avant les phases 11/12
 
-| # | Décision | Recommandation |
-|---|----------|----------------|
-| **D1** | Grille : habiller le moteur TanStack vs reconstruire la ligne en `file-row` DS | **Habiller** (moteur inchangé, faible risque) |
-| **D2** | Arbre : construire un Tree DS vs garder le Tree ui-kit repeint | **Garder** en exception permanente |
-| **D3** | `FilePreview` ui-kit : migrer vs garder l'exception | **Garder** (adopté récemment) |
+| # | Décision | Recommandation | Statut |
+|---|----------|----------------|--------|
+| **D1** | Grille : habiller le moteur TanStack vs reconstruire la ligne en `file-row` DS | **Habiller** (moteur inchangé, faible risque) | ⚠️ **RÉVISÉE 2026-06-15** → réécriture native (cf. ci-dessous) |
+| **D2** | Arbre : construire un Tree DS vs garder le Tree ui-kit repeint | **Garder** en exception permanente | ⚠️ **RÉVISÉE 2026-06-15** → réécriture native |
+| **D3** | `FilePreview` ui-kit : migrer vs garder l'exception | **Garder** (adopté récemment) | ⚠️ **RÉVISÉE 2026-06-15** → migration native |
+
+---
+
+## Phase 13 — exécution fichier par fichier (dépose TOTALE d'ui-kit)
+
+> **Décision 2026-06-15** : cible = **0 import `@gouvfr-lasuite` dans tout `src/`** (pas
+> seulement `features/explorer`), puis désinstallation de `@gouvfr-lasuite/ui-kit`
+> **et** `@gouvfr-lasuite/cunningham-react`. Cela **révise D1/D2/D3** : la grille,
+> l'arbre et la prévisualisation sont **réécrits en natif DS** (plus d'exception
+> permanente).
+
+### Constat de périmètre
+
+`grep -rl "@gouvfr-lasuite" src` = **102 fichiers** : **60 dans `features/explorer`**,
+**40 ailleurs** (auth, layouts, pages, sdk, wopi, release-note, config), **2 dans
+`src/components`** (ponts DS qui importent encore ui-kit : `ds-menu.tsx`, `ds-filter.tsx`,
+`ui/icon.tsx`).
+
+> ⚠️ **Le plan initial ne validait que l'explorateur (0/72).** Les étapes 13c
+> (preflight global) et 14 (désinstallation) exigent **0 import app-wide**, sinon
+> réactiver le preflight casse les composants ui-kit montés et `yarn remove` casse
+> le build. D'où une **pré-phase 13** qui dépose tous les imports AVANT l'endgame
+> technique.
+
+### Pré-phase 13 — dépose des imports (la vraie charge)
+
+Légende effort : 🟢 trivial · 🟡 moyen · 🔴 réécriture.
+
+#### Lot 1 — Type-only 🟢 (remplacer par types locaux)
+| Fichier | Symbole |
+|---|---|
+| `features/drivers/types.ts` | `FooterProps, TreeViewDataType` |
+| `utils/defaultRoutes.ts` | `IconProps` |
+| `features/ui/components/release-note/releaseNotes.config.ts` | `ReleaseNoteStep` |
+| `features/ui/components/release-note/useReleaseNote.ts` | `ReleaseNoteStep` |
+| `features/explorer/hooks/useOptimisticPagination.ts` | `PaginatedChildrenResult` |
+| `features/explorer/utils/utils.ts`, `features/wopi/openWopi.ts` | `FilePreviewType` (→ type natif, cf. D3) |
+
+#### Lot 2 — Swaps de primitives 🟢 (primitives DS déjà livrées)
+`Button`/`Spinner`/`Icon`/`Tooltip`/`HorizontalSeparator`/`useModal(s)` →
+`components/ui/{button,spinner,icon,tooltip,separator}.tsx` + `hooks/use-disclosure.ts`.
+- **Hors explorer (~13)** : `auth/{LoginButton,LogoutButton}`, `config/ConfigProvider`,
+  `ui/components/spinner/SpinnerPage`, `pages/{sdk/index,401,403,explorer/items/files/[id],wopi/[id],explorer/trash/index}`,
+  `feedback/Feedback`, `ui/components/breadcrumbs/Breadcrumbs`, `pages/sdk/explorer/index`, `sdk/SdkPickerFooter`.
+- **Explorer (~18)** : `app-view/{AppExplorerBreadcrumbs,AppExplorerGrid,AppExplorerSelectionBarGate,ExplorerSearchButton,ExplorerSearchButtonDs,ExplorerSelectionBar}`,
+  `embedded-explorer/{EmbeddedExplorer,EmbeddedExplorerGrid,EmbeddedExplorerGridActionsCell,EmbeddedExplorerGridNameCell,EmbeddedExplorerGridUpdatedAtCell,EmbeddedExplorerSearchInput,cells/CreatedCell,cells/LastModifiedCell,headers/CustomizableColumnHeader,headers/SortColumnButton}`,
+  `toasts/FileUploadToast`, `tree/ExplorerTreeItemActions`.
+
+#### Lot 3 — Hooks & utilitaires 🟡
+| Fichier | Symbole | Remplacement |
+|---|---|---|
+| `features/items/hooks/useDownloadItem.tsx` | `useModals, ModalSize` | `use-disclosure` + `DsConfirmDialog` |
+| `features/layouts/components/header/Header.tsx` | `LanguagePicker, useResponsive` | `select` DS + `use-mobile` |
+| `features/layouts/components/left-panel/LeftPanelMobile.tsx` | `useResponsive` | `use-mobile` |
+| `features/ui/components/infinite-scroll/InfiniteScroll.tsx` | `Loader, useCunningham` | `ui/spinner` + i18n |
+| `features/wopi/WopiEditorFrame.tsx` | `useCunningham` | locale i18n |
+| `features/forms/components/RhfInput.tsx` | champ cunningham | `ui/input` + `ui/label` |
+| `features/items/components/ItemInfo.tsx` | `UserRow` | router 100 % `ItemInfoDs` |
+| `features/ui/components/user/UserProfile.tsx` | `UserMenu` | `components/layout/user-menu.tsx` |
+| `features/explorer/utils/mimeTypes.ts` | `getMimeCategory, MimeCategory` | util local |
+| `features/explorer/components/embedded-explorer/{EmbeddedExplorerGridMobileCell,modals/ExplorerRenameItemModalDs}` | `removeFileExtension` | util local |
+| `components/{ds-menu,ds-filter,ui/icon}.tsx` | divers ui-kit | finaliser ces ponts en pur DS |
+
+#### Lot 4 — Menus data-driven 🟡
+`useDropdownMenu` / `MenuItem` → `components/ds-menu.tsx` (déjà DS) :
+`explorer/item-actions/ImportDropdown`, `tree/ExplorerTreeActions`,
+`hooks/{useCreateMenuItems,useItemActionMenuItems}`.
+
+#### Lot 5 — Modales 🟡 (pattern `DsPromptDialog`/`DsConfirmDialog` déjà en place)
+`ExplorerCreate{File,Folder,Workspace}Modal`, `ExplorerRenameItemModal`,
+`CancelUploadConfirmationModal`, `HardDeleteConfirmationModal`,
+`ExplorerTreeMoveConfirmationModal` (`Modal/Decision` → `alert-dialog`),
+`trash/utils.tsx`. → fusionner avec leurs doublons `*Ds`, supprimer les ponts à flag.
+
+#### Lot 6 — 🔴 Moteur ARBRE (révision D2 — réécriture native)
+Cœur : `useTreeContext`/`TreeView` ui-kit. **Construire un Tree DS natif**
+(récursion + `scroll-area` + DnD `@dnd-kit` ou équivalent), avec un contexte d'état
+propre remplaçant `useTreeContext`.
+- **Provider/état** : `components/ExplorerDndProvider.tsx`, `GlobalExplorerContext.tsx`,
+  `Droppable.tsx`, `hooks/{useMutations,useRefreshItems,useTreeUtils}.ts`.
+- **Rendu arbre** : `tree/{ExplorerTree,ExplorerFolderTree,ExplorerTreeItem,DroppableNodeTree,ExplorerTreeWorkspaces,nav/ExplorerTreeNav,nav/ExplorerTreeNavItem}.tsx`.
+- ⚠️ **Le plus gros risque de régression** (DnD, expand/collapse, sélection clavier).
+
+#### Lot 7 — 🔴 Moteur GRILLE (révision D1 — réécriture native)
+La data table shadcn (phase 12e) existe déjà mais s'appuie encore sur le moteur
+ui-kit. Réécrire `EmbeddedExplorerGrid` 100 % `ui/table` + TanStack natif, retirer
+la branche de repli Cunningham et les imports `useModal`/`Icon`/`Tooltip` résiduels
+des cellules/headers (la plupart traités en Lot 2).
+- Fichiers pivots : `embedded-explorer/{EmbeddedExplorer,EmbeddedExplorerGrid,EmbeddedExplorerGridBreadcrumbs}.tsx`, `icons/ItemIcon.tsx`.
+
+#### Lot 8 — 🔴 Composites hors explorer (réécriture)
+- `pages/index.tsx` — `Hero, Footer, MainLayout, HomeGutter` : **landing page** à refaire.
+- `features/layouts/components/{simple/SimpleLayout,sdk/SdkLayout,explorer/ExplorerLayout}.tsx` — `MainLayout` → `AppShell` DS (ExplorerLayout : retirer le chemin non-DS).
+- `features/ui/components/gaufre/Gaufre.tsx` — `LaGaufreV2` : **supprimer** (déjà hors shell DS).
+- `features/ui/components/release-note/ReleaseNoteAuto.tsx` — `ReleaseNoteModal` → `Dialog` DS.
+- `features/entitlement-disclaimers/components/EntitlementDisclaimerModal.tsx` — modale DS.
+- `features/explorer/components/modals/{move/ExplorerMoveFolderModal,search/ExplorerSearchModal}.tsx` — tree-picker + recherche (déjà doublons `*Ds`, basculer définitivement).
+- `features/explorer/components/modals/share/ItemShareModal.tsx` — **`ShareModal` composite ui-kit** (RBAC, invitations, liens). Réécriture DS lourde (option B du plan) — **le chantier hors-moteur le plus gros**.
+
+#### Lot 9 — 🔴 Prévisualisation (révision D3 — migration native)
+`features/ui/preview/CustomFilesPreview.tsx` (`FilePreview, FilePreviewType`),
+`features/wopi/openWopi.ts`, `pages/wopi/[id].tsx` → visionneuse native DS.
+
+### 13a — ThemeProvider source unique
+| Fichier | Modification |
+|---|---|
+| `src/pages/_app.tsx` | retirer `CunninghamProvider`, `ContextMenuProvider` (→ provider DS), `useSyncDarkClass`, `useCunninghamTheme` (favicon via token DS) ; remonter `<ThemeProvider>` à la racine ; brancher `useAppContext.setTheme` sur `useTheme()` DS |
+| `features/theme/ThemeProvider.tsx` | supprimer `useSyncDarkClass` |
+| `features/ui/cunningham/useCunninghamTheme.ts` | **supprimer** |
+
+### 13b — Bascule `@config` → `@theme`
+| Fichier | Modification |
+|---|---|
+| `src/styles/tailwind.css` | retirer `@config "../../tailwind.config.js"` ; promouvoir les `@theme` de `ds.css` en canoniques |
+| `tailwind.config.js` | **supprimer** |
+| `src/styles/cunningham-tokens.{css,ts}`, `cunningham-tokens-sass.scss` | **supprimer (3 fichiers)** |
+| `package.json` | retirer le script `build-theme` + la dep CLI `cunningham` |
+| `src/styles/globals.scss` | retirer `@use "./cunningham-tokens.css"` (l.3) et les `@use "@gouvfr-lasuite/ui-kit/sass/{fonts,style}"` (l.1-2) |
+| **8 SCSS consommant `var(--c--…)`** | `AppExplorer.scss`, `EmbeddedExplorer.scss`, `ExplorerSearchModal.scss`, `ExplorerTree.scss`, `Feedback.scss`, `layouts/header/index.scss`, `ui/responsive/index.scss`, `pages/index.scss` → remapper vers tokens DS ou supprimer |
+
+### 13c — Preflight global réactivé, `.sahla-ds` à la racine
+| Fichier | Modification |
+|---|---|
+| `src/styles/tailwind.css` | ajouter `@import "tailwindcss/preflight.css" layer(base)` |
+| `src/styles/ds.css` | retirer le reset scopé (**19 occ. `.sahla-ds`**) |
+| `src/styles/ds-explorer-grid.css` | retirer les resets ciblés (**67 occ. `.sahla-ds`/`.sahla-ds-grid`** : bordures UA, list-style, sidebar `[data-slot]`, table `nth-child`) |
+| `DsExplorerShell.tsx`, `DsExplorerHeader.tsx`, `components/ds-provider.tsx` | retirer les précautions « ne pas envelopper » + `style={{direction}}` sur contenus portalés ; envelopper une seule fois à la racine |
+
+### 14 — Nettoyage
+- Fusionner les doublons `*Ds` dans l'original, retirer les ponts à flag.
+- Retrait des flags : front (`features/flags/useFeatureFlag.ts`, `FLAG_DS_*`) **et**
+  backend (`core/api/viewsets.py FEATURE_FLAGS`, `drive/settings.py FEATURES_DS_*`,
+  `env.d/development/common`).
+- `yarn remove @gouvfr-lasuite/ui-kit @gouvfr-lasuite/cunningham-react`.
+- Supprimer le code mort : `components/layout/sidebar.tsx`, `pages/ds-preview.tsx`.
+- Validation : build + lint + **e2e Playwright** verts ; clair/sombre, LTR/RTL, AA ; CHANGELOG.
+
+### Ordre & jalons
+
+```
+Lots 1+2 (triviaux, ~37 fichiers) ─┐
+Lots 3+4+5 (hooks/menus/modales) ──┤
+Lot 8 share modal + composites ────┤→ JALON : 0 import hors moteur
+Lot 6 ARBRE natif ─────────────────┤
+Lot 7 GRILLE native ───────────────┤→ JALON : grep "@gouvfr-lasuite" src = 0
+Lot 9 preview native ──────────────┘
+        ↓
+13a (ThemeProvider) → 13b (@config→@theme) → 13c (preflight global) → 14 (deps + flags + e2e)
+```
+
+- **Jalon bloquant 13c** : `grep -rl "@gouvfr-lasuite" src` doit renvoyer **0** avant de
+  réactiver le preflight global.
+- **Chemin critique** = Lots 6 (arbre) et 8 (share modal) — les deux plus gros risques.

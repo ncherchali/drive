@@ -5,7 +5,7 @@
 // (ExplorerSearchModalDs, palette `command`). Depuis la phase 8b, les filtres
 // étant DS, la palette est intégralement DS.
 import { useEffect } from "react";
-import { useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useDisclosure } from "@/hooks/use-disclosure";
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export const ExplorerSearchButtonDs = ({
   keyboardShortcut?: boolean;
   defaultFilters?: ItemFilters;
 }) => {
-  const searchModal = useModal();
+  const searchModal = useDisclosure();
   const { t } = useTranslation();
 
   // Ouvre la recherche au raccourci ⌘K / Ctrl+K.
@@ -30,7 +30,7 @@ export const ExplorerSearchButtonDs = ({
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        searchModal.open();
+        searchModal.onOpen();
       }
     };
     document.addEventListener("keydown", down);
@@ -40,7 +40,7 @@ export const ExplorerSearchButtonDs = ({
   return (
     <>
       <ExplorerSearchModalDs
-        isOpen={searchModal.isOpen}
+        isOpen={searchModal.open}
         onClose={searchModal.onClose}
         defaultFilters={defaultFilters}
       />
@@ -48,7 +48,7 @@ export const ExplorerSearchButtonDs = ({
         variant="ghost"
         size="icon"
         aria-label={t("explorer.tree.search")}
-        onClick={searchModal.open}
+        onClick={searchModal.onOpen}
       >
         <Search />
       </Button>

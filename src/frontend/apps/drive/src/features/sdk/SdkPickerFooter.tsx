@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Item, LinkReach } from "../drivers/types";
-import { Button } from "@gouvfr-lasuite/cunningham-react";
-import { Spinner } from "@gouvfr-lasuite/ui-kit";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { ClientMessageType, SDKRelayManager } from "./SdkRelayManager";
 import { useMutationUpdateLinkConfiguration } from "../explorer/hooks/useMutations";
 
@@ -89,18 +89,18 @@ export const PickerFooter = ({
       </div>
       <div className="sdk__explorer__footer__actions">
         <Button
-          variant="tertiary"
+          variant="ghost"
           onClick={onCancel}
           disabled={waitForClosing}
-          icon={waitForClosing ? <Spinner size="sm" /> : undefined}
         >
+          {waitForClosing && <Spinner />}
           {t("sdk.explorer.cancel")}
         </Button>
         <Button
           onClick={onChoose}
           disabled={waitForClosing || selectedItems.length === 0}
-          icon={waitForClosing ? <Spinner size="sm" /> : undefined}
         >
+          {waitForClosing && <Spinner />}
           {t("sdk.explorer.choose")}
         </Button>
       </div>

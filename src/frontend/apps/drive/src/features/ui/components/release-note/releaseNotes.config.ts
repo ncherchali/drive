@@ -1,4 +1,4 @@
-import { ReleaseNoteStep } from "@gouvfr-lasuite/ui-kit";
+import type { ReleaseNoteStep } from "./types";
 
 import { ALL_VERSIONS } from "./versions";
 

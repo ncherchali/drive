@@ -1,4 +1,4 @@
-import { FilePreviewType } from "@gouvfr-lasuite/ui-kit";
+import type { FilePreviewType } from "@/features/ui/preview/filePreviewType";
 
 export const WOPI_TAB_PATH = "/wopi";
 

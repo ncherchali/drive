@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import { DefaultRoute, getDefaultRouteId } from "@/utils/defaultRoutes";
 import { useMemo } from "react";
 import { canCreateChildren } from "@/features/items/utils";
-import { Spinner } from "@gouvfr-lasuite/ui-kit";
+import { Spinner } from "@/components/ui/spinner";
 import { openWopiInNewTab } from "@/features/wopi/openWopi";
 import { itemToPreviewFile } from "@/features/explorer/utils/utils";
 
@@ -168,7 +168,7 @@ export const AppExplorerGrid = () => {
       {getContent()}
       {isLoading && (
         <div className="explorer__grid__loading-overlay">
-          <Spinner size="xl" />
+          <Spinner className="size-8" />
         </div>
       )}
     </div>

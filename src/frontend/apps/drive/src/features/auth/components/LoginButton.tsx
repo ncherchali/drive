@@ -1,4 +1,4 @@
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
 import { login } from "../Auth";
 import { useTranslation } from "react-i18next";
 import { SESSION_STORAGE_REDIRECT_AFTER_LOGIN_URL } from "@/features/api/fetchApi";
@@ -8,7 +8,7 @@ export const LoginButton = () => {
   return (
     <Button
       className="drive__header__login-button"
-      variant="tertiary"
+      variant="ghost"
       onClick={() => {
         sessionStorage.setItem(
           SESSION_STORAGE_REDIRECT_AFTER_LOGIN_URL,
