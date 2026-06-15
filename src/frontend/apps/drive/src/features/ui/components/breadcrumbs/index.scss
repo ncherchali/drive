@@ -4,7 +4,7 @@
   overflow: auto;
 
   &__separator {
-    color: var(--c--contextuals--content--semantic--neutral--tertiary);
+    color: var(--muted-foreground);
   }
 
   > * {
@@ -17,7 +17,7 @@
   padding: 4px;
   background-color: transparent;
   border: none;
-  color: var(--c--contextuals--content--semantic--neutral--secondary);
+  color: var(--muted-foreground);
   font-size: 16px;
   border-radius: 4px;
   font-weight: 400;
@@ -29,13 +29,11 @@
   text-decoration: none;
 
   &:hover {
-    background-color: var(
-      --c--contextuals--background--semantic--neutral--tertiary
-    );
+    background-color: var(--accent);
   }
 
   &.active {
     font-weight: 600;
-    color: var(--c--contextuals--content--semantic--neutral--primary);
+    color: var(--foreground);
   }
 }

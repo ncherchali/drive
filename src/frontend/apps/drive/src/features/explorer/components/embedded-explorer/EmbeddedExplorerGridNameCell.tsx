@@ -112,7 +112,7 @@ const EmbeddedExplorerGridNameCellComponent = (
           <Icon
             name={rightIcon}
             size={IconSize.SMALL}
-            color="var(--c--contextuals--content--semantic--neutral--tertiary)"
+            color="var(--muted-foreground)"
           />
         )}
       </div>

@@ -12,7 +12,7 @@
 
     &:focus {
       outline: 2px solid
-        var(--c--contextuals--content--semantic--brand--primary);
+        var(--primary);
       outline-offset: 2px;
     }
   }

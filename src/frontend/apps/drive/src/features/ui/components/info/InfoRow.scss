@@ -11,13 +11,13 @@
   &__label {
     @apply font-bold;
     font-size: var(--c--globals--font--sizes--sm);
-    color: var(--c--contextuals--content--semantic--neutral--primary);
+    color: var(--foreground);
   }
 
   &__right-content {
     &__string {
       font-size: var(--c--globals--font--sizes--sm);
-      color: var(--c--contextuals--content--semantic--neutral--secondary);
+      color: var(--muted-foreground);
     }
   }
 }

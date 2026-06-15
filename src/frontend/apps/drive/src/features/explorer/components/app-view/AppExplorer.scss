@@ -18,11 +18,11 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
   &--app {
     @apply p-4;
-    background-color: var(--c--contextuals--background--surface--tertiary);
+    background-color: var(--accent);
 
     @media (max-width: $tablet) {
       @apply p-0;
-      background-color: var(--c--contextuals--background--surface--tertiary);
+      background-color: var(--accent);
     }
 
     .explorer__container {
@@ -30,7 +30,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     }
 
     .explorer__content {
-      border: 1px var(--c--contextuals--border--surface--primary) solid;
+      border: 1px var(--border) solid;
 
       @media (max-width: $tablet) {
         @apply border-none p-[5px];
@@ -70,16 +70,14 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
     @media (max-width: $tablet) {
       @apply h-auto p-2;
-      background-color: var(--c--contextuals--background--surface--secondary);
+      background-color: var(--muted);
     }
   }
 
   &--drop-zone--drag-accept {
     .explorer__content {
-      background-color: var(
-        --c--contextuals--background--semantic--brand--tertiary
-      );
-      box-shadow: var(--c--contextuals--border--semantic--brand--primary) 0 0 0
+      background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+      box-shadow: var(--primary) 0 0 0
         3px inset;
       border-radius: 2px;
 
@@ -90,9 +88,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       table {
         tbody,
         thead {
-          background-color: var(
-            --c--contextuals--background--semantic--brand--tertiary
-          );
+          background-color: color-mix(in srgb, var(--primary) 12%, transparent);
         }
       }
     }
@@ -100,7 +96,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
   &__content {
     @apply flex flex-1 flex-col gap-4 box-content rounded;
-    background-color: var(--c--contextuals--background--surface--secondary);
+    background-color: var(--muted);
     transition:
       background-color 0.3s ease,
       box-shadow 0.3s ease;
@@ -116,10 +112,10 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
       &--mobile {
         @apply hidden items-center justify-between h-16 px-3;
-        border-bottom: 1px solid var(--c--contextuals--border--surface--primary);
+        border-bottom: 1px solid var(--border);
         border-top: 2px solid
-          var(--c--contextuals--border--semantic--brand--primary);
-        background: var(--c--contextuals--background--surface--secondary);
+          var(--primary);
+        background: var(--muted);
 
         @media (max-width: $tablet) {
           @apply flex;
@@ -128,7 +124,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
         &__default-route {
           @apply flex items-center gap-2 font-semibold overflow-hidden;
           font-size: var(--c--globals--font--sizes--sm);
-          color: var(--c--contextuals--content--semantic--neutral--primary);
+          color: var(--foreground);
 
           img {
             @apply w-[18px] h-[18px];
@@ -144,9 +140,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
             &__title {
               @apply flex items-center gap-1.5 font-medium text-sm;
               line-height: 20px;
-              color: var(
-                --c--contextuals--content--semantic--neutral--secondary
-              );
+              color: var(--muted-foreground);
 
               span {
                 @apply overflow-hidden text-ellipsis whitespace-nowrap;
@@ -156,14 +150,14 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
             &__folder {
               @apply text-base font-semibold overflow-hidden text-ellipsis whitespace-nowrap;
               line-height: 18px;
-              color: var(--c--contextuals--content--semantic--neutral--primary);
+              color: var(--foreground);
             }
           }
         }
 
         &__workspace {
           @apply flex items-center gap-2 text-base font-semibold px-2 overflow-hidden;
-          color: var(--c--contextuals--content--semantic--neutral--primary);
+          color: var(--foreground);
 
           span {
             @apply overflow-hidden text-ellipsis whitespace-nowrap;
@@ -175,22 +169,20 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     &__header {
       &__title {
         @apply text-[22px] font-bold pl-1.5;
-        color: var(--c--contextuals--content--semantic--neutral--primary);
+        color: var(--foreground);
       }
 
       &__description {
         @apply text-xs font-normal;
-        color: var(--c--contextuals--content--semantic--neutral--secondary);
+        color: var(--muted-foreground);
       }
     }
   }
 
   &__selection-bar {
     @apply flex items-center justify-between h-8 px-2 rounded;
-    background-color: var(
-      --c--contextuals--background--semantic--brand--tertiary
-    );
-    border: 1px solid var(--c--contextuals--border--semantic--brand--tertiary);
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
 
     &__left {
       @apply flex items-center gap-4;
@@ -202,7 +194,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
     &__caption {
       @apply text-sm font-medium;
-      color: var(--c--contextuals--content--semantic--brand--primary);
+      color: var(--primary);
     }
   }
 
@@ -210,16 +202,12 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     @apply cursor-grabbing rounded-xl font-bold text-[11px] w-fit whitespace-nowrap min-w-[120px];
     padding: var(--c--globals--spacings--3xs, 4px)
       calc(var(--c--globals--spacings--2xs, 6px) + 10px);
-    background-color: var(
-      --c--contextuals--background--semantic--brand--primary
-    );
-    color: var(--c--contextuals--content--semantic--brand--on-brand, #fff);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
 
     &__cannot-move {
-      background-color: var(
-        --c--contextuals--background--semantic--error--primary
-      );
-      color: var(--c--contextuals--content--semantic--error--on-error, #fff);
+      background-color: var(--destructive);
+      color: var(--destructive-foreground);
     }
   }
 }
@@ -239,8 +227,8 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
   &__files {
     @apply px-3 py-1 rounded mb-2 max-h-[250px];
-    background-color: var(--c--contextuals--background--surface--secondary);
-    border: 1px solid var(--c--contextuals--border--semantic--brand--tertiary);
+    background-color: var(--muted);
+    border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
     overflow: hidden auto;
     transition: all 0.2s ease-in-out;
 
@@ -250,48 +238,43 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
     &__item {
       @apply flex items-center justify-between h-10 text-sm font-semibold overflow-hidden min-w-0;
-      color: var(--c--contextuals--content--semantic--neutral--primary);
+      color: var(--foreground);
 
       &--error {
         .file-upload-toast__files__item__name span:first-of-type {
-          color: var(--c--contextuals--content--semantic--neutral--primary);
+          color: var(--foreground);
         }
       }
 
       &__size {
         @apply text-sm font-normal shrink-0 whitespace-nowrap;
-        color: var(--c--contextuals--content--semantic--neutral--tertiary);
+        color: var(--muted-foreground);
       }
 
       &__error-text {
         @apply text-xs font-normal cursor-default;
-        color: var(--c--contextuals--content--semantic--error--primary);
+        color: var(--destructive);
       }
 
       &__error-icon {
         @apply flex items-center justify-center w-6 h-6;
-        color: var(--c--contextuals--content--semantic--error--primary);
+        color: var(--destructive);
       }
 
       &__check {
         @apply flex items-center justify-center w-6 h-6 text-xl;
-        color: var(
-          --c--contextuals--content--semantic--success--primary,
-          #18753c
-        );
+        color: var(--success);
       }
 
       &__cancel-overlay {
         @apply absolute inset-[1px] flex items-center justify-center rounded-full;
-        background-color: var(
-          --c--contextuals--background--semantic--brand--secondary
-        );
+        background-color: color-mix(in srgb, var(--primary) 20%, transparent);
         opacity: 0.85;
       }
 
       &__cancel-icon {
         @apply text-base;
-        color: var(--c--contextuals--content--semantic--brand--primary);
+        color: var(--primary);
       }
 
       &__name {
@@ -325,7 +308,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
     &__percentage {
       @apply text-sm font-normal shrink-0;
-      color: var(--c--contextuals--content--semantic--neutral--tertiary);
+      color: var(--muted-foreground);
     }
 
     &__error-indicator {
@@ -333,7 +316,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
       .material-icons {
         font-size: 18px;
-        color: var(--c--contextuals--content--semantic--error--primary);
+        color: var(--destructive);
       }
     }
   }

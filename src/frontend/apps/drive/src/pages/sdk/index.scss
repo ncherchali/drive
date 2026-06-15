@@ -35,7 +35,7 @@
   padding: var(--c--globals--spacings--base) var(--c--globals--spacings--base) 0
     var(--c--globals--spacings--base);
   font-size: 14px;
-  color: var(--c--contextuals--content--semantic--neutral--secondary);
+  color: var(--muted-foreground);
 }
 
 .sdk__explorer__footer {
@@ -53,7 +53,7 @@
 
   &__caption {
     font-size: 14px;
-    color: var(--c--contextuals--content--semantic--neutral--secondary);
+    color: var(--muted-foreground);
   }
 
   &__actions {

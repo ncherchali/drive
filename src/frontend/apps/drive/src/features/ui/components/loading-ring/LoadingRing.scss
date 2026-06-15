@@ -48,15 +48,11 @@ $_ring-mask: radial-gradient(farthest-side, transparent 80%, #000 0);
 
   // Variants
   &--neutral {
-    --loading-ring-color: var(
-      --c--contextuals--content--semantic--neutral--secondary
-    );
+    --loading-ring-color: var(--muted-foreground);
   }
 
   &--brand {
-    --loading-ring-color: var(
-      --c--contextuals--content--semantic--brand--secondary
-    );
+    --loading-ring-color: var(--primary);
   }
 
   // Sizes

@@ -19,18 +19,16 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
   &__title {
     @apply overflow-hidden text-ellipsis whitespace-nowrap max-w-full font-medium;
     font-size: var(--c--globals--font--sizes--sm);
-    color: var(--c--contextuals--content--semantic--neutral--primary);
+    color: var(--foreground);
   }
 
   &__droppable {
     @apply rounded;
     border: 1.5px solid transparent;
     &.over {
-      background-color: var(
-        --c--contextuals--background--semantic--brand--tertiary
-      );
+      background-color: color-mix(in srgb, var(--primary) 12%, transparent);
       border: 1.5px solid
-        var(--c--contextuals--border--semantic--brand--primary);
+        var(--primary);
     }
   }
   &:hover {
@@ -80,24 +78,20 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
     @apply flex cursor-pointer items-center rounded h-[34px] pl-[22px] font-medium;
     gap: var(--c--globals--spacings--xs);
     font-size: var(--c--globals--font--sizes--sm);
-    color: var(--c--contextuals--content--semantic--neutral--primary);
+    color: var(--foreground);
 
     &.active {
       @apply font-bold;
-      background-color: var(
-        --c--contextuals--background--semantic--contextual--primary
-      );
+      background-color: var(--sidebar-accent);
     }
 
     &:hover {
-      background-color: var(
-        --c--contextuals--background--semantic--contextual--primary
-      );
+      background-color: var(--sidebar-accent);
     }
 
     &__icon {
       @apply flex items-center justify-center;
-      color: var(--c--contextuals--content--semantic--neutral--tertiary);
+      color: var(--muted-foreground);
     }
   }
 }
@@ -112,14 +106,6 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
  * adopte les couleurs DS d'un coup. Scopé `.sahla-ds-grid` → actif uniquement en
  * mode full-DS (shell DS + DS_EXPLORER_GRID), comme la repeinture de la grille.
  * ========================================================================== */
-.sahla-ds-grid .explorer__tree {
-  --c--contextuals--content--semantic--neutral--primary: var(--sidebar-foreground);
-  --c--contextuals--content--semantic--neutral--tertiary: var(--muted-foreground);
-  --c--contextuals--background--semantic--contextual--primary: var(--sidebar-accent);
-  --c--contextuals--background--semantic--brand--tertiary: var(--sidebar-accent);
-  --c--contextuals--border--semantic--brand--primary: var(--sidebar-primary);
-}
-
 .explorer__tree {
   @apply flex flex-col h-full;
 
@@ -128,7 +114,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 
     &__icon {
       @apply w-4 h-4;
-      color: var(--c--contextuals--content--semantic--neutral--tertiary);
+      color: var(--muted-foreground);
     }
   }
 
@@ -175,9 +161,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       margin: 0 12px;
 
       &:hover {
-        background-color: var(
-          --c--contextuals--background--semantic--contextual--primary
-        );
+        background-color: var(--sidebar-accent);
       }
 
       span {
@@ -199,9 +183,7 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
       font-family: inherit;
 
       &--selected {
-        background-color: var(
-          --c--contextuals--background--semantic--contextual--primary
-        );
+        background-color: var(--sidebar-accent);
       }
     }
   }
@@ -225,5 +207,5 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
   @apply font-semibold;
   padding: 8px 12px 4px;
   font-size: 12px;
-  color: var(--c--contextuals--content--semantic--neutral--tertiary);
+  color: var(--muted-foreground);
 }

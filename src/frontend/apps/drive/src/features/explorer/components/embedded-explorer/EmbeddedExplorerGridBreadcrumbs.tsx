@@ -295,7 +295,7 @@ export const LastItemBreadcrumb = ({ item }: { item: Item }) => {
         <Icon
           name="public"
           size={IconSize.SMALL}
-          color="var(--c--contextuals--content--semantic--neutral--tertiary)"
+          color="var(--muted-foreground)"
         />
       );
     }
@@ -304,7 +304,7 @@ export const LastItemBreadcrumb = ({ item }: { item: Item }) => {
         <Icon
           name="people"
           size={IconSize.SMALL}
-          color="var(--c--contextuals--content--semantic--neutral--tertiary)"
+          color="var(--muted-foreground)"
         />
       );
     }

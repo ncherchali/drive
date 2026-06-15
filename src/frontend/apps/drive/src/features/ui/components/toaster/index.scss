@@ -1,12 +1,10 @@
+// Thème de toast porté sur les tokens DS (la distinction de couleur d'origine
+// était déjà neutralisée — le chrome react-toastify est restylé côté composant).
 @mixin toaster-theme($color) {
-  background-color: var(
-    --c--contextuals--background--semantic--#{$color}--tertiary
-  );
-  border: 1px solid var(--c--contextuals--border--semantic--#{$color}--tertiary);
-  color: var(--c--contextuals--content--semantic--#{$color}--primary);
-  --toastify-color-progress-light: var(
-    --c--contextuals--content--semantic--#{$color}--tertiary
-  );
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  --toastify-color-progress-light: var(--primary);
 }
 
 .suite__toaster {
