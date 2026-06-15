@@ -1,15 +1,15 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactElement,
   type ReactNode,
 } from "react";
-import { useSyncDarkClass } from "@/features/theme/ThemeProvider";
+import { ThemeProvider } from "@/features/theme/ThemeProvider";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
-import { CunninghamProvider } from "@gouvfr-lasuite/ui-kit";
 import { ContextMenuProvider } from "@/components/ds-context-menu";
 import { DsModalsProvider } from "@/components/ds-modals";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -32,7 +32,6 @@ import { APIError, errorToString } from "@/features/api/APIError";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { AnalyticsProvider } from "@/features/analytics/AnalyticsProvider";
-import { capitalizeRegion } from "@/features/i18n/utils";
 import { ConfigProvider } from "@/features/config/ConfigProvider";
 import {
   removeQuotes,
@@ -121,15 +120,25 @@ export default function MyApp({
 const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { theme } = useAppContext();
   const router = useRouter();
   const themeTokens = useCunninghamTheme();
 
-  // Pont dark mode (coexistence Cunningham) : reflète l'état sombre du thème
-  // Cunningham courant sur la classe `.dark` de <html>, consommée par les
-  // composants DS (variant `dark:`). Cf. features/theme/ThemeProvider.
-  useSyncDarkClass(theme.includes("dark"));
+  // Thème de marque : applique la classe de tokens (`cunningham-theme--<theme>`,
+  // pilotée par la config) sur <html>. Remplace l'injection de tokens que faisait
+  // le CunninghamProvider (déposé) ; alimente les `--c--*` encore référencés par
+  // quelques SCSS/composants (migrés vers @theme au lot 13b). Le mode clair/sombre
+  // est lui géré par le ThemeProvider DS (classe `.dark`), source unique.
+  useEffect(() => {
+    const el = document.documentElement;
+    el.classList.forEach((cls) => {
+      if (cls.startsWith("cunningham-theme--")) {
+        el.classList.remove(cls);
+      }
+    });
+    el.classList.add(`cunningham-theme--${theme}`);
+  }, [theme]);
 
   const isSdk = useMemo(
     () => router.pathname.startsWith("/sdk"),
@@ -171,10 +180,7 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
         />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <CunninghamProvider
-          currentLocale={capitalizeRegion(i18n.language)}
-          theme={theme}
-        >
+        <ThemeProvider>
           <ConfigProvider>
             <AnalyticsProvider>
               <ContextMenuProvider>
@@ -186,7 +192,7 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
               {!isSdk && <FeedbackFooterMobile />}
             </AnalyticsProvider>
           </ConfigProvider>
-        </CunninghamProvider>
+        </ThemeProvider>
         {process.env.NODE_ENV === "development" && (
           <ReactQueryDevtools initialIsOpen={false} />
         )}

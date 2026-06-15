@@ -1,8 +1,8 @@
 // Modale « Paramètres » DS (accès depuis le footer de la sidebar).
 // Réglages réels : apparence (thème clair/sombre/système) et langue. Le thème
-// est piloté par la classe `.dark` + localStorage (`sahla-ds-theme`, partagé
-// avec le ThemeProvider DS) ; la langue via i18next. Pages Router : pas de "use
-// client". Modale portalée → contenu marqué `.sahla-ds` (cf. dialog DS).
+// est piloté par le ThemeProvider DS (source unique : état + localStorage +
+// classe `.dark`) via useTheme(). La langue via i18next. Pages Router : pas de
+// "use client". Modale portalée → contenu marqué `.sahla-ds` (cf. dialog DS).
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Monitor, Moon, Sun } from "lucide-react";
@@ -14,19 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTheme, type ThemeMode } from "@/features/theme/ThemeProvider";
 import { cn } from "@/utils/cn";
-
-type ThemeMode = "light" | "dark" | "system";
-const THEME_KEY = "sahla-ds-theme";
-
-const prefersDark = () =>
-  typeof window !== "undefined" &&
-  !!window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-
-const applyTheme = (mode: ThemeMode) => {
-  const dark = mode === "system" ? prefersDark() : mode === "dark";
-  document.documentElement.classList.toggle("dark", dark);
-};
 
 const LANGS = [
   { value: "fr", label: "Français" },
@@ -54,29 +43,10 @@ export function DsSettingsDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const { t, i18n } = useTranslation();
-  const [mode, setMode] = React.useState<ThemeMode>("system");
-
-  // Hydrate le mode courant depuis le stockage à l'ouverture.
-  React.useEffect(() => {
-    if (!open) return;
-    const stored = (typeof window !== "undefined"
-      ? localStorage.getItem(THEME_KEY)
-      : null) as ThemeMode | null;
-    if (stored === "light" || stored === "dark" || stored === "system") {
-      setMode(stored);
-    } else {
-      setMode(document.documentElement.classList.contains("dark") ? "dark" : "light");
-    }
-  }, [open]);
+  const { mode, setMode } = useTheme();
 
   const onSelectTheme = (next: ThemeMode) => {
     setMode(next);
-    try {
-      localStorage.setItem(THEME_KEY, next);
-    } catch {
-      /* localStorage indisponible */
-    }
-    applyTheme(next);
   };
 
   const currentLang = (i18n.language || "fr").split("-")[0];
