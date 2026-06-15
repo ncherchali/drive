@@ -151,11 +151,34 @@
   font-weight: 500;
 }
 
-/* La grille Cunningham `.c__datagrid` est `flex-col; align-items:flex-end` → ses
-   enfants ne s'étirent pas (table rétrécie + alignée à droite). En DS on étire
-   pour que la data table prenne toute la largeur. */
+/* La grille Cunningham `.c__datagrid` était `flex-col; align-items:flex-end`. En
+   DS on reproduit ce layout de base (auparavant fourni par ui-kit `.c__datagrid`,
+   déposé en 13c) en étirant les enfants → data table pleine largeur. */
 .sahla-ds-grid .explorer__grid {
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
+  gap: 0.5rem;
+  position: relative;
+  container-type: inline-size;
+}
+
+/* En-tête de colonne (auparavant `.c__datagrid__header` d'ui-kit). */
+.sahla-ds-grid .explorer__grid__header,
+.sahla-ds-grid .explorer__grid .c__datagrid__header {
+  display: flex;
+  align-items: center;
+}
+.sahla-ds-grid .c__datagrid__header--sortable {
+  cursor: pointer;
+}
+
+/* État vide (auparavant `.c__datagrid__empty-placeholder` d'ui-kit). */
+.sahla-ds-grid .c__datagrid__empty-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 /* EmbeddedExplorer.scss masque la 1re colonne (colonne « mobile » ui-kit) sur
@@ -187,9 +210,39 @@
   border-radius: var(--radius-lg);
 }
 
-/* Espacement vertical entre lignes légèrement aéré. */
+/* Sizing de base de la table, auparavant fourni par ui-kit
+   `.c__datagrid__table__container > table th/td` (déposé en 13c). On NE met PAS
+   `border-collapse` (la grille DS utilise `border-spacing` pour aérer les lignes). */
+.sahla-ds-grid .c__datagrid__table__container {
+  width: 100%;
+  overflow: auto;
+}
 .sahla-ds-grid .explorer__grid table {
+  width: 100%;
+  table-layout: fixed;
+  /* Espacement vertical entre lignes légèrement aéré. */
   border-spacing: 0 4px;
+}
+.sahla-ds-grid .explorer__grid th,
+.sahla-ds-grid .explorer__grid td {
+  text-align: start;
+  padding: 0 0.5rem;
+  height: 3rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sahla-ds-grid .c__datagrid__row__cell--actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.sahla-ds-grid .c__datagrid--empty {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--muted);
+  border: 1px solid var(--border);
 }
 
 /* ---- En-têtes de colonnes (style « tableau enterprise ») ----------------- */
