@@ -2,7 +2,8 @@ import { GenericDisclaimer } from "@/features/ui/components/generic-disclaimer/G
 import { SpinnerPage } from "@/features/ui/components/spinner/SpinnerPage";
 import { CustomFilesPreview } from "@/features/ui/preview/CustomFilesPreview";
 import { Icon } from "@/features/ui/components/icon/Icon";
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { useItem } from "@/features/explorer/hooks/useQueries";
@@ -28,8 +29,11 @@ export default function FilePage() {
         message={t("explorer.files.not_found.description")}
         imageSrc="/assets/403-background.png"
       >
-        <Button href="/" icon={<Icon name="home" />}>
-          {t("403.button")}
+        <Button asChild className="sahla-ds">
+          <Link href="/">
+            <Icon name="home" />
+            {t("403.button")}
+          </Link>
         </Button>
       </GenericDisclaimer>
     );

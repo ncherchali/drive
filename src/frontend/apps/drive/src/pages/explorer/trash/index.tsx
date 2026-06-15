@@ -8,11 +8,8 @@ import {
 import { getGlobalExplorerLayout } from "@/features/layouts/components/explorer/ExplorerLayout";
 import { addToast } from "@/features/ui/components/toaster/Toaster";
 import { ToasterItem } from "@/features/ui/components/toaster/Toaster";
-import {
-  Button,
-  Decision,
-  useModal,
-} from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { useModal } from "@/components/use-modal";
 import { useDsModals } from "@/components/ds-modals";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -106,7 +103,7 @@ export const TrashPageSelectionBarActions = () => {
     setSelectedItems([]);
   };
 
-  const handleHardDelete = async (decision: Decision) => {
+  const handleHardDelete = async (decision: "yes" | null) => {
     if (!decision) {
       return;
     }
@@ -122,20 +119,22 @@ export const TrashPageSelectionBarActions = () => {
 
   return (
     <>
-      <Button
+      <DsButton
         onClick={handleRestore}
-        icon={<img src={undoIcon.src} alt="" width={16} height={16} />}
-        variant="tertiary"
-        size="small"
+        variant="ghost"
+        size="icon"
         aria-label={t("explorer.grid.actions.restore")}
-      />
-      <Button
+      >
+        <img src={undoIcon.src} alt="" width={16} height={16} />
+      </DsButton>
+      <DsButton
         onClick={() => hardDeleteConfirmationModal.open()}
-        icon={<img src={cancelIcon.src} alt="" width={16} height={16} />}
-        variant="tertiary"
-        size="small"
+        variant="ghost"
+        size="icon"
         aria-label={t("explorer.grid.actions.hard_delete")}
-      />
+      >
+        <img src={cancelIcon.src} alt="" width={16} height={16} />
+      </DsButton>
       {hardDeleteConfirmationModal.isOpen && (
         <HardDeleteConfirmationModal
           {...hardDeleteConfirmationModal}

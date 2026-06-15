@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/features/ui/components/icon/Icon";
 import type { FilePreviewType } from "@/features/ui/preview/filePreviewType";
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 import { GenericDisclaimer } from "@/features/ui/components/generic-disclaimer/GenericDisclaimer";
 import { SpinnerPage } from "@/features/ui/components/spinner/SpinnerPage";
@@ -41,8 +42,11 @@ export default function WopiPage() {
         message={t("explorer.files.not_found.description")}
         imageSrc="/assets/403-background.png"
       >
-        <Button href="/" icon={<Icon name="home" />}>
-          {t("403.button")}
+        <Button asChild className="sahla-ds">
+          <Link href="/">
+            <Icon name="home" />
+            {t("403.button")}
+          </Link>
         </Button>
       </GenericDisclaimer>
     );

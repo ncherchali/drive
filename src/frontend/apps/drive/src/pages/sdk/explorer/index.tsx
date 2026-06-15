@@ -12,7 +12,6 @@ import {
   useSdkContext,
 } from "@/features/layouts/components/sdk/SdkLayout";
 import { PickerFooter } from "@/features/sdk/SdkPickerFooter";
-import { Tooltip } from "@gouvfr-lasuite/cunningham-react";
 import { useTranslation } from "react-i18next";
 import { useSyncExternalStore } from "react";
 
@@ -70,10 +69,8 @@ const SdkGridNameCell = (props: EmbeddedExplorerGridNameCellProps) => {
     return <EmbeddedExplorerGridNameCell {...props} />;
   }
   return (
-    <Tooltip content={t("sdk.explorer.cannot_pick")}>
-      {/* Nested div is needed to make the tooltip work */}
-      <div>
-        <EmbeddedExplorerGridNameCell {...props}>
+    <div title={t("sdk.explorer.cannot_pick")}>
+      <EmbeddedExplorerGridNameCell {...props}>
           <svg
             width="16"
             height="16"
@@ -86,9 +83,8 @@ const SdkGridNameCell = (props: EmbeddedExplorerGridNameCellProps) => {
               fill="#777777"
             />
           </svg>
-        </EmbeddedExplorerGridNameCell>
-      </div>
-    </Tooltip>
+      </EmbeddedExplorerGridNameCell>
+    </div>
   );
 };
 
