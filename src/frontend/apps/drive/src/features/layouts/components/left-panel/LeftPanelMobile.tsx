@@ -1,18 +1,16 @@
-import { Gaufre } from "@/features/ui/components/gaufre/Gaufre";
 import { UserProfile } from "@/features/ui/components/user/UserProfile";
-import { useResponsive } from "@gouvfr-lasuite/ui-kit";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const LeftPanelMobile = () => {
-  const { isTablet } = useResponsive();
+  const isMobile = useIsMobile();
 
-  if (!isTablet) {
+  if (!isMobile) {
     return null;
   }
 
   return (
     <div className="drive__home__left-panel">
       <div className="drive__home__left-panel__gaufre">
-        <Gaufre />
         <UserProfile />
       </div>
     </div>

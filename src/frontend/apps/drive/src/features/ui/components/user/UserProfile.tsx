@@ -1,23 +1,21 @@
-import { UserMenu } from "@gouvfr-lasuite/ui-kit";
-import { useAuth } from "@/features/auth/Auth";
-import { logout } from "@/features/auth/Auth";
+import { useAuth, logout } from "@/features/auth/Auth";
+import { UserMenu } from "@/components/layout/user-menu";
 import { LanguagePickerUserMenu } from "@/features/layouts/components/header/Header";
 import { LoginButton } from "@/features/auth/components/LoginButton";
 
+// Profil utilisateur (chemin non-DS) — anciennement UserMenu d'ui-kit, désormais
+// le menu utilisateur DS (components/layout/user-menu). Le sélecteur de langue
+// (DS) est inséré comme contenu du menu.
 export const UserProfile = () => {
   const { user } = useAuth();
+
+  if (!user) {
+    return <LoginButton />;
+  }
+
   return (
-    <>
-      {user ? (
-        <UserMenu
-          user={user}
-          logout={logout}
-          termOfServiceUrl="https://docs.numerique.gouv.fr/docs/8e298e03-c95f-44c7-be4a-ffb618af1854/"
-          actions={<LanguagePickerUserMenu />}
-        />
-      ) : (
-        <LoginButton />
-      )}
-    </>
+    <UserMenu name={user.email} onLogout={logout}>
+      <LanguagePickerUserMenu />
+    </UserMenu>
   );
 };

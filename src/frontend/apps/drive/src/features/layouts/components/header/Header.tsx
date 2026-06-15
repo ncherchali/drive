@@ -1,15 +1,21 @@
-import { LanguagePicker, useResponsive } from "@gouvfr-lasuite/ui-kit";
 import { useAuth } from "@/features/auth/Auth";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Check, ChevronDown } from "lucide-react";
 import { ExplorerSearchButton } from "@/features/explorer/components/app-view/ExplorerSearchButton";
 import { getDriver } from "@/features/config/Config";
 import { Item } from "@/features/drivers/types";
 import { ItemFilters } from "@/features/drivers/Driver";
 import { useIsMinimalLayout } from "@/utils/useLayout";
 import { Feedback } from "@/features/feedback/Feedback";
-import { Gaufre } from "@/features/ui/components/gaufre/Gaufre";
 import { UserProfile } from "@/features/ui/components/user/UserProfile";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 export const HeaderIcon = () => {
   return (
@@ -48,7 +54,6 @@ export const LANGUAGES = [
   },
 ];
 
-
 export const HeaderRight = ({
   displaySearch,
   currentItem,
@@ -57,11 +62,8 @@ export const HeaderRight = ({
   currentItem?: Item;
 }) => {
   const { user } = useAuth();
-
-  
   const isMinimalLayout = useIsMinimalLayout();
-
-  const { isTablet } = useResponsive();
+  const isMobile = useIsMobile();
 
   const defaultFilters: ItemFilters = useMemo(() => {
     const workspaceId = currentItem?.parents?.[0]?.id ?? currentItem?.id;
@@ -74,48 +76,34 @@ export const HeaderRight = ({
     return {};
   }, [currentItem, isMinimalLayout]);
 
-
   return (
     <>
       {user && displaySearch && (
         <ExplorerSearchButton defaultFilters={defaultFilters} />
       )}
 
-      {!isTablet && (
-        <>
-          <Gaufre />
-          <UserProfile />
-        </>
-      )}
+      {!isMobile && <UserProfile />}
     </>
   );
 };
 
-
+/** Sélecteur de langue (dropdown DS) — anciennement LanguagePicker d'ui-kit. */
 export const LanguagePickerUserMenu = () => {
   const { i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
   const driver = getDriver();
   const [selectedLanguage, setSelectedLanguage] = useState(user?.language);
 
-  // We must set the language to lowercase because django does not use "en-US", but "en-us".
-
-  const languages = useMemo(() => {
-    return LANGUAGES.map((language) => ({
-      ...language,
-      isChecked: language.value === selectedLanguage,
-    }));
-  }, [selectedLanguage]);
-
+  // On force la langue en minuscules car django utilise "en-us", pas "en-US".
   const onChange = (value: string) => {
     setSelectedLanguage(value);
     i18n.changeLanguage(value).catch((err) => {
       console.error("Error changing language", err);
     });
     if (user) {
-      // The language still applies client-side via i18n above. Persisting to
-      // the backend may fail if the server doesn't allow this language (its
-      // User.language choices come from settings.LANGUAGES) — don't crash then.
+      // La langue s'applique côté client via i18n ci-dessus. La persistance
+      // backend peut échouer si le serveur n'autorise pas cette langue (ses
+      // choix User.language viennent de settings.LANGUAGES) — ne pas crasher.
       driver
         .updateUser({ language: value, id: user.id })
         .then(() => {
@@ -127,12 +115,33 @@ export const LanguagePickerUserMenu = () => {
     }
   };
 
+  const current =
+    LANGUAGES.find((l) => l.value === selectedLanguage)?.shortLabel ?? "FR";
+
   return (
-    <LanguagePicker
-      languages={languages}
-      size="small"
-      onChange={onChange}
-      compact
-    />
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-foreground outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {current}
+          <ChevronDown className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="sahla-ds min-w-40">
+        {LANGUAGES.map((language) => (
+          <DropdownMenuItem
+            key={language.value}
+            onSelect={() => onChange(language.value)}
+          >
+            <span className="flex-1">{language.label}</span>
+            {language.value === selectedLanguage && (
+              <Check className="ms-auto size-4" aria-hidden />
+            )}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
