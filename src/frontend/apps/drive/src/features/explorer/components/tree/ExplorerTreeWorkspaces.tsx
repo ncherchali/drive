@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { Separator } from "@/components/ui/separator";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useFirstLevelItems } from "../../hooks/useQueries";
 import { itemIsWorkspace } from "@/features/drivers/utils";
@@ -27,7 +27,7 @@ export const ExplorerTreeWorkspaces = () => {
 
   return (
     <div className="explorer__tree__nav__container">
-      <HorizontalSeparator withPadding={false} />
+      <Separator />
       <div className="explorer__tree__workspaces__title">
         {t("explorer.tree.workspaces.title")}
       </div>

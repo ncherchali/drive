@@ -9,7 +9,7 @@ import {
   useFeatureFlag,
   FLAG_DS_EXPLORER_GRID,
 } from "@/features/flags/useFeatureFlag";
-import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { Separator } from "@/components/ui/separator";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useCallback, useEffect, useState } from "react";
 import { ExplorerTreeActions } from "./ExplorerTreeActions";
@@ -25,7 +25,7 @@ export const ExplorerTree = () => {
   return (
     <div className="explorer__tree">
       <ExplorerTreeActions />
-      <HorizontalSeparator withPadding={false} />
+      <Separator />
       <ExplorerTreeNavDefault />
 
       <ExplorerFolderTree />
@@ -33,7 +33,7 @@ export const ExplorerTree = () => {
       <ExplorerTreeWorkspaces />
       <ExplorerTreeNav />
       <div className="explorer__tree__mobile-navs">
-        <HorizontalSeparator />
+        <Separator />
         <LeftPanelMobile />
       </div>
     </div>

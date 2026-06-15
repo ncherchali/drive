@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { ExplorerTreeNavItem } from "./ExplorerTreeNavItem";
-import { HorizontalSeparator } from "@gouvfr-lasuite/ui-kit";
+import { Separator } from "@/components/ui/separator";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import { TrashIcon } from "@/features/ui/components/icon/TrashIcon";
 import { Trash2 } from "lucide-react";
@@ -28,7 +28,7 @@ export const ExplorerTreeNav = () => {
 
   return (
     <div className="explorer__tree__nav__container">
-      <HorizontalSeparator withPadding={false} />
+      <Separator />
       <div className="explorer__tree__nav">
         {navItems.map((item) => (
           <ExplorerTreeNavItem key={item.label} {...item} />
