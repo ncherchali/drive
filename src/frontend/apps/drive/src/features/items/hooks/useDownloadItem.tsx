@@ -1,5 +1,5 @@
 import { Item, ItemUploadState } from "@/features/drivers/types";
-import { ModalSize, useModals } from "@gouvfr-lasuite/cunningham-react";
+import { useDsModals } from "@/components/ds-modals";
 import { downloadFile } from "../utils";
 import { useAuth } from "@/features/auth/Auth";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,7 @@ import posthog from "posthog-js";
 export const useDownloadItem = () => {
   const { t } = useTranslation();
 
-  const modals = useModals();
+  const modals = useDsModals();
   const { user } = useAuth();
   const handleDownloadItem = async (item?: Item) => {
     if (!item?.url || !item?.title) {
@@ -59,7 +59,6 @@ export const useDownloadItem = () => {
 
     if (title && description) {
       const decision = await modals.confirmationModal({
-        size: ModalSize.MEDIUM,
         title,
         children: description,
       });

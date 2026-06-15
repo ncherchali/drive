@@ -12,8 +12,8 @@ import {
   Button,
   Decision,
   useModal,
-  useModals,
 } from "@gouvfr-lasuite/cunningham-react";
+import { useDsModals } from "@/components/ds-modals";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import undoIcon from "@/assets/icons/undo_blue.svg";
@@ -47,7 +47,7 @@ export default function TrashPage() {
     placeholderData: (previousData) => previousData,
   });
 
-  const modals = useModals();
+  const modals = useDsModals();
 
   useDefaultRoute(DefaultRoute.TRASH);
 

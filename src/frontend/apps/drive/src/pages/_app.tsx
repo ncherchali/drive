@@ -11,6 +11,7 @@ import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { CunninghamProvider } from "@gouvfr-lasuite/ui-kit";
 import { ContextMenuProvider } from "@/components/ds-context-menu";
+import { DsModalsProvider } from "@/components/ds-modals";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   MutationCache,
@@ -177,7 +178,9 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
           <ConfigProvider>
             <AnalyticsProvider>
               <ContextMenuProvider>
-                {getLayout(<Component {...pageProps} />)}
+                <DsModalsProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </DsModalsProvider>
               </ContextMenuProvider>
               <ResponsiveDivs />
               {!isSdk && <FeedbackFooterMobile />}

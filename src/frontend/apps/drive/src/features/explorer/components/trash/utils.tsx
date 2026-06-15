@@ -1,18 +1,12 @@
-import {
-  ModalSize,
-  useModals,
-  VariantType,
-} from "@gouvfr-lasuite/cunningham-react";
+import type { DsModalsApi } from "@/components/ds-modals";
 import i18n from "@/features/i18n/initI18n";
 
 export const messageModalTrashNavigate = (
-  modals: ReturnType<typeof useModals>,
+  modals: DsModalsApi,
   isFile: boolean = false,
 ) => {
   const key = isFile ? "modal_file" : "modal_folder";
-  modals.messageModal({
-    messageType: VariantType.INFO,
-    size: ModalSize.MEDIUM,
+  void modals.messageModal({
     title: i18n.t(`explorer.trash.navigate.${key}.title`),
     children: (
       <div className="clr-greyscale-600">

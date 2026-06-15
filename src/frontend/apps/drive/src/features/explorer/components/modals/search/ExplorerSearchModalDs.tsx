@@ -9,7 +9,7 @@
 // intégrables sous `.sahla-ds` sans casse.
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useModals } from "@gouvfr-lasuite/cunningham-react";
+import { useDsModals } from "@/components/ds-modals";
 import { CornerDownLeft } from "lucide-react";
 import { Key } from "react-aria-components";
 import { Item, ItemType } from "@/features/drivers/types";
@@ -67,7 +67,7 @@ export const ExplorerSearchModalDs = ({
   const [items, setItems] = useState<Item[]>([]);
   const driver = getDriver();
   const { onNavigate, setPreviewItem, setPreviewItems } = useGlobalExplorer();
-  const modals = useModals();
+  const modals = useDsModals();
 
   // Recherche serveur debouncée. Le clear et la requête passent tous deux par le
   // timeout (pas de setState synchrone dans l'effet), avec annulation au cleanup.

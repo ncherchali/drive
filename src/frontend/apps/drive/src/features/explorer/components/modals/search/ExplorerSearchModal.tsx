@@ -3,8 +3,8 @@ import {
   Modal,
   ModalProps,
   ModalSize,
-  useModals,
 } from "@gouvfr-lasuite/cunningham-react";
+import { useDsModals } from "@/components/ds-modals";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -86,7 +86,7 @@ export const ExplorerSearchModal = (props: ExplorerSearchModalProps) => {
     setFilters(handleFilterChange(filters, name, value));
   };
 
-  const modals = useModals();
+  const modals = useDsModals();
 
   const onItemClick = (item: Item) => {
     if (item.type === ItemType.FOLDER) {
