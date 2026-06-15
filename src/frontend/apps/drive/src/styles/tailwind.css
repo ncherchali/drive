@@ -1,15 +1,15 @@
 /* Entrée Tailwind 4. Importée avant globals.scss dans _app.tsx.
  *
- * On n'importe PAS encore `tailwindcss/preflight.css` : le preflight reste scopé
- * sous `.sahla-ds` (cf. ds.css §5) tant qu'ui-kit/style fournit le reset global
- * des bribes Cunningham ; la bascule vers le preflight global est l'étape 13c.2.
+ * Preflight GLOBAL activé (13c.2) : remplace le reset de base d'ui-kit/style
+ * (déposé) — Cunningham n'est plus en cohabitation. Le reset shadcn/Radix n'est
+ * donc plus scopé sous `.sahla-ds`.
  *
- * `@config` (tailwind.config.js, couleurs/polices branchées sur les tokens
- * Cunningham) a été retiré (13c.1) : les utilitaires couleur du DS viennent
- * désormais uniquement de `@theme` (ds.css), et la police de base d'une règle
- * `body { font-family: Inter }` (globals.scss). */
+ * `@config` (tailwind.config.js, tokens Cunningham) a été retiré (13c.1) : les
+ * utilitaires couleur du DS viennent uniquement de `@theme` (ds.css), la police
+ * de base d'une règle `body { font-family: Inter }` (globals.scss). */
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 
 /* Couche tokens du Design System (shadcn/Radix). Importée dans la même instance

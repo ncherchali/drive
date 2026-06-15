@@ -207,56 +207,24 @@
 }
 
 /* ----------------------------------------------------------------------------
- * 5) Reset preflight SCOPÉ sous `.sahla-ds`.
- *    Le preflight global de Tailwind reste désactivé (cohabitation Cunningham) ;
- *    on ne ré-applique ici que ce dont shadcn/Radix dépend, et uniquement à
- *    l'intérieur des sous-arbres marqués `class="sahla-ds"`.
+ * 5) Défauts globaux du DS (compléments au preflight Tailwind global, 13c.2).
+ *    Le preflight (tailwind.css) couvre box-sizing, margin/padding 0,
+ *    border-width 0, reset bouton/img/formulaires. On n'ajoute ici que ce qui
+ *    lui manque pour le DS — plus de scoping `.sahla-ds`.
  * -------------------------------------------------------------------------- */
 @layer base {
-  .sahla-ds,
-  .sahla-ds *,
-  .sahla-ds *::before,
-  .sahla-ds *::after {
-    box-sizing: border-box;
-    /* largeur 0 par défaut + style solide + couleur de bordure du thème :
-       l'utilitaire `border` n'a plus qu'à fixer la largeur (équivaut au reset
-       de bordure du preflight). */
-    border: 0 solid var(--border);
+  /* Tailwind v4 laisse la couleur de bordure à `currentColor` ; on rétablit le
+     token de bordure du thème (l'utilitaire `border` ne fixe plus que la
+     largeur). */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
   }
 
-  .sahla-ds {
+  body {
     color: var(--foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
-  }
-
-  /* Les éléments de formulaire héritent de la typographie (sinon styles UA). */
-  .sahla-ds button,
-  .sahla-ds input,
-  .sahla-ds optgroup,
-  .sahla-ds select,
-  .sahla-ds textarea {
-    font: inherit;
-    color: inherit;
-    letter-spacing: inherit;
-  }
-
-  .sahla-ds button {
-    cursor: pointer;
-    background-color: transparent;
-    background-image: none;
-  }
-
-  .sahla-ds :disabled {
-    cursor: default;
-  }
-
-  /* Cohérence des médias en flux. */
-  .sahla-ds img,
-  .sahla-ds svg,
-  .sahla-ds video,
-  .sahla-ds canvas {
-    display: block;
-    vertical-align: middle;
   }
 }
