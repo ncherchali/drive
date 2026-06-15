@@ -2,7 +2,7 @@ import { Item } from "@/features/drivers/types";
 import { getFormatTranslationKey } from "@/features/explorer/utils/mimeTypes";
 import { formatSize } from "@/features/explorer/utils/utils";
 import { InfoRow } from "@/features/ui/components/info/InfoRow";
-import { UserRow } from "@gouvfr-lasuite/ui-kit";
+import { Avatar } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 
 export type ItemInfoProps = {
@@ -44,7 +44,12 @@ export const ItemInfo = ({ item }: ItemInfoProps) => {
       )}
       <InfoRow
         label={t("explorer.rightPanel.created_by")}
-        rightContent={<UserRow fullName={item.creator.full_name} />}
+        rightContent={
+          <span className="flex items-center gap-2">
+            <Avatar name={item.creator.full_name} className="size-6 text-xs" />
+            <span className="truncate text-sm">{item.creator.full_name}</span>
+          </span>
+        }
       />
     </div>
   );

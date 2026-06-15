@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { Item } from "@/features/drivers/types";
 import { useEffect, useRef } from "react";
 import { useAppExplorer } from "./AppExplorer";
-import { useResponsive } from "@gouvfr-lasuite/ui-kit";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { MenuContext } from "@/components/ds-menu";
 import { useGlobalExplorer } from "@/features/explorer/components/GlobalExplorerContext";
 import { useSetSelectedItems } from "@/features/explorer/stores/selectionStore";
@@ -143,7 +143,7 @@ export const AppExplorerInner = () => {
     }
   }, [itemId]);
 
-  const { isTablet } = useResponsive();
+  const isMobile = useIsMobile();
 
   const { menuItems: contextMenuItems, modals: createModals } =
     useCreateMenuItems({ includeImport: true });
@@ -181,7 +181,7 @@ export const AppExplorerInner = () => {
     );
   };
 
-  if (isTablet || appExplorer.disableAreaSelection) {
+  if (isMobile || appExplorer.disableAreaSelection) {
     return (
       <>
         {renderContent()}

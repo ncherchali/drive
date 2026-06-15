@@ -1,7 +1,6 @@
-import { FilterOption } from "@gouvfr-lasuite/ui-kit";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import { RotateCcw } from "lucide-react";
-import { FilterControl } from "@/components/ds-filter";
+import { FilterControl, FilterOption } from "@/components/ds-filter";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import folderIcon from "@/assets/folder/folder.svg";

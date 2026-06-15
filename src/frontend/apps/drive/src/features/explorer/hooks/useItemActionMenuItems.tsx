@@ -1,19 +1,19 @@
 import { Item, ItemType } from "@/features/drivers/types";
 import {
-  Shared,
+  Share2 as Shared,
   Download,
   Copy,
   FolderPlus,
   Upload,
   Star,
-  Edit,
+  Pencil as Edit,
   ArrowRight,
   Info,
-  Trash,
-} from "@gouvfr-lasuite/ui-kit";
+  Trash2 as Trash,
+} from "lucide-react";
 import { useTreeContext } from "@/components/tree";
 import type { MenuItem } from "@/components/ds-menu";
-import { useModal } from "@gouvfr-lasuite/cunningham-react";
+import { useModal } from "@/components/use-modal";
 import { t } from "i18next";
 import {
   itemToTreeItem,

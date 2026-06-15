@@ -1,18 +1,15 @@
-// Adaptateur de filtre DS — pont data-driven ui-kit → Design System.
+// Filtre « chip » Design System — dropdown mono-sélection (label + options
+// { value, label, render?, showSeparator? }, `selectedKey`, `onSelectionChange`).
 // Pages Router : pas de "use client".
 //
-// Le `Filter` de @gouvfr-lasuite/ui-kit est un dropdown mono-sélection « chip »
-// (label + options { value, label, render?, showSeparator? }, `selectedKey`,
-// `onSelectionChange`). Ce pont expose la même API : derrière le flag
-// DS_APP_SHELL il rend une version DS (popover + liste sélectionnable), sinon il
-// délègue au composant ui-kit. Les filtres métier (ExplorerFilterType/Workspace/
-// Scope) restent inchangés ; seul leur primitif de rendu bascule.
+// Remplace le `Filter` de l'ui-kit DINUM (dépose totale) : popover + liste
+// sélectionnable, types locaux. Les filtres métier (ExplorerFilterType/Workspace/
+// Scope) consomment ce composant via `FilterControl`.
 //
 // Auto-suffisance : le déclencheur fixe `border-solid` explicitement et le
 // contenu portalé porte `.sahla-ds`, pour un rendu correct même hors d'un
 // sous-arbre `.sahla-ds` (barre de grille, modale de recherche…).
 import * as React from "react";
-import { Filter as UiKitFilter } from "@gouvfr-lasuite/ui-kit";
 import type { Key } from "react-aria-components";
 import { Check, ChevronDown } from "lucide-react";
 import {
@@ -21,20 +18,22 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import {
-  FLAG_DS_APP_SHELL,
-  useFeatureFlag,
-} from "@/features/flags/useFeatureFlag";
 import { cn } from "@/utils/cn";
 
-type FilterProps = React.ComponentProps<typeof UiKitFilter>;
-
-/** Vue permissive d'une option (superset réellement passé par les filtres). */
-type Option = {
+/** Option d'un filtre « chip ». */
+export type FilterOption = {
   label: string;
   value?: Key;
   render?: () => React.ReactNode;
   showSeparator?: boolean;
+};
+
+export type FilterProps = {
+  label: string;
+  options?: FilterOption[];
+  selectedKey?: Key | null;
+  onSelectionChange?: (key: Key | null) => void;
+  isDisabled?: boolean;
 };
 
 function DsFilter({
@@ -45,7 +44,7 @@ function DsFilter({
   isDisabled,
 }: FilterProps) {
   const [open, setOpen] = React.useState(false);
-  const list = (options ?? []) as Option[];
+  const list = options ?? [];
   const isActive = selectedKey != null;
   const selected = list.find(
     (option) => String(option.value) === String(selectedKey),
@@ -105,14 +104,9 @@ function DsFilter({
 }
 
 /**
- * Filtre « chip » à API ui-kit (`label`, `options`, `selectedKey`,
- * `onSelectionChange`, `isDisabled`). Rend le DS derrière le flag DS_APP_SHELL,
- * sinon le composant ui-kit d'origine.
+ * Filtre « chip » data-driven (`label`, `options`, `selectedKey`,
+ * `onSelectionChange`, `isDisabled`) — rendu Design System.
  */
 export function FilterControl(props: FilterProps) {
-  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
-  if (useDs) {
-    return <DsFilter {...props} />;
-  }
-  return <UiKitFilter {...props} />;
+  return <DsFilter {...props} />;
 }

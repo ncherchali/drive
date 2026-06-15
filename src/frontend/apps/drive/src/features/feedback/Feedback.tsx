@@ -1,11 +1,14 @@
 import { Icon, IconType } from "@/features/ui/components/icon/Icon";
+import { Button, ButtonProps } from "@/components/ui/button";
 import {
-  Button,
-  ButtonProps,
-  Modal,
-  ModalSize,
-  useModal,
-} from "@gouvfr-lasuite/cunningham-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { useModal } from "@/components/use-modal";
+import { cn } from "@/utils/cn";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useConfig } from "../config/ConfigProvider";
@@ -76,37 +79,47 @@ export const Feedback = (props: { buttonProps?: Partial<ButtonProps> }) => {
     return null;
   }
 
+  const { className: buttonClassName, ...restButtonProps } =
+    props.buttonProps ?? {};
+
   return (
     <>
       <Button
-        icon={<Icon name="feedback" type={IconType.OUTLINED} />}
-        color="info"
-        className="c__feedback__button"
         variant="secondary"
+        className={cn("sahla-ds gap-2 c__feedback__button", buttonClassName)}
         onClick={onClick}
-        {...props.buttonProps}
+        {...restButtonProps}
       >
+        <Icon name="feedback" type={IconType.OUTLINED} />
         {t("feedback.button")}
       </Button>
 
-      <Modal
-        {...modal}
-        title={t("feedback.modal.title")}
-        size={ModalSize.MEDIUM}
+      <Dialog
+        open={modal.isOpen}
+        onOpenChange={(open) => {
+          if (!open) modal.close();
+        }}
       >
-        <p className="fs-m clr-greyscale-600">
-          {t("feedback.modal.description")}
-        </p>
-        <div className="c__feedback__modal__buttons">
-          {FEEDBACK_BUTTONS.filter((button) => !!button.href).map((button) => (
-            <FeedbackButton
-              key={button.title}
-              {...button}
-              href={button.href!}
-            />
-          ))}
-        </div>
-      </Modal>
+        <DialogContent className="sahla-ds">
+          <DialogHeader>
+            <DialogTitle>{t("feedback.modal.title")}</DialogTitle>
+            <DialogDescription>
+              {t("feedback.modal.description")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="c__feedback__modal__buttons">
+            {FEEDBACK_BUTTONS.filter((button) => !!button.href).map(
+              (button) => (
+                <FeedbackButton
+                  key={button.title}
+                  {...button}
+                  href={button.href!}
+                />
+              ),
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
@@ -114,7 +127,7 @@ export const Feedback = (props: { buttonProps?: Partial<ButtonProps> }) => {
 export const FeedbackFooterMobile = () => {
   return (
     <div className="c__feedback__footer">
-      <Feedback buttonProps={{ fullWidth: true }} />
+      <Feedback buttonProps={{ className: "w-full" }} />
     </div>
   );
 };
