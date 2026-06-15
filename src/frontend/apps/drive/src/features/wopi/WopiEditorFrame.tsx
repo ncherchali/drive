@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
-import { useCunningham } from "@gouvfr-lasuite/cunningham-react";
+import { useTranslation } from "react-i18next";
+import { FileWarning } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDriver } from "@/features/config/Config";
-import { ErrorPreview, FilePreviewType } from "@gouvfr-lasuite/ui-kit";
+import type { FilePreviewType } from "@/features/ui/preview/filePreviewType";
 
 interface WopiEditorFrameProps {
   item: FilePreviewType;
@@ -13,7 +14,7 @@ export const WopiEditorFrame = ({
   item,
   onFileRename,
 }: WopiEditorFrameProps) => {
-  const { t } = useCunningham();
+  const { t } = useTranslation();
   const formRef = useRef<HTMLFormElement>(null);
   const queryClient = useQueryClient();
 
@@ -61,11 +62,25 @@ export const WopiEditorFrame = ({
   }, [item.id, queryClient]);
 
   if (isLoading) {
-    return <div>{t("components.filePreview.wopi.loading")}</div>;
+    return (
+      <div className="wopi-editor__loading">
+        {t("wopi.editor.loading", "Chargement de l'éditeur…")}
+      </div>
+    );
   }
 
   if (isError || !wopiInfo) {
-    return <ErrorPreview file={item} />;
+    return (
+      <div className="sahla-ds flex h-full flex-col items-center justify-center gap-3 p-8 text-center text-muted-foreground">
+        <FileWarning className="size-10" aria-hidden />
+        <p className="max-w-sm text-sm">
+          {t(
+            "wopi.editor.error",
+            "Impossible d'ouvrir l'aperçu de ce fichier.",
+          )}
+        </p>
+      </div>
+    );
   }
 
   return (

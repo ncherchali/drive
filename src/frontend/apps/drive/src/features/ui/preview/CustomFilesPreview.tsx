@@ -1,12 +1,14 @@
 import { Item, ItemType } from "@/features/drivers/types";
-import { FilePreview, FilePreviewType } from "@gouvfr-lasuite/ui-kit";
+import type { FilePreviewType } from "./filePreviewType";
+import { DsFilePreview } from "./DsFilePreview";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import posthog from "posthog-js";
 import { itemToPreviewFile } from "@/features/explorer/utils/utils";
 import { useDownloadItem } from "@/features/items/hooks/useDownloadItem";
 import { ItemInfo } from "@/features/items/components/ItemInfo";
-import { Button, useModal } from "@gouvfr-lasuite/cunningham-react";
+import { Button } from "@/components/ui/button";
+import { useModal } from "@/components/use-modal";
 import { ItemShareModal } from "@/features/explorer/components/modals/share/ItemShareModal";
 import { openWopiInNewTab } from "@/features/wopi/openWopi";
 
@@ -39,7 +41,7 @@ export const CustomFilesPreview = ({
   };
 
   return (
-    <FilePreview
+    <DsFilePreview
       isOpen={!!currentItem}
       onClose={handleClosePreview}
       files={files}
@@ -79,7 +81,7 @@ const CustomFilesPreviewRightHeader = ({
   return (
     <>
       <div className="custom-files-preview-right-header">
-        <Button variant="tertiary" onClick={shareModal.open}>
+        <Button variant="ghost" size="sm" onClick={shareModal.open}>
           {t("explorer.rightPanel.share")}
         </Button>
       </div>
