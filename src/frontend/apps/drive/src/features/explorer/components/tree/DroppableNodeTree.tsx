@@ -5,7 +5,7 @@ import {
   TreeDataItem,
   TreeViewNodeTypeEnum,
   useTreeContext,
-} from "@gouvfr-lasuite/ui-kit";
+} from "@/components/tree";
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { canDrop } from "../ExplorerDndProvider";

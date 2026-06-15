@@ -1,5 +1,17 @@
-import { FooterProps, TreeViewDataType } from "@gouvfr-lasuite/ui-kit";
+import type { TreeViewDataType } from "@/components/tree";
 import { ColumnPreferences } from "../explorer/types/columns";
+
+/**
+ * Configuration d'un pied de page applicatif. Type local — anciennement
+ * `FooterProps` de l'ui-kit DINUM (dépose totale, lot 6).
+ */
+type FooterLink = { label: string; href: string };
+export type FooterProps = {
+  externalLinks?: readonly FooterLink[];
+  legalLinks?: readonly FooterLink[];
+  license?: { label: string; link: FooterLink };
+  logo?: { src: string; width?: string; height?: string; alt: string };
+};
 
 export enum ItemType {
   FILE = "file",

@@ -1,5 +1,5 @@
 import { Item } from "@/features/drivers/types";
-import { PaginatedChildrenResult } from "@gouvfr-lasuite/ui-kit";
+import { PaginatedChildrenResult } from "@/components/tree";
 import { QueryClient, QueryKey, useQueryClient } from "@tanstack/react-query";
 
 /**

@@ -1,7 +1,5 @@
 import { Item, ItemType } from "@/features/drivers/types";
 import {
-  useTreeContext,
-  MenuItem,
   Shared,
   Download,
   Copy,
@@ -13,6 +11,8 @@ import {
   Info,
   Trash,
 } from "@gouvfr-lasuite/ui-kit";
+import { useTreeContext } from "@/components/tree";
+import type { MenuItem } from "@/components/ds-menu";
 import { useModal } from "@gouvfr-lasuite/cunningham-react";
 import { t } from "i18next";
 import {

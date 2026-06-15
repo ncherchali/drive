@@ -19,7 +19,7 @@ import {
 } from "./GlobalExplorerContext";
 import { Item, TreeItem } from "@/features/drivers/types";
 import { ExplorerDragOverlay } from "./tree/ExploreDragOverlay";
-import { TreeViewNodeTypeEnum, useTreeContext } from "@gouvfr-lasuite/ui-kit";
+import { TreeViewNodeTypeEnum, useTreeContext } from "@/components/tree";
 import { addItemsMovedToast } from "./toasts/addItemsMovedToast";
 import { useModal } from "@gouvfr-lasuite/cunningham-react";
 import { createContext, useContext, useState } from "react";

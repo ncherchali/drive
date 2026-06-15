@@ -4,7 +4,7 @@ import {
   NodeRendererProps,
   TreeDataItem,
   TreeViewDataType,
-} from "@gouvfr-lasuite/ui-kit";
+} from "@/components/tree";
 import { useEffect } from "react";
 
 type DroppableProps = {

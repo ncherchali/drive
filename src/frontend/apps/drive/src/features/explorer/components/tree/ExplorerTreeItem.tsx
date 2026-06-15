@@ -5,14 +5,12 @@ import {
   TreeItemData,
 } from "@/features/drivers/types";
 import {
-  Icon,
-  IconSize,
   NodeRendererProps,
   TreeDataItem,
   TreeViewDataType,
   TreeViewItem,
   TreeViewNodeTypeEnum,
-} from "@gouvfr-lasuite/ui-kit";
+} from "@/components/tree";
 import { DroppableNodeTree } from "./DroppableNodeTree";
 import {
   NavigationEventType,
@@ -22,20 +20,14 @@ import { ExplorerTreeItemActions } from "./ExplorerTreeItemActions";
 import { useRouter } from "next/router";
 import { DefaultRoute } from "@/utils/defaultRoutes";
 import { setFromRoute } from "../../utils/utils";
-import folderIconTree from "@/assets/tree/folder.svg";
 import { Folder as FolderIcon, Star } from "lucide-react";
 import { Icon as DsIcon } from "@/components/ui/icon";
-import {
-  useFeatureFlag,
-  FLAG_DS_EXPLORER_GRID,
-} from "@/features/flags/useFeatureFlag";
 
 type ExplorerTreeItemProps = NodeRendererProps<TreeDataItem<TreeItem>>;
 
 export const ExplorerTreeItem = ({ ...props }: ExplorerTreeItemProps) => {
   const { onNavigate, setPreviewItem, setPreviewItems } = useGlobalExplorer();
   const router = useRouter();
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
 
   const item: TreeViewDataType<TreeItemData> = props.node.data.value;
 
@@ -69,7 +61,7 @@ export const ExplorerTreeItem = ({ ...props }: ExplorerTreeItemProps) => {
         >
           <div className="explorer__tree__item" data-testid="tree_item_content">
             <div className="explorer__tree__item__content">
-              <ExplorerTreeItemIcon item={item} size={IconSize.MEDIUM} />
+              <ExplorerTreeItemIcon item={item} />
               {/* 
                 We need to check the nodeType because the generic type T in TreeViewDataType 
                 is only available for nodes of type NODE
@@ -81,15 +73,7 @@ export const ExplorerTreeItem = ({ ...props }: ExplorerTreeItemProps) => {
               )}
               {item.nodeType === TreeViewNodeTypeEnum.SIMPLE_NODE && (
                 <>
-                  {useDs ? (
-                    <DsIcon icon={Star} size="small" />
-                  ) : (
-                    <Icon
-                      size={IconSize.SMALL}
-                      name={"star_border"}
-                      color="var(--c--contextuals--content--semantic--neutral--tertiary)"
-                    />
-                  )}
+                  <DsIcon icon={Star} size="small" />
                   <span className="explorer__tree__item__title">
                     {item.label}
                   </span>
@@ -111,20 +95,9 @@ export const ExplorerTreeItemIcon = ({
   item,
 }: {
   item: TreeViewDataType<TreeItem>;
-  size?: IconSize;
 }) => {
-  const useDs = useFeatureFlag(FLAG_DS_EXPLORER_GRID);
   if (item.nodeType === TreeViewNodeTypeEnum.NODE) {
-    if (useDs) {
-      return <DsIcon icon={FolderIcon} size="small" />;
-    }
-    return (
-      <img
-        className="c__file-icon icon--small"
-        src={folderIconTree.src}
-        alt=""
-      />
-    );
+    return <DsIcon icon={FolderIcon} size="small" />;
   }
 
   return null;

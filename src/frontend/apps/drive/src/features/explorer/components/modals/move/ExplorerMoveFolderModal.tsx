@@ -6,11 +6,8 @@ import {
   useModal,
 } from "@gouvfr-lasuite/cunningham-react";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  HorizontalSeparator,
-  useResponsive,
-  useTreeContext,
-} from "@gouvfr-lasuite/ui-kit";
+import { HorizontalSeparator, useResponsive } from "@gouvfr-lasuite/ui-kit";
+import { useTreeContext } from "@/components/tree";
 import { Trans, useTranslation } from "react-i18next";
 import { useMoveItems } from "@/features/explorer/api/useMoveItem";
 import { addItemsMovedToast } from "../../toasts/addItemsMovedToast";
