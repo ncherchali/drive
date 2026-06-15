@@ -1,6 +1,6 @@
 import { ToasterItem } from "@/features/ui/components/toaster/Toaster";
-import { Button, Tooltip } from "@gouvfr-lasuite/cunningham-react";
-import { X } from "lucide-react";
+import { Button as DsButton } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
@@ -71,21 +71,20 @@ export const FileRow = ({
           </div>
         )}
         {meta.status === FileUploadStatus.ERROR && (
-          <Tooltip
-            content={t(
+          <div
+            className="file-upload-toast__files__item__progress"
+            title={t(
               `explorer.actions.upload.files.error_reasons.${meta.error ?? "unknown"}`,
             )}
           >
-            <div className="file-upload-toast__files__item__progress">
-              <span className="file-upload-toast__files__item__error-text">
-                {t(
-                  `explorer.actions.upload.files.error_short.${meta.error ?? "unknown"}`,
-                  t("explorer.actions.upload.files.error"),
-                )}
-              </span>
-              <FileErrorIcon />
-            </div>
-          </Tooltip>
+            <span className="file-upload-toast__files__item__error-text">
+              {t(
+                `explorer.actions.upload.files.error_short.${meta.error ?? "unknown"}`,
+                t("explorer.actions.upload.files.error"),
+              )}
+            </span>
+            <FileErrorIcon />
+          </div>
         )}
         {meta.status === FileUploadStatus.UPLOADING && (
           <div
@@ -249,47 +248,49 @@ export const FileUploadToast = (
                   })
                 ) : null}
                 {errorCount > 0 && (
-                  <Tooltip
-                    content={t("explorer.actions.upload.files.error_count", {
+                  <span
+                    className="file-upload-toast__description__error-indicator"
+                    title={t("explorer.actions.upload.files.error_count", {
                       count: errorCount,
                     })}
                   >
-                    <span className="file-upload-toast__description__error-indicator">
-                      <ErrorIcon size={20} />
-                    </span>
-                  </Tooltip>
+                    <ErrorIcon size={20} />
+                  </span>
                 )}
               </>
             )}
           </div>
           <div className="file-upload-toast__description__actions">
             {!simpleMode && (
-              <Button
-                variant="tertiary"
-                size="small"
-                icon={
-                  <span className="material-icons">
-                    {isOpen ? "keyboard_arrow_up" : "keyboard_arrow_down"}
-                  </span>
-                }
+              <DsButton
+                variant="ghost"
+                size="icon"
                 onClick={() => setIsOpen(!isOpen)}
-              ></Button>
+              >
+                {isOpen ? (
+                  <ChevronUp className="size-4" />
+                ) : (
+                  <ChevronDown className="size-4" />
+                )}
+              </DsButton>
             )}
 
             {canClose ? (
-              <Button
+              <DsButton
                 onClick={props.closeToast}
-                variant="tertiary"
-                size="small"
-                icon={<X className="size-4" />}
-              ></Button>
+                variant="ghost"
+                size="icon"
+              >
+                <X className="size-4" />
+              </DsButton>
             ) : (
-              <Button
+              <DsButton
                 onClick={() => setIsCancelModalOpen(true)}
-                variant="tertiary"
-                size="small"
-                icon={<X className="size-4" />}
-              ></Button>
+                variant="ghost"
+                size="icon"
+              >
+                <X className="size-4" />
+              </DsButton>
             )}
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@gouvfr-lasuite/cunningham-react";
+import { Button as DsButton } from "@/components/ui/button";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import type { MenuItem } from "@/components/ds-menu";
 import { MenuDropdown } from "@/components/ds-menu";
@@ -76,15 +76,15 @@ export const CustomizableColumnHeader = ({
         isOpen={isOpen}
         onOpenChange={setIsOpen}
       >
-        <Button
-          color="neutral"
-          variant="tertiary"
-          size="nano"
-          icon={buttonIcon}
+        <DsButton
+          variant="ghost"
+          size="sm"
+          className="gap-1.5"
           onClick={() => setIsOpen(!isOpen)}
         >
+          {buttonIcon}
           {t(currentConfig.labelKey)}
-        </Button>
+        </DsButton>
       </MenuDropdown>
       {sortable && currentConfig.sortable !== false && (
         <SortColumnButton

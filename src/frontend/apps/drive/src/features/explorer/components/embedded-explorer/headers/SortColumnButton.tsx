@@ -1,17 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Button, Tooltip } from "@gouvfr-lasuite/cunningham-react";
-import { IconSize } from "@/features/ui/components/icon/Icon";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { Button as DsButton } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
-import {
-  FLAG_DS_APP_SHELL,
-  useFeatureFlag,
-} from "@/features/flags/useFeatureFlag";
 import { SortState } from "@/features/explorer/types/columns";
-import { SortAscIcon } from "@/features/ui/components/icon/sorting/sort-asc";
-import { SortDescIcon } from "@/features/ui/components/icon/sorting/sort-desc";
-import { SortNeutralIcon } from "@/features/ui/components/icon/sorting/sort-neutral";
 
 type SortColumnId = NonNullable<SortState>["columnId"];
 
@@ -27,7 +18,6 @@ export const SortColumnButton = <TColumnId extends SortColumnId>({
   onSort,
 }: SortColumnButtonProps<TColumnId>) => {
   const { t } = useTranslation();
-  const useDs = useFeatureFlag(FLAG_DS_APP_SHELL);
 
   const isActive = sortState?.columnId === columnId;
   const direction = isActive ? sortState.direction : null;
@@ -38,53 +28,30 @@ export const SortColumnButton = <TColumnId extends SortColumnId>({
     return t("explorer.grid.sort.reset");
   })();
 
-  const sortIcon = (() => {
-    if (!isActive) return <SortNeutralIcon size={IconSize.SMALL} />;
-    if (direction === "asc") return <SortAscIcon size={IconSize.SMALL} />;
-    return <SortDescIcon size={IconSize.SMALL} />;
-  })();
-
-  // Version DS : chevrons lucide propres, cohérents avec l'en-tête NOM
-  // (DsGridSortHeader) ; ghost (sans boîte), couleur active = foreground.
-  // Tooltip natif `title` (pas de TooltipProvider hors DsProvider).
-  if (useDs) {
-    const dsSortIcon = !isActive ? (
-      <ChevronsUpDown className="size-3.5 opacity-50" />
-    ) : direction === "asc" ? (
-      <ArrowUp className="size-3.5" />
-    ) : (
-      <ArrowDown className="size-3.5" />
-    );
-    return (
-      <DsButton
-        variant="ghost"
-        size="icon"
-        className={cn("size-7", isActive && "text-foreground")}
-        onClick={(e) => {
-          e.stopPropagation();
-          onSort(columnId);
-        }}
-        aria-label={nextTooltip}
-        title={nextTooltip}
-      >
-        {dsSortIcon}
-      </DsButton>
-    );
-  }
+  // Chevrons lucide propres, cohérents avec l'en-tête NOM (DsGridSortHeader) ;
+  // ghost (sans boîte), couleur active = foreground. Tooltip natif `title`
+  // (pas de TooltipProvider hors d'un wrapper .sahla-ds).
+  const sortIcon = !isActive ? (
+    <ChevronsUpDown className="size-3.5 opacity-50" />
+  ) : direction === "asc" ? (
+    <ArrowUp className="size-3.5" />
+  ) : (
+    <ArrowDown className="size-3.5" />
+  );
 
   return (
-    <Tooltip content={nextTooltip}>
-      <Button
-        color={isActive ? "brand" : "neutral"}
-        size="nano"
-        variant={isActive ? "secondary" : "tertiary"}
-        icon={sortIcon}
-        onClick={(e) => {
-          e.stopPropagation();
-          onSort(columnId);
-        }}
-        aria-label={nextTooltip}
-      />
-    </Tooltip>
+    <DsButton
+      variant="ghost"
+      size="icon"
+      className={cn("size-7", isActive && "text-foreground")}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSort(columnId);
+      }}
+      aria-label={nextTooltip}
+      title={nextTooltip}
+    >
+      {sortIcon}
+    </DsButton>
   );
 };

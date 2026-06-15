@@ -2,7 +2,6 @@ import { CellContext } from "@tanstack/react-table";
 import { Item, ItemUploadState, LinkReach } from "@/features/drivers/types";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Draggable } from "@/features/explorer/components/Draggable";
-import { Tooltip } from "@gouvfr-lasuite/cunningham-react";
 import { ItemIcon } from "@/features/explorer/components/icons/ItemIcon";
 import { useDisableDragGridItem } from "@/features/explorer/components/embedded-explorer/hooks";
 import { Icon, IconSize } from "@/features/ui/components/icon/Icon";
@@ -39,7 +38,10 @@ const EmbeddedExplorerGridNameCellComponent = (
         className="explorer__grid__item__name__title-wrapper"
         disabled={isDuplicating || disableItemDragAndDrop || isSelected} // If it's selected then we can drag on the entire cell
       >
-        <div className="explorer__grid__item__name__title-wrapper">
+        <div
+          className="explorer__grid__item__name__title-wrapper"
+          title={isOverflown ? item.title : undefined}
+        >
           <span
             className={clsx("explorer__grid__item__name__text", {
               "explorer__grid__item__name--duplicating-text": isDuplicating,
@@ -105,11 +107,7 @@ const EmbeddedExplorerGridNameCellComponent = (
         ) : (
           <ItemIcon key={item.id} item={item} size={IconSize.LARGE} />
         )}
-        {isOverflown ? (
-          <Tooltip content={item.title}>{renderTitle()}</Tooltip>
-        ) : (
-          renderTitle()
-        )}
+        {renderTitle()}
         {rightIcon && (
           <Icon
             name={rightIcon}
