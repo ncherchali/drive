@@ -210,26 +210,18 @@
   border-radius: var(--radius-lg);
 }
 
-/* Sizing de base de la table, auparavant fourni par ui-kit
-   `.c__datagrid__table__container > table th/td` (déposé en 13c). On NE met PAS
-   `border-collapse` (la grille DS utilise `border-spacing` pour aérer les lignes). */
+/* Conteneur scrollable de la table (auparavant ui-kit `.c__datagrid__table__
+   container`). Le sizing des cellules et `table-layout` sont laissés à la
+   primitive shadcn `Table` (composants/ui/table.tsx) : NE PAS forcer
+   `table-layout:fixed` ici (la table DS est en `auto` ; la colonne NOM=w-full
+   absorbe l'espace, les autres se dimensionnent au contenu). */
 .sahla-ds-grid .c__datagrid__table__container {
   width: 100%;
   overflow: auto;
 }
 .sahla-ds-grid .explorer__grid table {
-  width: 100%;
-  table-layout: fixed;
   /* Espacement vertical entre lignes légèrement aéré. */
   border-spacing: 0 4px;
-}
-.sahla-ds-grid .explorer__grid th,
-.sahla-ds-grid .explorer__grid td {
-  text-align: start;
-  padding: 0 0.5rem;
-  height: 3rem;
-  white-space: nowrap;
-  overflow: hidden;
 }
 .sahla-ds-grid .c__datagrid__row__cell--actions {
   display: flex;

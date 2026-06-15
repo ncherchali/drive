@@ -9,9 +9,9 @@
  *  - le preflight global reste DÉSACTIVÉ (cf. tailwind.css) ; on fournit ici un
  *    reset minimal SCOPÉ sous `.sahla-ds` — seuls les sous-arbres marqués
  *    `class="sahla-ds"` reçoivent le reset dont shadcn/Radix a besoin ;
- *  - `@config` (tokens Cunningham) reste en place dans tailwind.css ; la bascule
- *    @config → @theme est l'étape finale, une fois Cunningham retiré ;
- *  - le dark mode passe par la classe `.dark` (pontée au switch applicatif).
+ *  - `@config` (tokens Cunningham) a été RETIRÉ (13c.1) : les utilitaires couleur
+ *    viennent uniquement de `@theme` ci-dessous ;
+ *  - le dark mode passe par la classe `.dark` (ThemeProvider DS, source unique).
  * ========================================================================== */
 
 /* Animations shadcn (animate-in/out, fade, zoom, slide) — plugin CSS v4. */

@@ -1,17 +1,17 @@
 /* Entrée Tailwind 4. Importée avant globals.scss dans _app.tsx.
  *
- * On n'importe PAS `tailwindcss/preflight.css` : Tailwind n'apporte que ses
- * utilitaires (et le thème), pas de reset global, pour cohabiter avec
- * Cunningham/ui-kit (équivalent de l'ancien `corePlugins.preflight: false`).
+ * On n'importe PAS encore `tailwindcss/preflight.css` : le preflight reste scopé
+ * sous `.sahla-ds` (cf. ds.css §5) tant qu'ui-kit/style fournit le reset global
+ * des bribes Cunningham ; la bascule vers le preflight global est l'étape 13c.2.
  *
- * `@config` réutilise tailwind.config.js (couleurs/polices branchées sur les
- * tokens Cunningham — source unique de vérité, cf. ce fichier). */
+ * `@config` (tailwind.config.js, couleurs/polices branchées sur les tokens
+ * Cunningham) a été retiré (13c.1) : les utilitaires couleur du DS viennent
+ * désormais uniquement de `@theme` (ds.css), et la police de base d'une règle
+ * `body { font-family: Inter }` (globals.scss). */
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
-@config "../../tailwind.config.js";
 
-/* Couche tokens du futur Design System (shadcn/Radix). Importée dans la même
-   instance Tailwind ; preflight scopé sous `.sahla-ds`, tokens sémantiques
-   commutables `.dark`. Cohabite avec Cunningham (cf. ds.css). */
+/* Couche tokens du Design System (shadcn/Radix). Importée dans la même instance
+   Tailwind ; tokens sémantiques commutables `.dark`. */
 @import "./ds.css";
