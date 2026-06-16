@@ -42,3 +42,4 @@ next-env.d.ts
 
 # scripts de validation locaux (Playwright + captures, chemins machine-spécifiques)
 /scripts/
+/.validation/
