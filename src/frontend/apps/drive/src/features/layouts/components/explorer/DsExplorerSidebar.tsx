@@ -25,6 +25,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
@@ -132,6 +133,10 @@ export function DsExplorerSidebar({
           </SidebarMenu>
         </SidebarGroup>
 
+        {/* Trait de séparation à marges (pas bord-à-bord) entre la nav et les
+            espaces. */}
+        <SidebarSeparator />
+
         {/* Espaces : titre = LIEN vers la vue centrale des espaces ; action « + »
             pour en créer ; tuiles teintées d'accès rapide. */}
         <SidebarGroup>
@@ -195,7 +200,7 @@ export function DsExplorerSidebar({
                 {t("settings.title", "Paramètres")}
               </DropdownMenuItem>
             </UserMenu>
-            <span className="min-w-0 flex-1 truncate text-sm text-sidebar-foreground/80">
+            <span className="min-w-0 flex-1 truncate text-sm font-medium text-sidebar-foreground">
               {user.email}
             </span>
           </div>

@@ -47,7 +47,14 @@ export function UserMenu({
               "focus-visible:ring-2 focus-visible:ring-ring",
             )}
           >
-            <Avatar name={name} src={avatarUrl} />
+            {/* Avatar de compte en remplissage de marque (violet) plutôt que le
+                gris `muted` peu lisible → initiales bien visibles, contraste AA
+                en clair et sombre. */}
+            <Avatar
+              name={name}
+              src={avatarUrl}
+              className="bg-primary font-semibold text-primary-foreground"
+            />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
