@@ -139,7 +139,10 @@ export const DsShareModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl gap-0 overflow-hidden p-0">
+      <DialogContent
+        aria-label="Share modal"
+        className="max-w-xl gap-0 overflow-hidden p-0"
+      >
         <DialogHeader className="px-5 pb-3 pt-5">
           <DialogTitle>{modalTitle}</DialogTitle>
         </DialogHeader>
@@ -158,11 +161,18 @@ export const DsShareModal = ({
 
         <Separator />
 
-        <div className="max-h-[40vh] overflow-y-auto px-5 py-2">
+        <div
+          className="max-h-[40vh] overflow-y-auto px-5 py-2"
+          data-testid="members-list"
+        >
           {accesses.map((access) => {
             const topMessage = accessRoleTopMessage?.(access);
             return (
-              <div key={access.id} className="py-1.5">
+              <div
+                key={access.id}
+                className="py-1.5"
+                data-testid="share-member-item"
+              >
                 <MemberLine
                   name={access.user.full_name || access.user.email}
                   email={access.user.email}
@@ -396,6 +406,9 @@ const InviteSection = ({
         <div className="relative min-w-0 flex-1">
           <Input
             value={query}
+            role="combobox"
+            aria-label="Quick search input"
+            aria-expanded={suggestions.length > 0}
             placeholder={t(
               "explorer.actions.share.modal.search_placeholder",
               "Ajouter des personnes par e-mail",
@@ -406,7 +419,10 @@ const InviteSection = ({
             }}
           />
           {query !== "" && (suggestions.length > 0 || loading) && (
-            <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md">
+            <div
+              data-testid="search-users-list"
+              className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-border bg-popover p-1 shadow-md"
+            >
               {loading && (
                 <div className="flex items-center justify-center p-2 text-muted-foreground">
                   <Loader2 className="size-4 animate-spin" />
@@ -416,6 +432,7 @@ const InviteSection = ({
                 <button
                   type="button"
                   key={user.id}
+                  data-testid="search-user-item"
                   className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-start text-sm hover:bg-accent"
                   onClick={() => addUser(user)}
                 >

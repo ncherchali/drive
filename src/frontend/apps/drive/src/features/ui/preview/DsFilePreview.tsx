@@ -103,6 +103,7 @@ export const DsFilePreview = ({
       role="dialog"
       aria-modal="true"
       aria-label={current.title}
+      data-testid="file-preview"
     >
       {/* En-tête */}
       <header className="flex h-14 shrink-0 items-center gap-2 border-b border-solid border-border px-3">
@@ -156,28 +157,28 @@ export const DsFilePreview = ({
       <div className="flex min-h-0 flex-1">
         <div className="relative flex min-w-0 flex-1 items-center justify-center overflow-auto bg-muted/30">
           {files.length > 1 && (
-            <Button
-              variant="secondary"
-              size="icon"
-              aria-label={t("explorer.preview.previous", "Précédent")}
-              className="absolute start-3 top-1/2 z-10 -translate-y-1/2 rounded-full shadow"
-              onClick={() => goTo(-1)}
-            >
-              <ChevronLeft className="size-5" />
-            </Button>
+            <div data-testid="file-preview-nav">
+              <Button
+                variant="secondary"
+                size="icon"
+                aria-label={t("explorer.preview.previous", "Précédent")}
+                className="absolute start-3 top-1/2 z-10 -translate-y-1/2 rounded-full shadow"
+                onClick={() => goTo(-1)}
+              >
+                <ChevronLeft className="size-5" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="icon"
+                aria-label={t("explorer.preview.next", "Suivant")}
+                className="absolute end-3 top-1/2 z-10 -translate-y-1/2 rounded-full shadow"
+                onClick={() => goTo(1)}
+              >
+                <ChevronRight className="size-5" />
+              </Button>
+            </div>
           )}
           <PreviewViewer file={current} />
-          {files.length > 1 && (
-            <Button
-              variant="secondary"
-              size="icon"
-              aria-label={t("explorer.preview.next", "Suivant")}
-              className="absolute end-3 top-1/2 z-10 -translate-y-1/2 rounded-full shadow"
-              onClick={() => goTo(1)}
-            >
-              <ChevronRight className="size-5" />
-            </Button>
-          )}
         </div>
 
         {sidebarContent && sidebarOpen && (
