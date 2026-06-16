@@ -8,6 +8,7 @@
 // Material Icons. Le passage esthétique material→lucide est un polish séparé.
 import * as React from "react";
 import clsx from "clsx";
+import type { LucideIcon } from "lucide-react";
 
 export enum IconSize {
   X_SMALL = "xsmall",
@@ -68,6 +69,24 @@ export const Icon = ({
       {name}
     </span>
   );
+};
+
+/**
+ * Adapte une icône lucide à l'API maison `(props: Partial<IconProps>) => JSX`
+ * (taille via IconSize string|number → px). Permet aux registres d'icônes
+ * (routes par défaut, colonnes de la grille) de rendre du lucide en gardant les
+ * appels existants — icônes COHÉRENTES avec la sidebar (lucide) partout.
+ */
+export const fromLucide = (LucideComp: LucideIcon) => {
+  const Adapted = ({ size, color, className }: Partial<IconProps>) => (
+    <LucideComp
+      size={resolveSize(size) ?? 24}
+      color={color}
+      className={className}
+    />
+  );
+  Adapted.displayName = `Lucide(${LucideComp.displayName ?? "icon"})`;
+  return Adapted;
 };
 
 export type IconSvgProps = Omit<Partial<IconProps>, "name" | "type">;

@@ -154,6 +154,22 @@
   color: var(--foreground);
   font-weight: 500;
 }
+/* En-tête de route par défaut (Mes fichiers, Récents, Partagés, Favoris) rendu
+   comme un TITRE de page, aligné sur l'en-tête « Corbeille »
+   (explorer__content__header__title : 22px / bold / foreground). Sélecteur
+   d'attribut (spécificité 0,3,0) → gagne sur la repeinture DS ci-dessus. L'icône
+   lucide hérite de currentColor (donc foreground). */
+.sahla-ds-grid .c__breadcrumbs__button[data-testid="default-route-button"] {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+.sahla-ds-grid
+  .c__breadcrumbs__button[data-testid="default-route-button"]
+  svg {
+  width: 24px;
+  height: 24px;
+}
 
 /* La grille Cunningham `.c__datagrid` était `flex-col; align-items:flex-end`. En
    DS on reproduit ce layout de base (auparavant fourni par ui-kit `.c__datagrid`,

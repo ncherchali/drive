@@ -1,10 +1,6 @@
-import { RecentIcon } from "@/features/ui/components/icon/RecentIcon";
-import { MyFilesIcon } from "@/features/ui/components/icon/MyFilesIcon";
-import { SharedWithMeIcon } from "@/features/ui/components/icon/SharedWithMeIcon";
-import { StarredIcon } from "@/features/ui/components/icon/StarredIcon";
-import { TrashIcon } from "@/features/ui/components/icon/TrashIcon";
 import { JSX } from "react";
 import type { IconProps } from "@/features/ui/components/icon/Icon";
+import { fromLucide } from "@/features/ui/components/icon/Icon";
 import { History, House, Share2, Star, Trash2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -38,25 +34,25 @@ export const ORDERED_DEFAULT_ROUTES: DefaultRouteData[] = [
     id: DefaultRoute.RECENT,
     label: "explorer.tree.recent",
     route: "/explorer/items/recent",
-    icon: RecentIcon,
+    icon: fromLucide(History),
   },
   {
     id: DefaultRoute.MY_FILES,
     label: "explorer.tree.my_files",
     route: "/explorer/items/my-files",
-    icon: MyFilesIcon,
+    icon: fromLucide(House),
   },
   {
     id: DefaultRoute.SHARED_WITH_ME,
     label: "explorer.tree.shared_with_me",
     route: "/explorer/items/shared-with-me",
-    icon: SharedWithMeIcon,
+    icon: fromLucide(Share2),
   },
   {
     id: DefaultRoute.FAVORITES,
     label: "explorer.tree.favorites",
     route: "/explorer/items/favorites",
-    icon: StarredIcon,
+    icon: fromLucide(Star),
   },
 ];
 
@@ -64,7 +60,7 @@ export const TRASH_ROUTE_DATA: DefaultRouteData = {
   id: DefaultRoute.TRASH,
   label: "explorer.tree.trash",
   route: "/explorer/trash",
-  icon: TrashIcon,
+  icon: fromLucide(Trash2),
 };
 
 export const getDefaultRoute = (

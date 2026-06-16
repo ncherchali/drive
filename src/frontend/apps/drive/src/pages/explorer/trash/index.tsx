@@ -25,6 +25,7 @@ import { HardDeleteConfirmationModal } from "@/features/explorer/components/moda
 import { messageModalTrashNavigate } from "@/features/explorer/components/trash/utils";
 import { DefaultRoute } from "@/utils/defaultRoutes";
 import { useDefaultRoute } from "@/hooks/useDefaultRoute";
+import { Trash2 } from "lucide-react";
 
 export default function TrashPage() {
   const { t } = useTranslation();
@@ -61,6 +62,7 @@ export default function TrashPage() {
           data-testid="trash-page-breadcrumbs"
         >
           <div className="explorer__content__header__title">
+            <Trash2 aria-hidden />
             {t("explorer.trash.title")}
           </div>
           <div className="explorer__content__header__description">

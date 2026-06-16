@@ -166,8 +166,13 @@ $tablet: 1024px;
 
     &__header {
       &__title {
-        @apply text-[22px] font-bold pl-1.5;
+        @apply flex items-center gap-2 text-[22px] font-bold pl-1.5;
         color: var(--foreground);
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
       }
 
       &__description {

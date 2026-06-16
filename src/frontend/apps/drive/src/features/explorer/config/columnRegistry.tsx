@@ -4,10 +4,15 @@ import { CreatedCell } from "../components/embedded-explorer/cells/CreatedCell";
 import { CreatedByCell } from "../components/embedded-explorer/cells/CreatedByCell";
 import { FileTypeCell } from "../components/embedded-explorer/cells/FileTypeCell";
 import { FileSizeCell } from "../components/embedded-explorer/cells/FileSizeCell";
-import { ClockIcon } from "@/features/ui/components/icon/Clock";
-import { PersonIcon } from "@/features/ui/components/icon/PersoIcon";
-import { FileIcon } from "@/features/ui/components/icon/FileIcon";
-import { WeightIcon } from "@/features/ui/components/icon/WeightIcon";
+import { fromLucide } from "@/features/ui/components/icon/Icon";
+import { Clock, User, File, Weight } from "lucide-react";
+
+// Icônes des en-têtes de colonnes en lucide (cohérence avec la sidebar et le
+// breadcrumb). `fromLucide` conserve l'API `(props{size})` attendue par l'en-tête.
+const ClockIcon = fromLucide(Clock);
+const PersonIcon = fromLucide(User);
+const FileIcon = fromLucide(File);
+const WeightIcon = fromLucide(Weight);
 
 export const COLUMN_REGISTRY: Record<ColumnType, ColumnConfig> = {
   [ColumnType.LAST_MODIFIED]: {
