@@ -1,9 +1,7 @@
-nav {
-  width: 100%;
-  height: 52px;
-  background-color: #fff;
-  border: 1px grey solid;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
+// (vide volontairement)
+//
+// Cet ancien fichier contenait une règle placeholder `nav { background:#fff;
+// border:1px solid gray; height:52px; … }` sur le sélecteur GLOBAL `nav`. Elle
+// repeignait tous les <nav> de l'app (landing, fil d'Ariane…) en blanc avec un
+// cadre gris fixe — d'où la « box » de la navbar et la navbar restée claire en
+// thème sombre. `GlobalLayout` ne rend plus aucun <nav> ; la règle est retirée.
