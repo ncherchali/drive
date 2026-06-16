@@ -210,7 +210,8 @@
             "file_size": "File size",
             "folder": "Folder",
             "default_suffix": "(default)",
-            "manage": "Columns"
+            "manage": "Columns",
+            "resize": "Resize column"
           },
           "size_units": {
             "B": "B",
@@ -823,7 +824,8 @@
             "file_size": "Taille",
             "folder": "Dossier",
             "default_suffix": "(par défaut)",
-            "manage": "Colonnes"
+            "manage": "Colonnes",
+            "resize": "Redimensionner la colonne"
           },
           "size_units": {
             "B": "o",
@@ -1444,7 +1446,8 @@
             "file_size": "Bestandsgrootte",
             "folder": "Map",
             "default_suffix": "(standaard)",
-            "manage": "Kolommen"
+            "manage": "Kolommen",
+            "resize": "Kolom vergroten/verkleinen"
           },
           "size_units": {
             "B": "B",

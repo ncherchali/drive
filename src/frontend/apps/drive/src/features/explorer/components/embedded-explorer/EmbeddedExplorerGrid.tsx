@@ -34,6 +34,7 @@ import { useContextMenuContext } from "@/components/ds-context-menu";
 import { useItemActionMenuItems } from "../../hooks/useItemActionMenuItems";
 import { ColumnConfig, ColumnType, SortState } from "../../types/columns";
 import { IconSize } from "@/features/ui/components/icon/Icon";
+import { useColumnWidths } from "../../hooks/useColumnWidths";
 import { useDuplicatingItemsPoller } from "../../hooks/useDuplicatingItemsPoller";
 import {
   DsExplorerGridRow,
@@ -133,6 +134,8 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
   const lastSelectedRowRef = useRef<string | null>(null);
 
   const columnConfigs = props.columnConfigs ?? EMPTY_COLUMN_CONFIGS;
+  const { getWidth, startResize } = useColumnWidths();
+  const resizable = !props.isCompact;
 
   const columns = useMemo(
     () => [
@@ -370,7 +373,24 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
           tabIndex={0}
           onKeyDown={onKeyDown}
           className={clsx({ explorer__compact: props.isCompact })}
+          // `table-layout: fixed` + <colgroup> : largeurs de colonnes contrôlées
+          // (redimensionnables) ; la colonne « Nom » reste SANS largeur → elle
+          // absorbe l'espace restant (évite le collapse des autres colonnes).
+          style={resizable ? { tableLayout: "fixed" } : undefined}
         >
+          {resizable && (
+            <colgroup>
+              <col style={{ width: 44 }} />
+              <col />
+              {columnConfigs.map((config) => (
+                <col
+                  key={config.type}
+                  style={{ width: getWidth(config.type) }}
+                />
+              ))}
+              <col style={{ width: 48 }} />
+            </colgroup>
+          )}
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-9 ps-3 pe-0">
@@ -390,7 +410,7 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
                   {columnConfigs.map((config) => {
                     const ColumnIcon = config.icon;
                     return (
-                      <TableHead key={config.type}>
+                      <TableHead key={config.type} className="relative">
                         <DsGridSortHeader
                           label={t(config.labelKey)}
                           columnId={config.type}
@@ -401,6 +421,25 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
                             config.sortable !== false
                           }
                           icon={<ColumnIcon size={IconSize.SMALL} />}
+                        />
+                        {/* Poignée de redimensionnement (bord inline-end). */}
+                        <div
+                          role="separator"
+                          aria-orientation="vertical"
+                          aria-label={t(
+                            "explorer.grid.columns.resize",
+                            "Redimensionner la colonne",
+                          )}
+                          onMouseDown={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            startResize(
+                              config.type,
+                              event.clientX,
+                              getWidth(config.type),
+                            );
+                          }}
+                          className="absolute inset-y-1 end-0 z-10 w-1 cursor-col-resize touch-none rounded bg-transparent transition-colors hover:bg-primary/40"
                         />
                       </TableHead>
                     );
