@@ -1591,7 +1591,15 @@ class Development(Base):
     CSRF_TRUSTED_ORIGINS = [
         "http://localhost:8072",
         "http://localhost:3000",
-        *values.ListValue([], environ_name="CSRF_TRUSTED_ORIGINS"),
+        # `environ_prefix=None` : sans lui, django-configurations cherchait
+        # `DJANGO_CSRF_TRUSTED_ORIGINS` (préfixe par défaut) et IGNORAIT la var
+        # d'env `CSRF_TRUSTED_ORIGINS` (cf. les autres réglages env du fichier qui
+        # passent tous `environ_prefix=None`). Conséquence : un front de dev
+        # remappé (ex. :3001 via env) n'était pas autorisé → 403 « Origin checking
+        # failed » sur toute écriture (POST/PATCH/DELETE).
+        *values.ListValue(
+            [], environ_name="CSRF_TRUSTED_ORIGINS", environ_prefix=None
+        ),
     ]
     DEBUG = True
     LOAD_E2E_URLS = True
