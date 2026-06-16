@@ -17,12 +17,20 @@ const OPTIONS: { mode: ThemeMode; label: string; icon: React.ReactNode }[] = [
   { mode: "system", label: "Système", icon: <Monitor /> },
 ];
 
-export function ModeToggle() {
+export function ModeToggle({
+  variant = "outline",
+  size = "icon",
+  modal,
+}: {
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  size?: React.ComponentProps<typeof Button>["size"];
+  modal?: boolean;
+} = {}) {
   const { mode, setMode } = useTheme();
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={modal}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="Changer le thème">
+        <Button variant={variant} size={size} aria-label="Changer le thème">
           <Sun className="dark:hidden" aria-hidden />
           <Moon className="hidden dark:block" aria-hidden />
         </Button>

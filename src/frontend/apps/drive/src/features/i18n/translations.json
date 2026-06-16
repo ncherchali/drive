@@ -1,6 +1,14 @@
 {
   "en": {
     "translation": {
+      "401": {
+        "title": "You need to be logged in to access the documents.",
+        "button": "Login"
+      },
+      "403": {
+        "title": "You don't have the necessary permissions to access this page.",
+        "button": "Home"
+      },
       "entitlements": {
         "can_upload": {
           "cannot_upload": "You don't have the necessary rights to transfer files."
@@ -21,14 +29,6 @@
             }
           }
         }
-      },
-      "401": {
-        "title": "You need to be logged in to access the documents.",
-        "button": "Login"
-      },
-      "403": {
-        "title": "You don't have the necessary permissions to access this page.",
-        "button": "Home"
       },
       "share_modal": {
         "options": {
@@ -90,7 +90,16 @@
         "title": "Easy storage and sharing",
         "subtitle": "A modern, high-performance drive built for French public teams. Sovereign hosting in France, strong security, and seamless sync with all LaSuite apps. On par with the market’s best—without the data trade-offs.",
         "main_button": "Sign in",
-        "more": "Learn more"
+        "more": "Learn more",
+        "values": [
+          "Storage",
+          "Sharing",
+          "Collaboration",
+          "Sovereignty",
+          "Security"
+        ],
+        "badge": "Sovereign hosting · La Suite",
+        "rotating_lead": "Designed for"
       },
       "feedback": {
         "button": "Give feedback",
@@ -604,6 +613,14 @@
   },
   "fr": {
     "translation": {
+      "401": {
+        "title": "Connectez-vous pour accéder aux documents.",
+        "button": "Se connecter"
+      },
+      "403": {
+        "title": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
+        "button": "Accueil"
+      },
       "entitlements": {
         "can_upload": {
           "cannot_upload": "Vous n'avez pas les droits nécessaires pour transférer des fichiers."
@@ -624,14 +641,6 @@
             }
           }
         }
-      },
-      "401": {
-        "title": "Connectez-vous pour accéder aux documents.",
-        "button": "Se connecter"
-      },
-      "403": {
-        "title": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
-        "button": "Accueil"
       },
       "share_modal": {
         "options": {
@@ -693,7 +702,16 @@
         "title": "Stocker et partager facilement",
         "subtitle": "Un stockage performant et sécurisé pour les équipes publiques françaises. Hébergement en France, sécurité renforcée, et synchronisation fluide avec toutes les applications LaSuite. A la hauteur des meilleurs du marché, sans les compromis de données.",
         "main_button": "Se connecter",
-        "more": "En savoir plus"
+        "more": "En savoir plus",
+        "values": [
+          "le Stockage",
+          "le Partage",
+          "la Collaboration",
+          "la Souveraineté",
+          "la Sécurité"
+        ],
+        "badge": "Hébergement souverain · La Suite",
+        "rotating_lead": "Pensé pour"
       },
       "feedback": {
         "button": "Faire un retour",
@@ -1215,6 +1233,14 @@
   },
   "nl": {
     "translation": {
+      "401": {
+        "title": "U moet ingelogd zijn om toegang te krijgen tot de bestanden.",
+        "button": "Login"
+      },
+      "403": {
+        "title": "U beschikt niet over de benodigde rechten om dit bestand te openen.",
+        "button": "Home"
+      },
       "entitlements": {
         "can_upload": {
           "cannot_upload": "U heeft niet de benodigde rechten om bestanden te uploaden."
@@ -1235,14 +1261,6 @@
             }
           }
         }
-      },
-      "401": {
-        "title": "U moet ingelogd zijn om toegang te krijgen tot de bestanden.",
-        "button": "Login"
-      },
-      "403": {
-        "title": "U beschikt niet over de benodigde rechten om dit bestand te openen.",
-        "button": "Home"
       },
       "share_modal": {
         "options": {
@@ -1304,7 +1322,16 @@
         "title": "Eenvoudige opslag en delen",
         "subtitle": "Een modern, hoogwaardig platform voor bestandenopslag ontworpen voor Franse publieke teams. Soevereine hosting in Frankrijk, sterke beveiliging en naadloze synchronisatie met alle LaSuite-apps. Even goed als de beste op de markt — zonder concessies op het gebied van data.",
         "main_button": "Inloggen",
-        "more": "Meer informatie"
+        "more": "Meer informatie",
+        "values": [
+          "Opslag",
+          "Delen",
+          "Samenwerking",
+          "Soevereiniteit",
+          "Beveiliging"
+        ],
+        "badge": "Soevereine hosting · La Suite",
+        "rotating_lead": "Gemaakt voor"
       },
       "feedback": {
         "button": "Geef feedback",
@@ -1808,6 +1835,21 @@
     "translation": {
       "app_title": "Drive",
       "app_description": "إدارة الملفات",
+      "home": {
+        "title": "تخزين ومشاركة بكل بساطة",
+        "subtitle": "مساحة تخزين حديثة وعالية الأداء مصمّمة للفرق العمومية الفرنسية. استضافة سيادية في فرنسا، أمان معزّز، ومزامنة سلسة مع جميع تطبيقات La Suite. بمستوى أفضل الحلول في السوق، دون أي تنازل عن بياناتك.",
+        "main_button": "تسجيل الدخول",
+        "more": "اعرف المزيد",
+        "values": [
+          "التخزين",
+          "المشاركة",
+          "التعاون",
+          "السيادة",
+          "الأمان"
+        ],
+        "badge": "استضافة سيادية · La Suite",
+        "rotating_lead": "مصمّم من أجل"
+      },
       "welcome": "مرحبًا",
       "logout": "تسجيل الخروج",
       "login": "تسجيل الدخول",
