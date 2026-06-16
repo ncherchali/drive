@@ -13,7 +13,7 @@ export function useGridColumns(
   viewConfigKey: ViewConfigKey,
   navigationId?: string,
 ) {
-  const { prefs, setColumn } = useColumnPreferences();
+  const { prefs, toggleColumn, setColumns } = useColumnPreferences();
   const [sortState, setSortState] = useState<SortState>(null);
 
   const viewConfig: ViewConfig =
@@ -45,8 +45,11 @@ export function useGridColumns(
     [],
   );
 
-  const column1Config = COLUMN_REGISTRY[prefs.column1];
-  const column2Config = COLUMN_REGISTRY[prefs.column2];
+  // Configs ordonnées des colonnes de données visibles (N colonnes variables).
+  const columnConfigs = useMemo(
+    () => prefs.columns.map((type) => COLUMN_REGISTRY[type]),
+    [prefs.columns],
+  );
 
   const ordering = useMemo(
     () => computeOrdering(viewConfig, sortState),
@@ -54,11 +57,11 @@ export function useGridColumns(
   );
 
   return {
-    column1Config,
-    column2Config,
+    columnConfigs,
     sortState,
     cycleSortForColumn,
-    setColumn,
+    toggleColumn,
+    setColumns,
     prefs,
     ordering,
     viewConfig,

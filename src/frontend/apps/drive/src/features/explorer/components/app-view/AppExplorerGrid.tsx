@@ -134,10 +134,7 @@ export const AppExplorerGrid = () => {
         onFileClick={handleFileClick}
         sortState={appExplorer.sortState}
         onSort={appExplorer.onSort}
-        prefs={appExplorer.prefs}
-        onChangeColumn={appExplorer.onChangeColumn}
-        column1Config={appExplorer.column1Config}
-        column2Config={appExplorer.column2Config}
+        columnConfigs={appExplorer.columnConfigs}
         viewSortable={appExplorer.viewConfig.sortable}
       />
     );

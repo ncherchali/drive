@@ -32,14 +32,8 @@ import { useModal } from "@/components/use-modal";
 import { ExplorerMoveFolder } from "@/features/explorer/components/modals/move/ExplorerMoveFolderModal";
 import { useContextMenuContext } from "@/components/ds-context-menu";
 import { useItemActionMenuItems } from "../../hooks/useItemActionMenuItems";
-import {
-  ColumnConfig,
-  ColumnPreferences,
-  ColumnType,
-  DEFAULT_COLUMN_PREFERENCES,
-  SortState,
-} from "../../types/columns";
-import { CustomizableColumnHeader } from "./headers/CustomizableColumnHeader";
+import { ColumnConfig, ColumnType, SortState } from "../../types/columns";
+import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useDuplicatingItemsPoller } from "../../hooks/useDuplicatingItemsPoller";
 import {
   DsExplorerGridRow,
@@ -53,9 +47,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import posthog from "posthog-js";
-
-const POSTHOG_EVENT_COLUMN_TYPE_CHANGED = "column_type_changed";
 
 export type EmbeddedExplorerGridProps = {
   isCompact?: boolean;
@@ -74,14 +65,13 @@ export type EmbeddedExplorerGridProps = {
   // Custom columns
   sortState?: SortState;
   onSort?: (columnId: "title" | ColumnType) => void;
-  prefs?: ColumnPreferences;
-  onChangeColumn?: (slot: "column1" | "column2", type: ColumnType) => void;
-  column1Config?: ColumnConfig;
-  column2Config?: ColumnConfig;
+  /** Colonnes de données visibles (ordonnées), N variables. */
+  columnConfigs?: ColumnConfig[];
   viewSortable?: boolean;
 };
 
 const EMPTY_ARRAY: Item[] = [];
+const EMPTY_COLUMN_CONFIGS: ColumnConfig[] = [];
 const columnHelper = createColumnHelper<Item>();
 
 // Only the fields actually consumed by cells/hooks — keeping this narrow so
@@ -142,8 +132,7 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
 
   const lastSelectedRowRef = useRef<string | null>(null);
 
-  const col1CellComponent = props.column1Config?.cell;
-  const col2CellComponent = props.column2Config?.cell;
+  const columnConfigs = props.columnConfigs ?? EMPTY_COLUMN_CONFIGS;
 
   const columns = useMemo(
     () => [
@@ -159,14 +148,13 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
       ...(props.isCompact
         ? []
         : [
-            columnHelper.display({
-              id: "info-col-1",
-              cell: col1CellComponent ?? EmbeddedExplorerGridMobileCell,
-            }),
-            columnHelper.display({
-              id: "info-col-2",
-              cell: col2CellComponent ?? EmbeddedExplorerGridMobileCell,
-            }),
+            // Une colonne de données par préférence visible (ordre conservé).
+            ...columnConfigs.map((config) =>
+              columnHelper.display({
+                id: `info-${config.type}`,
+                cell: config.cell,
+              }),
+            ),
             columnHelper.display({
               id: "actions",
               cell: props.gridActionsCell ?? EmbeddedExplorerGridActionsCell,
@@ -174,7 +162,13 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
           ]),
     ],
 
-    [col1CellComponent, col2CellComponent, props.isCompact],
+    [
+      columnConfigs,
+      props.isCompact,
+      props.gridNameCell,
+      props.gridActionsCell,
+      t,
+    ],
   );
 
   const table = useReactTable({
@@ -206,30 +200,6 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
   const handleSortColumn = useCallback(
     (id: string) => props.onSort?.(id as ColumnType),
     [props.onSort],
-  );
-
-  const handleChangeCol1 = useCallback(
-    (type: ColumnType) => {
-      posthog.capture(POSTHOG_EVENT_COLUMN_TYPE_CHANGED, {
-        slot: "column1",
-        new_type: type,
-        previous_type: props.prefs?.column1,
-      });
-      props.onChangeColumn?.("column1", type);
-    },
-    [props.onChangeColumn, props.prefs?.column1],
-  );
-
-  const handleChangeCol2 = useCallback(
-    (type: ColumnType) => {
-      posthog.capture(POSTHOG_EVENT_COLUMN_TYPE_CHANGED, {
-        slot: "column2",
-        new_type: type,
-        previous_type: props.prefs?.column2,
-      });
-      props.onChangeColumn?.("column2", type);
-    },
-    [props.onChangeColumn, props.prefs?.column2],
   );
 
   const contextValue = useMemo<EmbeddedExplorerGridContextType>(
@@ -417,42 +387,24 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
               </TableHead>
               {!props.isCompact && (
                 <>
-                  <TableHead>
-                    {props.prefs && props.column1Config ? (
-                      <CustomizableColumnHeader
-                        slot="column1"
-                        currentType={props.prefs.column1}
-                        defaultType={DEFAULT_COLUMN_PREFERENCES.column1}
-                        sortState={props.sortState ?? null}
-                        onSort={handleSortColumn}
-                        onChangeColumn={handleChangeCol1}
-                        otherColumnType={props.prefs.column2}
-                        sortable={props.viewSortable !== false}
-                      />
-                    ) : (
-                      <DsGridSortHeader
-                        label={t("explorer.grid.last_update")}
-                        columnId={ColumnType.LAST_MODIFIED}
-                        sortState={props.sortState ?? null}
-                        onSort={handleSortColumn}
-                        sortable={false}
-                      />
-                    )}
-                  </TableHead>
-                  <TableHead>
-                    {props.prefs && props.column2Config ? (
-                      <CustomizableColumnHeader
-                        slot="column2"
-                        currentType={props.prefs.column2}
-                        defaultType={DEFAULT_COLUMN_PREFERENCES.column2}
-                        sortState={props.sortState ?? null}
-                        onSort={handleSortColumn}
-                        onChangeColumn={handleChangeCol2}
-                        otherColumnType={props.prefs.column1}
-                        sortable={props.viewSortable !== false}
-                      />
-                    ) : null}
-                  </TableHead>
+                  {columnConfigs.map((config) => {
+                    const ColumnIcon = config.icon;
+                    return (
+                      <TableHead key={config.type}>
+                        <DsGridSortHeader
+                          label={t(config.labelKey)}
+                          columnId={config.type}
+                          sortState={props.sortState ?? null}
+                          onSort={handleSortColumn}
+                          sortable={
+                            props.viewSortable !== false &&
+                            config.sortable !== false
+                          }
+                          icon={<ColumnIcon size={IconSize.SMALL} />}
+                        />
+                      </TableHead>
+                    );
+                  })}
                   <TableHead className="w-12" />
                 </>
               )}

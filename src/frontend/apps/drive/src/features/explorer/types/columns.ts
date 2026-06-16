@@ -18,15 +18,18 @@ export type SortState = {
   direction: SortDirection;
 } | null;
 
+/** Liste ORDONNÉE des colonnes de données affichées dans la grille (ajout/retrait
+ *  via le menu « Colonnes »). Remplace l'ancien duo de slots fixes. */
 export type ColumnPreferences = {
-  column1: ColumnType;
-  column2: ColumnType;
+  columns: ColumnType[];
 };
 
 export const DEFAULT_COLUMN_PREFERENCES: ColumnPreferences = {
-  column1: ColumnType.LAST_MODIFIED,
-  column2: ColumnType.CREATED_BY,
+  columns: [ColumnType.LAST_MODIFIED, ColumnType.CREATED_BY],
 };
+
+/** Toutes les colonnes proposables au menu « Colonnes », dans l'ordre d'offre. */
+export const ALL_COLUMN_TYPES: ColumnType[] = Object.values(ColumnType);
 
 export type ColumnCellProps = CellContext<Item, unknown>;
 

@@ -40,6 +40,7 @@ from lasuite.drf.models.choices import (
     get_equivalent_link_definition,
 )
 from pydantic import BaseModel as PydanticBaseModel
+from pydantic import model_validator
 from timezone_field import TimeZoneField
 
 from core.utils.item_title import manage_unique_title as manage_unique_title_utils
@@ -178,12 +179,42 @@ class ColumnType(StrEnum):
 
 
 class ColumnPreferences(PydanticBaseModel):
-    """Pydantic model to validate the custom columns a user can have."""
+    """Pydantic model to validate the custom columns a user can display.
 
-    column1: ColumnType
-    column2: ColumnType
+    A user picks an ORDERED list of columns to show in the explorer grid
+    (add/remove), instead of a fixed pair of slots.
+    """
+
+    columns: list[ColumnType] = []
 
     model_config = {"extra": "forbid"}
+
+    @model_validator(mode="before")
+    @classmethod
+    def _migrate_legacy_slots(cls, data):
+        """Convert the legacy `{column1, column2}` shape to `{columns: [...]}`.
+
+        Existing rows stored the previous two-slot format. We migrate them
+        transparently on read so no data migration is required; they get
+        rewritten in the new shape on the next save.
+        """
+        if isinstance(data, dict) and "columns" not in data:
+            legacy = [data[key] for key in ("column1", "column2") if data.get(key)]
+            if legacy:
+                return {"columns": legacy}
+        return data
+
+    @model_validator(mode="after")
+    def _dedupe_columns(self):
+        """Keep columns unique while preserving order (defensive)."""
+        seen = set()
+        unique = []
+        for column in self.columns:
+            if column not in seen:
+                seen.add(column)
+                unique.append(column)
+        self.columns = unique
+        return self
 
 
 class User(AbstractBaseUser, BaseModel, auth_models.PermissionsMixin):

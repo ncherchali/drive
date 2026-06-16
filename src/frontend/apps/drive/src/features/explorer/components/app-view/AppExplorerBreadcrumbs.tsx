@@ -25,6 +25,7 @@ import {
 import { ItemActionDropdown } from "../item-actions/ItemActionDropdown";
 import { useCreateMenuItems } from "../../hooks/useCreateMenuItems";
 import { Item, ItemType } from "@/features/drivers/types";
+import { ColumnsManagerMenu } from "../ColumnsManagerMenu";
 
 export const AppExplorerBreadcrumbs = () => {
   const { item, onNavigate } = useGlobalExplorer();
@@ -58,33 +59,38 @@ export const AppExplorerBreadcrumbs = () => {
           }}
         />
 
-        {showActions && (
-          <div className="explorer__content__breadcrumbs__actions">
-            <ImportDropdown
-              importMenu={importDropdown}
-              trigger={
-                <DsButton
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => importDropdown.setIsOpen(true)}
-                >
-                  <Upload className="size-4" />
-                  {t("explorer.tree.import.label")}
-                </DsButton>
-              }
-            />
-            <DsButton
-              variant="ghost"
-              size="icon"
-              data-testid="create-folder-button"
-              aria-label={t("explorer.tree.create.folder", "Créer un dossier")}
-              onClick={() => createFolderModal.open()}
-            >
-              <FolderPlus className="size-4" />
-            </DsButton>
-          </div>
-        )}
+        <div className="explorer__content__breadcrumbs__actions">
+          {/* Gestion des colonnes : visible sur toutes les vues liste (même en
+              lecture seule), indépendamment des actions de création. */}
+          <ColumnsManagerMenu />
+          {showActions && (
+            <>
+              <ImportDropdown
+                importMenu={importDropdown}
+                trigger={
+                  <DsButton
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => importDropdown.setIsOpen(true)}
+                  >
+                    <Upload className="size-4" />
+                    {t("explorer.tree.import.label")}
+                  </DsButton>
+                }
+              />
+              <DsButton
+                variant="ghost"
+                size="icon"
+                data-testid="create-folder-button"
+                aria-label={t("explorer.tree.create.folder", "Créer un dossier")}
+                onClick={() => createFolderModal.open()}
+              >
+                <FolderPlus className="size-4" />
+              </DsButton>
+            </>
+          )}
+        </div>
       </div>
       <div className="explorer__content__separator">
         <Separator />

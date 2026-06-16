@@ -209,7 +209,8 @@
             "file_type": "File type",
             "file_size": "File size",
             "folder": "Folder",
-            "default_suffix": "(default)"
+            "default_suffix": "(default)",
+            "manage": "Columns"
           },
           "size_units": {
             "B": "B",
@@ -821,7 +822,8 @@
             "file_type": "Type de fichier",
             "file_size": "Taille",
             "folder": "Dossier",
-            "default_suffix": "(par défaut)"
+            "default_suffix": "(par défaut)",
+            "manage": "Colonnes"
           },
           "size_units": {
             "B": "o",
@@ -1441,7 +1443,8 @@
             "file_type": "Bestandstype",
             "file_size": "Bestandsgrootte",
             "folder": "Map",
-            "default_suffix": "(standaard)"
+            "default_suffix": "(standaard)",
+            "manage": "Kolommen"
           },
           "size_units": {
             "B": "B",

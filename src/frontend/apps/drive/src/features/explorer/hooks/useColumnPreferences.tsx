@@ -9,7 +9,10 @@ import { getDriver } from "@/features/config/Config";
 
 type ColumnPreferencesContextType = {
   prefs: ColumnPreferences;
-  setColumn: (slot: "column1" | "column2", type: ColumnType) => void;
+  /** Ajoute la colonne si absente, la retire si présente. */
+  toggleColumn: (type: ColumnType) => void;
+  /** Remplace la liste ordonnée des colonnes. */
+  setColumns: (columns: ColumnType[]) => void;
 };
 
 const ColumnPreferencesContext = createContext<
@@ -28,25 +31,50 @@ export function ColumnPreferencesProvider({
     () => user?.column_preferences ?? DEFAULT_COLUMN_PREFERENCES,
   );
 
-  const setColumn = useCallback(
-    (slot: "column1" | "column2", type: ColumnType) => {
-      setPrefsState((prev) => {
-        const next = { ...prev, [slot]: type };
-        if (user) {
-          driver
-            .updateUser({ id: user.id, column_preferences: next })
-            .then(() => {
-              void refreshUser?.();
-            });
-        }
-        return next;
-      });
+  const persist = useCallback(
+    (next: ColumnPreferences) => {
+      if (user) {
+        driver
+          .updateUser({ id: user.id, column_preferences: next })
+          .then(() => {
+            void refreshUser?.();
+          });
+      }
     },
     [user, driver, refreshUser],
   );
 
+  const setColumns = useCallback(
+    (columns: ColumnType[]) => {
+      // Dédoublonne en conservant l'ordre (le backend le fait aussi, défensif).
+      const unique = columns.filter((c, i) => columns.indexOf(c) === i);
+      setPrefsState(() => {
+        const next = { columns: unique };
+        persist(next);
+        return next;
+      });
+    },
+    [persist],
+  );
+
+  const toggleColumn = useCallback(
+    (type: ColumnType) => {
+      setPrefsState((prev) => {
+        const has = prev.columns.includes(type);
+        const next = {
+          columns: has
+            ? prev.columns.filter((c) => c !== type)
+            : [...prev.columns, type],
+        };
+        persist(next);
+        return next;
+      });
+    },
+    [persist],
+  );
+
   return (
-    <ColumnPreferencesContext.Provider value={{ prefs, setColumn }}>
+    <ColumnPreferencesContext.Provider value={{ prefs, toggleColumn, setColumns }}>
       {children}
     </ColumnPreferencesContext.Provider>
   );

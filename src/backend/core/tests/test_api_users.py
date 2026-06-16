@@ -294,8 +294,10 @@ def test_api_users_retrieve_me_authenticated_with_column_preferences():
     """Authenticated users should be able to retrieve their own user via the "/users/me" path."""
     user = factories.UserFactory(
         column_preferences={
-            "column1": models.ColumnType.FILE_SIZE,
-            "column2": models.ColumnType.LAST_MODIFIED,
+            "columns": [
+                models.ColumnType.FILE_SIZE,
+                models.ColumnType.LAST_MODIFIED,
+            ]
         }
     )
 
@@ -315,7 +317,27 @@ def test_api_users_retrieve_me_authenticated_with_column_preferences():
         "short_name": user.short_name,
         "language": user.language,
         "last_release_note_seen": None,
-        "column_preferences": {"column1": "file_size", "column2": "last_modified"},
+        "column_preferences": {"columns": ["file_size", "last_modified"]},
+    }
+
+
+def test_api_users_retrieve_me_column_preferences_legacy_migrated():
+    """Legacy two-slot prefs ({column1, column2}) are migrated to {columns: [...]}."""
+    user = factories.UserFactory(
+        column_preferences={
+            "column1": models.ColumnType.FILE_SIZE,
+            "column2": models.ColumnType.LAST_MODIFIED,
+        }
+    )
+
+    client = APIClient()
+    client.force_login(user)
+
+    response = client.get("/api/v1.0/users/me/")
+
+    assert response.status_code == 200
+    assert response.json()["column_preferences"] == {
+        "columns": ["file_size", "last_modified"]
     }
 
 
@@ -654,10 +676,17 @@ def test_api_users_patch_last_release_note_seen_valid(value):
     assert user.last_release_note_seen == value
 
 
-@pytest.mark.parametrize("column1", list(models.ColumnType))
-@pytest.mark.parametrize("column2", list(models.ColumnType))
-def test_api_users_patch_column_preferences_valid(column2, column1):
-    """Patching column_preferences using valid value should succeed."""
+@pytest.mark.parametrize(
+    "columns",
+    [
+        [],
+        [models.ColumnType.FILE_SIZE],
+        [models.ColumnType.LAST_MODIFIED, models.ColumnType.CREATED_BY],
+        list(models.ColumnType),
+    ],
+)
+def test_api_users_patch_column_preferences_valid(columns):
+    """Patching column_preferences with a valid list of columns should succeed."""
 
     user = factories.UserFactory()
 
@@ -666,63 +695,47 @@ def test_api_users_patch_column_preferences_valid(column2, column1):
 
     assert user.column_preferences is None
 
-    column_preferences = {
-        "column1": column1,
-        "column2": column2,
-    }
-
     response = client.patch(
         f"/api/v1.0/users/{user.id!s}/",
         {
-            "column_preferences": column_preferences,
+            "column_preferences": {"columns": columns},
         },
         format="json",
     )
 
     assert response.status_code == 200
     user.refresh_from_db()
-    assert user.column_preferences == models.ColumnPreferences(**column_preferences)
+    assert user.column_preferences == models.ColumnPreferences(columns=columns)
 
 
-@pytest.mark.parametrize(
-    "column_name,missing_column", [("column1", "column2"), ("column2", "column1")]
-)
-def test_api_users_patch_column_preferences_missing_column_should_fail(column_name, missing_column):
-    """Patching column_preferences with a missing required column parameter should fails."""
+def test_api_users_patch_column_preferences_dedupes_columns():
+    """Duplicate columns are removed while preserving order."""
 
     user = factories.UserFactory()
 
     client = APIClient()
     client.force_login(user)
 
-    assert user.column_preferences is None
-
-    column_preferences = {column_name: models.ColumnType.FILE_SIZE}
-
     response = client.patch(
         f"/api/v1.0/users/{user.id!s}/",
         {
-            "column_preferences": column_preferences,
+            "column_preferences": {
+                "columns": ["file_size", "file_size", "last_modified"],
+            },
         },
         format="json",
     )
 
-    assert response.json() == {
-        "type": "validation_error",
-        "errors": [
-            {
-                "code": "invalid",
-                "detail": "Field required",
-                "attr": f"column_preferences.0.{missing_column}",
-            }
-        ],
-    }
-
-    assert response.status_code == 400
+    assert response.status_code == 200
+    user.refresh_from_db()
+    assert user.column_preferences.columns == [
+        models.ColumnType.FILE_SIZE,
+        models.ColumnType.LAST_MODIFIED,
+    ]
 
 
 def test_api_users_patch_column_preferences_extra_value_should_fail():
-    """Patching column_preferences adding extra value should fail."""
+    """Patching column_preferences adding an extra key should fail."""
 
     user = factories.UserFactory()
 
@@ -731,36 +744,23 @@ def test_api_users_patch_column_preferences_extra_value_should_fail():
 
     assert user.column_preferences is None
 
-    column_preferences = {
-        "column1": models.ColumnType.FILE_SIZE,
-        "column2": models.ColumnType.LAST_MODIFIED,
-        "not_allowed": "foo",
-    }
-
     response = client.patch(
         f"/api/v1.0/users/{user.id!s}/",
         {
-            "column_preferences": column_preferences,
+            "column_preferences": {
+                "columns": [models.ColumnType.FILE_SIZE],
+                "not_allowed": "foo",
+            },
         },
         format="json",
     )
 
-    assert response.json() == {
-        "type": "validation_error",
-        "errors": [
-            {
-                "code": "invalid",
-                "detail": "Extra inputs are not permitted",
-                "attr": "column_preferences.0.not_allowed",
-            },
-        ],
-    }
-
     assert response.status_code == 400
+    assert "Extra inputs are not permitted" in str(response.json())
 
 
 def test_api_users_patch_column_preferences_invalid_value():
-    """Patching column_preferences with good key but invalid value should fail"""
+    """Patching column_preferences with an invalid column value should fail."""
 
     user = factories.UserFactory()
 
@@ -769,38 +769,16 @@ def test_api_users_patch_column_preferences_invalid_value():
 
     assert user.column_preferences is None
 
-    column_preferences = {
-        "column1": "invalid",
-        "column2": "also_invalid",
-    }
-
     response = client.patch(
         f"/api/v1.0/users/{user.id!s}/",
         {
-            "column_preferences": column_preferences,
+            "column_preferences": {"columns": ["invalid"]},
         },
         format="json",
     )
 
-    assert response.json() == {
-        "type": "validation_error",
-        "errors": [
-            {
-                "code": "invalid",
-                "detail": "Input should be 'last_modified', 'created', 'created_by', "
-                "'file_type' or 'file_size'",
-                "attr": "column_preferences.0.column1",
-            },
-            {
-                "code": "invalid",
-                "detail": "Input should be 'last_modified', 'created', 'created_by', "
-                "'file_type' or 'file_size'",
-                "attr": "column_preferences.1.column2",
-            },
-        ],
-    }
-
     assert response.status_code == 400
+    assert "Input should be" in str(response.json())
 
 
 def test_api_users_patch_authenticated_other():

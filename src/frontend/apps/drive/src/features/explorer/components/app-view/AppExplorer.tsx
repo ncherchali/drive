@@ -48,9 +48,8 @@ export type AppExplorerContextType = AppExplorerProps & {
   sortState: SortState;
   onSort: (columnId: "title" | ColumnType) => void;
   prefs: ColumnPreferences;
-  onChangeColumn: (slot: "column1" | "column2", type: ColumnType) => void;
-  column1Config?: ColumnConfig;
-  column2Config?: ColumnConfig;
+  toggleColumn: (type: ColumnType) => void;
+  columnConfigs: ColumnConfig[];
   filters: ItemFilters;
   onFiltersChange: (filters: ItemFilters) => void;
   viewConfig: ViewConfig;
@@ -76,11 +75,10 @@ export const AppExplorer = (props: AppExplorerProps) => {
   );
 
   const {
-    column1Config,
-    column2Config,
+    columnConfigs,
     sortState,
     cycleSortForColumn,
-    setColumn,
+    toggleColumn,
     prefs,
     viewConfig,
   } = useGridColumns(props.viewConfigKey, props.navigationId);
@@ -103,9 +101,8 @@ export const AppExplorer = (props: AppExplorerProps) => {
       sortState,
       onSort: cycleSortForColumn,
       prefs,
-      onChangeColumn: setColumn,
-      column1Config,
-      column2Config,
+      toggleColumn,
+      columnConfigs,
       filters: baseFilters,
       onFiltersChange: setBaseFilters,
       viewConfig,
@@ -115,10 +112,10 @@ export const AppExplorer = (props: AppExplorerProps) => {
       sortState,
       cycleSortForColumn,
       prefs,
-      setColumn,
-      column1Config,
-      column2Config,
+      toggleColumn,
+      columnConfigs,
       baseFilters,
+      viewConfig,
     ],
   );
 
