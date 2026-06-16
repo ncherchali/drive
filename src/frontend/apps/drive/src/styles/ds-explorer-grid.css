@@ -21,6 +21,10 @@
  * pour un accent UNIQUE et cohérent avec l'avatar/boutons DS (`--primary`).
  * Posé sur `.sahla-ds-grid` (racine du shell) → cascade à toute la coquille. */
 .sahla-ds-grid {
+  /* Chiffres tabulaires sur toute la coquille de l'explorateur : tailles, dates
+     et compteurs s'alignent verticalement en colonnes (finition enterprise). */
+  font-variant-numeric: tabular-nums;
+
   --c--globals--colors--brand-050: #f5f3ff;
   --c--globals--colors--brand-100: #ede9fe;
   --c--globals--colors--brand-150: #e3ddfd;

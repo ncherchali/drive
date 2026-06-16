@@ -85,11 +85,11 @@ $xl: 1200px;
         outline: none;
         background: transparent;
         color: var(--foreground);
-        font-family: "Inter", system-ui, sans-serif;
+        font-family: var(--font-sans);
         font-size: 16px;
 
         &::placeholder {
-          font-family: "Inter", system-ui, sans-serif;
+          font-family: var(--font-sans);
           color: var(--muted-foreground);
           font-size: 16px;
           font-weight: 400;

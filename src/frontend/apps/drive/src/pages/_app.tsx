@@ -106,8 +106,9 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
           href="/assets/sahla_favicon.svg"
           type="image/svg+xml"
         />
-        {/* Inter (police de base LTR du DS, remplace les @font-face d'ui-kit) +
-            Cairo (interface arabe RTL — cf. --font-cairo). */}
+        {/* Typographie du DS : Inter Variable (axe optique opsz 14–32 + tous les
+            poids → un seul fichier, optical sizing) pour l'UI LTR ; Cairo pour
+            l'arabe (RTL). Polices pilotées par les tokens --font-* (ds.css). */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -115,7 +116,7 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
           crossOrigin=""
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Cairo:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </Head>

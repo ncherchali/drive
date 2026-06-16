@@ -20,11 +20,10 @@
 @use "./../pages/sdk/index.scss" as *;
 body {
   margin: 0;
-  // Police de base du DS (Inter, chargée via Google Fonts dans _app). Posée
-  // après `@use ui-kit/style` → gagne sur sa règle body (qui pointait vers la
-  // police Cunningham). Remplace les @font-face d'ui-kit/sass/fonts (déposés).
-  font-family:
-    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  // Police de base via le token DS unique `--font-sans` (défini dans ds.css).
+  // Inter en UI ; basculée en Cairo sous html[dir="rtl"] par simple override du
+  // token (cf. bloc RTL ci-dessous).
+  font-family: var(--font-sans);
 }
 
 * {
@@ -45,21 +44,14 @@ body {
 }
 
 // --- RTL / Arabic support ---------------------------------------------------
-// Cairo is reserved for the right-to-left (Arabic) interface.
-:root {
-  --font-cairo: "Cairo", sans-serif;
-}
-
-// When the document is in RTL (set by initI18n on <html dir="rtl">), use Cairo
-// across the UI. We target broadly because the design system sets the base
-// font-family on several elements rather than relying on inheritance.
-[dir="rtl"] body,
-[dir="rtl"] button,
-[dir="rtl"] input,
-[dir="rtl"] textarea,
-[dir="rtl"] select,
-[dir="rtl"] .c__button {
-  font-family: var(--font-cairo);
+// Cairo est réservé à l'interface arabe (droite-à-gauche). On bascule TOUTE la
+// typographie en redéfinissant le token unique `--font-sans` sous le document
+// RTL (dir="rtl" posé par initI18n sur <html>). Tout ce qui pointe sur
+// var(--font-sans) — body, composants, utilitaire Tailwind `font-sans`, SCSS —
+// passe alors en Cairo sans énumérer les éléments. `html[dir=…]` (spécificité
+// 0,1,1) l'emporte sur le `:root` du token, quel que soit l'ordre d'import.
+html[dir="rtl"] {
+  --font-sans: var(--font-arabic);
 }
 
 // Related to @viselect/react
