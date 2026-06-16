@@ -1,8 +1,6 @@
-@use "sass:map";
-@use "@/styles/cunningham-tokens-sass" as *;
 
-$tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
-$xl: map.get($themes, "default", "globals", "breakpoints", "xl");
+$tablet: 1024px;
+$xl: 1200px;
 
 /**
  * Mixin to apply border and background to a row of a datagrid.
@@ -45,30 +43,30 @@ $xl: map.get($themes, "default", "globals", "breakpoints", "xl");
 
   &--with-search {
     .embedded-explorer__container {
-      padding-top: var(--c--globals--spacings--xs);
+      padding-top: 0.5rem;
     }
   }
 
   &__container {
     display: flex;
     flex-direction: column;
-    gap: var(--c--globals--spacings--xs);
+    gap: 0.5rem;
     flex: 1;
   }
 
   &__search {
     width: 100%;
-    margin-bottom: var(--c--globals--spacings--xs);
+    margin-bottom: 0.5rem;
 
     &__container {
       width: 100%;
       display: flex;
       align-items: center;
-      gap: var(--c--globals--spacings--xs);
+      gap: 0.5rem;
       padding: calc(
-          var(--c--globals--spacings--base) + var(--c--globals--spacings--xxs)
+          1rem + 0.375rem
         )
-        calc(var(--c--globals--spacings--sm) + var(--c--globals--spacings--xs));
+        calc(0.75rem + 0.5rem);
 
       border-bottom: 1px solid var(--border);
 
@@ -87,11 +85,11 @@ $xl: map.get($themes, "default", "globals", "breakpoints", "xl");
         outline: none;
         background: transparent;
         color: var(--foreground);
-        font-family: var(--c--globals--font--families--base);
+        font-family: "Inter", system-ui, sans-serif;
         font-size: 16px;
 
         &::placeholder {
-          font-family: var(--c--globals--font--families--base);
+          font-family: "Inter", system-ui, sans-serif;
           color: var(--muted-foreground);
           font-size: 16px;
           font-weight: 400;
@@ -110,19 +108,19 @@ $xl: map.get($themes, "default", "globals", "breakpoints", "xl");
     &__last-item {
       display: flex;
       align-items: center;
-      gap: var(--c--globals--spacings--2xs);
+      gap: 0.375rem;
     }
   }
 
   &__empty {
     color: var(--muted-foreground);
-    font-weight: var(--c--globals--font--weights--regular);
-    font-size: var(--c--globals--font--sizes--md);
+    font-weight: 400;
+    font-size: 1rem;
   }
 
   &--compact {
     td:has(.explorer__grid__item__name) {
-      padding-left: var(--c--globals--spacings--2xs);
+      padding-left: 0.375rem;
     }
 
     .c__datagrid__row__cell--actions {

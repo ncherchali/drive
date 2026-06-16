@@ -1,6 +1,4 @@
-@use "sass:map";
-@use "@/styles/cunningham-tokens-sass" as *;
-$tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
+$tablet: 1024px;
 
 :root {
   --header-height: 52px;
@@ -110,19 +108,25 @@ $tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
 }
 
 .drive__header__logo {
-  background-image: var(--c--components--logo--src);
+  background-image: url("/assets/sahla_logo.svg");
   width: 142px;
   height: 40px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 }
+.dark .drive__header__logo {
+  background-image: url("/assets/sahla_logo_dark.svg");
+}
 
 .drive__logo-icon {
-  background-image: var(--c--components--logo-icon--src);
+  background-image: url("/assets/sahla_logo-icon.svg");
   width: 64px;
   height: 64px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+.dark .drive__logo-icon {
+  background-image: url("/assets/sahla_logo-icon_dark.svg");
 }

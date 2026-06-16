@@ -6,17 +6,17 @@
 // police et couleurs par token Cunningham (var(--c--…)) gardées en CSS.
 .info-row {
   @apply flex items-center justify-between;
-  padding: var(--c--globals--spacings--3xs, 0.25rem) 0;
+  padding: 0.25rem 0;
 
   &__label {
     @apply font-bold;
-    font-size: var(--c--globals--font--sizes--sm);
+    font-size: 0.875rem;
     color: var(--foreground);
   }
 
   &__right-content {
     &__string {
-      font-size: var(--c--globals--font--sizes--sm);
+      font-size: 0.875rem;
       color: var(--muted-foreground);
     }
   }

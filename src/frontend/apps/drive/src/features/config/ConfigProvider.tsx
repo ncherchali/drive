@@ -3,8 +3,7 @@ import Head from "next/head";
 import Script from "next/script";
 import { useApiConfig } from "./useApiConfig";
 import { ApiConfig } from "@/features/drivers/types";
-import { createContext, useContext, useEffect } from "react";
-import { useAppContext } from "@/pages/_app";
+import { createContext, useContext } from "react";
 
 export interface ConfigContextType {
   config: ApiConfig;
@@ -24,15 +23,6 @@ export const useConfig = () => {
 
 export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: config } = useApiConfig();
-  const { setTheme } = useAppContext();
-
-  useEffect(() => {
-    if (config?.FRONTEND_THEME) {
-      setTheme(config.FRONTEND_THEME);
-    } else {
-      setTheme("sahla-light");
-    }
-  }, [config?.FRONTEND_THEME, setTheme]);
 
   if (!config) {
     return (

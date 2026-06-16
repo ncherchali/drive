@@ -6,7 +6,7 @@
 }
 
 .sdk__explorer {
-  padding: 0 var(--c--globals--spacings--md);
+  padding: 0 1.5rem;
   flex-grow: 1;
   display: flex;
   overflow-y: auto;
@@ -32,8 +32,8 @@
   height: 50px;
   display: flex;
   align-items: center;
-  padding: var(--c--globals--spacings--base) var(--c--globals--spacings--base) 0
-    var(--c--globals--spacings--base);
+  padding: 1rem 1rem 0
+    1rem;
   font-size: 14px;
   color: var(--muted-foreground);
 }

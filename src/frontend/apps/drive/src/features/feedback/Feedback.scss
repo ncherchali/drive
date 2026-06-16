@@ -1,7 +1,5 @@
-@use "sass:map";
-@use "@/styles/cunningham-tokens-sass" as *;
 
-$tablet: map.get($themes, "default", "globals", "breakpoints", "tablet");
+$tablet: 1024px;
 
 .c__feedback {
   &__footer {

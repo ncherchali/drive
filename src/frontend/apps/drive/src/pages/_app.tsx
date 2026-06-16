@@ -1,12 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { useMemo, type ReactElement, type ReactNode } from "react";
 import { ThemeProvider } from "@/features/theme/ThemeProvider";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
@@ -33,10 +25,6 @@ import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { AnalyticsProvider } from "@/features/analytics/AnalyticsProvider";
 import { ConfigProvider } from "@/features/config/ConfigProvider";
-import {
-  removeQuotes,
-  useCunninghamTheme,
-} from "@/features/ui/cunningham/useCunninghamTheme";
 import { ResponsiveDivs } from "@/features/ui/components/responsive/ResponsiveDivs";
 import { FeedbackFooterMobile } from "@/features/feedback/Feedback";
 import { useRouter } from "next/router";
@@ -88,32 +76,13 @@ const queryClient = new QueryClient({
   },
 });
 
-export interface AppContextType {
-  theme: string;
-  setTheme: (theme: string) => void;
-}
-
-const AppContext = createContext<AppContextType | undefined>(undefined);
-
-export const useAppContext = () => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error("useAppContext must be used within an AppContextProvider");
-  }
-  return context;
-};
-
 export default function MyApp({
   Component,
   pageProps,
   router,
 }: AppPropsWithLayout) {
-  const [theme, setTheme] = useState<string>("sahla-light");
-
   return (
-    <AppContext.Provider value={{ theme, setTheme }}>
-      <MyAppInner Component={Component} pageProps={pageProps} router={router} />
-    </AppContext.Provider>
+    <MyAppInner Component={Component} pageProps={pageProps} router={router} />
   );
 }
 
@@ -121,24 +90,7 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t } = useTranslation();
-  const { theme } = useAppContext();
   const router = useRouter();
-  const themeTokens = useCunninghamTheme();
-
-  // Thème de marque : applique la classe de tokens (`cunningham-theme--<theme>`,
-  // pilotée par la config) sur <html>. Remplace l'injection de tokens que faisait
-  // le CunninghamProvider (déposé) ; alimente les `--c--*` encore référencés par
-  // quelques SCSS/composants (migrés vers @theme au lot 13b). Le mode clair/sombre
-  // est lui géré par le ThemeProvider DS (classe `.dark`), source unique.
-  useEffect(() => {
-    const el = document.documentElement;
-    el.classList.forEach((cls) => {
-      if (cls.startsWith("cunningham-theme--")) {
-        el.classList.remove(cls);
-      }
-    });
-    el.classList.add(`cunningham-theme--${theme}`);
-  }, [theme]);
 
   const isSdk = useMemo(
     () => router.pathname.startsWith("/sdk"),
@@ -151,12 +103,8 @@ const MyAppInner = ({ Component, pageProps }: AppPropsWithLayout) => {
         <title>{t("app_title")}</title>
         <link
           rel="icon"
-          href={removeQuotes(themeTokens.components.favicon.src)}
-          type={
-            removeQuotes(themeTokens.components.favicon.src).endsWith(".svg")
-              ? "image/svg+xml"
-              : "image/png"
-          }
+          href="/assets/sahla_favicon.svg"
+          type="image/svg+xml"
         />
         {/* Inter (police de base LTR du DS, remplace les @font-face d'ui-kit) +
             Cairo (interface arabe RTL — cf. --font-cairo). */}
