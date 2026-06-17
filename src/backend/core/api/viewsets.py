@@ -52,6 +52,7 @@ from core.services.search_indexers import (
     get_visited_items_ids_of,
 )
 from core.storage import get_storage_compute_backend
+from core.tasks.audit import record_media_access
 from core.tasks.item import duplicate_file, process_item_purge, rename_file
 from core.utils.analytics import posthog_capture
 from wopi.services import access as access_service
@@ -1547,10 +1548,9 @@ class ItemViewSet(
         if item.upload_state == models.ItemUploadStateChoices.PENDING:
             raise drf.exceptions.PermissionDenied()
 
-        audit.record(
-            "item.download", actor=request.user, target=item, fail_silently=True
-        )
-
+        # The actual download is audited asynchronously at the media-auth
+        # subrequest (A2-5), which is the single point where bytes are served;
+        # this permalink only redirects there, so it does not record on its own.
         redirect_url = f"{settings.MEDIA_BASE_URL}{settings.MEDIA_URL}{quote(item.file_key)}"
         return drf.response.Response(
             status=status.HTTP_302_FOUND,
@@ -1591,7 +1591,9 @@ class ItemViewSet(
         annotation. The request will then be proxied to the object storage backend who will
         respond with the file after checking the signature included in headers.
         """
-        url_params, _, _, item = self._authorize_subrequest(request, MEDIA_STORAGE_URL_PATTERN)
+        url_params, _, user_id, item = self._authorize_subrequest(
+            request, MEDIA_STORAGE_URL_PATTERN
+        )
         if item.type != models.ItemTypeChoices.FILE:
             logger.debug("Item '%s' is not a file", item.id)
             raise drf.exceptions.PermissionDenied()
@@ -1603,6 +1605,19 @@ class ItemViewSet(
         if url_params.get("preview") and not utils.is_previewable_item(item):
             logger.debug("Item '%s' is not previewable", item.id)
             raise drf.exceptions.PermissionDenied()
+
+        # Audit actual content downloads asynchronously (off the request path).
+        # Previews (thumbnails, etc.) are skipped to avoid flooding the trail.
+        if not url_params.get("preview"):
+            record_media_access.delay(
+                "item.download",
+                str(user_id) if user_id else None,
+                models.AuditActorTypeChoices.USER
+                if user_id
+                else models.AuditActorTypeChoices.ANONYMOUS,
+                str(item.id),
+                str(item.path) if item.path else "",
+            )
 
         # Generate S3 authorization headers using the extracted URL parameters
         request = utils.generate_s3_authorization_headers(f"{url_params.get('key'):s}")
