@@ -20,6 +20,7 @@ import dj_database_url
 import posthog
 import sentry_sdk
 from boto3.s3.transfer import TransferConfig
+from celery.schedules import crontab
 from configurations import Configuration, values
 from lasuite.configuration.values import SecretFileValue
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -1083,6 +1084,16 @@ class Base(Configuration):
     CELERY_BROKER_URL = values.Value("redis://redis:6379/0")
     CELERY_BROKER_TRANSPORT_OPTIONS = values.DictValue({})
     CELERY_TASK_ROUTES = values.DictValue({})
+    # Periodic tasks (requires a Celery beat process — e.g. worker `-B` in dev,
+    # a dedicated beat deployment in prod). Audit partition maintenance (A2-4)
+    # runs daily: it pre-creates upcoming monthly partitions and drops those
+    # older than AUDIT_RETENTION_DAYS.
+    CELERY_BEAT_SCHEDULE = {
+        "manage-audit-partitions": {
+            "task": "core.tasks.audit.manage_audit_partitions",
+            "schedule": crontab(hour=3, minute=0),
+        },
+    }
 
     # Session
     SESSION_ENGINE = "django.contrib.sessions.backends.cache"
