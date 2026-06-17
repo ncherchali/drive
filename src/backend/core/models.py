@@ -1641,6 +1641,11 @@ class AuditEvent(models.Model):
         blank=True,
         help_text=_("Additional structured context for the event."),
     )
+    # Tamper-evidence (A2-7). Populated only when FEATURES_AUDIT_TAMPER_EVIDENT
+    # is enabled: each event chains to the previous one so any alteration or
+    # deletion breaks the chain. NULL when the feature is off.
+    prev_hash = models.CharField(max_length=64, null=True, blank=True, editable=False)
+    entry_hash = models.CharField(max_length=64, null=True, blank=True, editable=False)
 
     class Meta:
         db_table = "drive_audit_event"

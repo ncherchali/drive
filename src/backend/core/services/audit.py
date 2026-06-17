@@ -15,13 +15,22 @@ caller; resilient async shipping (outbox/DLQ) is layered on later without
 changing this call surface.
 """
 
+import hashlib
+import json
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.db import connection, transaction
 
 from core import models
 
 logger = logging.getLogger(__name__)
+
+# Fixed key for the advisory lock that serializes hash-chain appends (A2-7).
+_AUDIT_CHAIN_LOCK = 0xA0D17
+# prev_hash value of the very first (genesis) chained event.
+_GENESIS = ""
 
 
 def _resolve_actor(actor):
@@ -31,6 +40,46 @@ def _resolve_actor(actor):
     if isinstance(actor, AnonymousUser):
         return None, models.AuditActorTypeChoices.ANONYMOUS
     return None, models.AuditActorTypeChoices.SYSTEM
+
+
+def _entry_hash(event, prev_hash):
+    """SHA-256 over the event's stable content chained to ``prev_hash``.
+
+    ``created_at`` is DB-assigned (auto_now_add) and therefore excluded; the
+    UUID id keeps each entry unique, and every other meaningful field is
+    covered, so any content alteration breaks the chain.
+    """
+    payload = json.dumps(
+        {
+            "id": str(event.id),
+            "actor_id": str(event.actor_id) if event.actor_id else None,
+            "actor_type": event.actor_type,
+            "action": event.action,
+            "target_uuid": str(event.target_uuid) if event.target_uuid else None,
+            "target_type": event.target_type,
+            "path_snapshot": event.path_snapshot,
+            "metadata": event.metadata,
+        },
+        sort_keys=True,
+        default=str,
+    )
+    return hashlib.sha256(f"{prev_hash}:{payload}".encode()).hexdigest()
+
+
+def _append_chained(event):
+    """Append ``event`` to the hash chain under a serializing advisory lock."""
+    with transaction.atomic():
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pg_advisory_xact_lock(%s)", [_AUDIT_CHAIN_LOCK])
+        last = (
+            models.AuditEvent.objects.exclude(entry_hash__isnull=True)
+            .order_by("-created_at", "-id")
+            .first()
+        )
+        event.prev_hash = last.entry_hash if last else _GENESIS
+        event.entry_hash = _entry_hash(event, event.prev_hash)
+        event.save()
+    return event
 
 
 # pylint: disable-next=too-many-arguments
@@ -79,19 +128,68 @@ def record(  # noqa: PLR0913
     if path_snapshot is None and target_item is not None and target_item.path:
         path_snapshot = str(target_item.path)
 
+    event = models.AuditEvent(
+        action=action,
+        actor=resolved_actor,
+        actor_type=actor_type,
+        target=target_item,
+        target_uuid=target_id,
+        target_type=target_type or "",
+        path_snapshot=path_snapshot or "",
+        metadata=metadata or {},
+    )
+
     try:
-        return models.AuditEvent.objects.create(
-            action=action,
-            actor=resolved_actor,
-            actor_type=actor_type,
-            target=target_item,
-            target_uuid=target_id,
-            target_type=target_type or "",
-            path_snapshot=path_snapshot or "",
-            metadata=metadata or {},
-        )
+        if getattr(settings, "FEATURES_AUDIT_TAMPER_EVIDENT", False):
+            return _append_chained(event)
+        event.save()
+        return event
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to record audit event '%s'", action)
         if not fail_silently:
             raise
         return None
+
+
+def verify_chain(events=None):
+    """Verify the tamper-evident hash chain (A2-7).
+
+    Walks the chain by following ``prev_hash`` → ``entry_hash`` links (order
+    independent of timestamps), recomputing each hash. Returns
+    ``(is_valid, problems)``: an altered event fails its hash recomputation, a
+    removed event breaks a link, and a fork yields more than one successor.
+    Only chained events (``entry_hash`` set) are considered.
+    """
+    queryset = (
+        events
+        if events is not None
+        else models.AuditEvent.objects.exclude(entry_hash__isnull=True)
+    )
+    chained = list(queryset)
+    if not chained:
+        return True, []
+
+    problems = []
+    by_prev = {}
+    for event in chained:
+        if _entry_hash(event, event.prev_hash or _GENESIS) != event.entry_hash:
+            problems.append(f"hash mismatch for event {event.id}")
+        by_prev.setdefault(event.prev_hash or _GENESIS, []).append(event)
+
+    walked = 0
+    cursor_hash = _GENESIS
+    while cursor_hash in by_prev:
+        successors = by_prev[cursor_hash]
+        if len(successors) > 1:
+            problems.append(f"chain fork after hash {cursor_hash[:12]}…")
+        walked += 1
+        cursor_hash = successors[0].entry_hash
+        if walked > len(chained):  # safety against an unexpected cycle
+            break
+
+    if walked != len(chained):
+        problems.append(
+            f"chain reaches {walked}/{len(chained)} events (missing/removed link)"
+        )
+
+    return (not problems), problems

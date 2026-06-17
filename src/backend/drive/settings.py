@@ -961,6 +961,11 @@ class Base(Configuration):
     AUDIT_RETENTION_DAYS = values.Value(
         None, environ_name="AUDIT_RETENTION_DAYS", environ_prefix=None
     )
+    # A2-7: when enabled, audit events are hash-chained (tamper-evident). Off by
+    # default; enabling it has a small write cost (serialized appends).
+    FEATURES_AUDIT_TAMPER_EVIDENT = values.BooleanValue(
+        False, environ_name="FEATURES_AUDIT_TAMPER_EVIDENT", environ_prefix=None
+    )
 
     # Mail
     EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")

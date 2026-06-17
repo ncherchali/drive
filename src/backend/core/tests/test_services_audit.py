@@ -71,13 +71,13 @@ def test_services_audit_record_explicit_actor_type_wins():
 
 def test_services_audit_record_fail_silently_swallows_errors():
     """With fail_silently, a write failure is logged and returns None."""
-    with mock.patch.object(models.AuditEvent.objects, "create", side_effect=RuntimeError("boom")):
+    with mock.patch.object(models.AuditEvent, "save", side_effect=RuntimeError("boom")):
         assert audit.record("item.create", fail_silently=True) is None
 
 
 def test_services_audit_record_raises_by_default():
     """By default (fail-closed) a write failure propagates."""
-    with mock.patch.object(models.AuditEvent.objects, "create", side_effect=RuntimeError("boom")):
+    with mock.patch.object(models.AuditEvent, "save", side_effect=RuntimeError("boom")):
         with pytest.raises(RuntimeError):
             audit.record("item.create")
 
