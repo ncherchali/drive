@@ -956,6 +956,12 @@ class Base(Configuration):
     )
     PURGE_GRACE_DAYS = values.Value(7, environ_name="PURGE_GRACE_DAYS", environ_prefix=None)
 
+    # Audit (A2-4): number of days to keep audit events. None/0 disables purge
+    # (keep forever) — the safe default for a tamper-evident governance trail.
+    AUDIT_RETENTION_DAYS = values.Value(
+        None, environ_name="AUDIT_RETENTION_DAYS", environ_prefix=None
+    )
+
     # Mail
     EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")
     EMAIL_BRAND_NAME = values.Value(None)
