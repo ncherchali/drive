@@ -9,6 +9,7 @@ from os.path import splitext
 from urllib.parse import quote
 
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -913,3 +914,56 @@ class AuditEventSerializer(serializers.ModelSerializer):
             "metadata",
         ]
         read_only_fields = fields
+
+
+class ShareLinkSerializer(serializers.ModelSerializer):
+    """Manage advanced share links of an item (H1.3).
+
+    `password` is write-only and hashed on create; the raw value is never
+    returned. `token` is generated server-side and returned so the owner can
+    build the share URL.
+    """
+
+    password = serializers.CharField(
+        write_only=True, required=False, allow_blank=True, allow_null=True
+    )
+    has_password = serializers.BooleanField(read_only=True)
+    is_valid = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = models.ShareLink
+        fields = [
+            "id",
+            "token",
+            "role",
+            "password",
+            "has_password",
+            "expires_at",
+            "max_downloads",
+            "download_count",
+            "is_valid",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "token",
+            "has_password",
+            "download_count",
+            "is_valid",
+            "created_at",
+        ]
+
+    def create(self, validated_data):
+        password = validated_data.pop("password", None)
+        if password:
+            validated_data["password_hash"] = make_password(password)
+        return super().create(validated_data)
+
+
+class ShareLinkResolveSerializer(serializers.Serializer):
+    """Input for the public share-link resolution endpoint."""
+
+    token = serializers.CharField()
+    password = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )

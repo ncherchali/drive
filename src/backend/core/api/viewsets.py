@@ -2218,6 +2218,131 @@ class InvitationViewset(
         )
 
 
+class ShareLinkViewSet(
+    drf.mixins.CreateModelMixin,
+    drf.mixins.ListModelMixin,
+    drf.mixins.RetrieveModelMixin,
+    drf.mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """Manage advanced share links of an item (H1.3).
+
+    Nested under `items/{resource_id}/share-links/`. Restricted to users who can
+    manage the item (owner/admin): non-managers see an empty list and cannot
+    create or revoke links.
+    """
+
+    lookup_field = "id"
+    pagination_class = None
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = models.ShareLink.objects.select_related("item").all()
+    serializer_class = serializers.ShareLinkSerializer
+
+    @cached_property
+    def item(self):
+        """Resolve the parent item from the nested URL."""
+        try:
+            return models.Item.objects.annotate_user_roles(self.request.user).get(
+                pk=self.kwargs["resource_id"]
+            )
+        except models.Item.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+
+    def _can_manage(self):
+        return bool(self.item.get_abilities(self.request.user).get("accesses_manage"))
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(item=self.kwargs["resource_id"])
+        if not self._can_manage():
+            return queryset.none()
+        return queryset
+
+    def perform_create(self, serializer):
+        if not self._can_manage():
+            raise drf.exceptions.PermissionDenied()
+        share_link = serializer.save(
+            item_id=self.kwargs["resource_id"], creator=self.request.user
+        )
+        audit.record(
+            "share_link.create",
+            actor=self.request.user,
+            target=share_link.item,
+            metadata={
+                "share_link_id": str(share_link.id),
+                "role": share_link.role,
+                "has_password": share_link.has_password,
+            },
+        )
+
+    def perform_destroy(self, instance):
+        item = instance.item
+        share_link_id = instance.id
+        super().perform_destroy(instance)
+        audit.record(
+            "share_link.delete",
+            actor=self.request.user,
+            target=item,
+            metadata={"share_link_id": str(share_link_id)},
+        )
+
+
+class ShareLinkResolveView(drf.views.APIView):
+    """Public endpoint to resolve a share link by token (H1.3).
+
+    Validates the token, optional password, expiration and download cap, counts
+    the access atomically, and returns the item with a download URL. Byte-level
+    re-validation at the storage layer is a follow-up.
+    """
+
+    permission_classes = [drf.permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        """Resolve a share link by token (and optional password)."""
+        serializer = serializers.ShareLinkResolveSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data["token"]
+        password = serializer.validated_data.get("password")
+
+        try:
+            link = models.ShareLink.objects.select_related("item").get(token=token)
+        except models.ShareLink.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+
+        if link.is_expired:
+            raise drf.exceptions.PermissionDenied("This share link has expired.")
+        if link.has_password and not link.check_password(password):
+            raise drf.exceptions.PermissionDenied("Invalid password.")
+        if not link.register_download():
+            raise drf.exceptions.PermissionDenied(
+                "This share link has reached its download limit."
+            )
+
+        actor = request.user if request.user.is_authenticated else None
+        audit.record(
+            "share_link.download",
+            actor=actor,
+            target=link.item,
+            metadata={"share_link_id": str(link.id)},
+            fail_silently=True,
+        )
+
+        item = link.item
+        return drf.response.Response(
+            {
+                "item": {
+                    "id": str(item.id),
+                    "title": item.title,
+                    "filename": item.filename,
+                    "type": item.type,
+                },
+                "role": link.role,
+                "download_url": (
+                    f"/api/{settings.API_VERSION}/items/{item.id!s}/download/"
+                ),
+            }
+        )
+
+
 class ConfigView(drf.views.APIView):
     """API ViewSet for sharing some public settings."""
 

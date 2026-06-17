@@ -172,6 +172,16 @@ class InvitationFactory(factory.django.DjangoModelFactory):
     issuer = factory.SubFactory(UserFactory)
 
 
+class ShareLinkFactory(factory.django.DjangoModelFactory):
+    """A factory to create advanced share links for testing purposes."""
+
+    class Meta:
+        model = models.ShareLink
+
+    item = factory.SubFactory(ItemFactory)
+    creator = factory.SubFactory(UserFactory)
+
+
 class AuditEventFactory(factory.django.DjangoModelFactory):
     """A factory to create audit events for testing purposes."""
 

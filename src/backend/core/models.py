@@ -3,6 +3,7 @@ Declare and configure the models for the drive core application
 """
 # pylint: disable=too-many-lines
 
+import secrets
 import smtplib
 import uuid
 from datetime import timedelta
@@ -13,6 +14,7 @@ from os.path import splitext
 from django.conf import settings
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.hashers import check_password
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex, GistIndex
 from django.contrib.sites.models import Site
@@ -1556,6 +1558,102 @@ class Invitation(BaseModel):
             "partial_update": is_owner_or_admin,
             "retrieve": is_owner_or_admin,
         }
+
+
+class ShareLink(BaseModel):
+    """Advanced share link for an item (H1.3).
+
+    A tokenized link granting a `role` on an item, optionally protected by a
+    password, bounded by an expiration date and/or a maximum number of
+    downloads. The download counter is incremented atomically so the cap holds
+    under concurrency.
+
+    This complements the simple `link_reach`/`link_role` on `Item`: it is an
+    explicit, revocable, auditable link with its own constraints.
+    """
+
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="share_links"
+    )
+    token = models.CharField(max_length=64, unique=True, editable=False)
+    role = models.CharField(
+        max_length=20,
+        choices=LinkRoleChoices.choices,
+        default=LinkRoleChoices.READER,
+    )
+    password_hash = models.CharField(max_length=128, null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    max_downloads = models.PositiveIntegerField(null=True, blank=True)
+    download_count = models.PositiveIntegerField(default=0)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="share_links_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_share_link"
+        verbose_name = _("Share link")
+        verbose_name_plural = _("Share links")
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"ShareLink({self.token[:8]}… on {self.item_id})"
+
+    def save(self, *args, **kwargs):
+        """Generate a URL-safe token on first save."""
+        if not self.token:
+            self.token = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
+
+    @property
+    def has_password(self):
+        """Whether the link is password-protected."""
+        return bool(self.password_hash)
+
+    @property
+    def is_expired(self):
+        """Whether the link has passed its expiration date."""
+        return self.expires_at is not None and self.expires_at <= timezone.now()
+
+    @property
+    def is_exhausted(self):
+        """Whether the download cap has been reached."""
+        return (
+            self.max_downloads is not None
+            and self.download_count >= self.max_downloads
+        )
+
+    @property
+    def is_valid(self):
+        """Whether the link can still be used (not expired, not exhausted)."""
+        return not self.is_expired and not self.is_exhausted
+
+    def check_password(self, raw_password):
+        """Return True when the link is password-protected and the value matches."""
+        return bool(self.password_hash) and check_password(
+            raw_password or "", self.password_hash
+        )
+
+    def register_download(self):
+        """Atomically count one download; return False if the cap is reached.
+
+        A single conditional UPDATE guarantees the cap holds under concurrency:
+        it only increments while there is no cap or the count is below it.
+        """
+        updated = (
+            ShareLink.objects.filter(pk=self.pk)
+            .filter(
+                models.Q(max_downloads__isnull=True)
+                | models.Q(download_count__lt=models.F("max_downloads"))
+            )
+            .update(download_count=models.F("download_count") + 1)
+        )
+        if updated:
+            self.download_count += 1
+        return bool(updated)
 
 
 class AuditEvent(models.Model):

@@ -27,6 +27,11 @@ item_related_router.register(
     viewsets.InvitationViewset,
     basename="invitations",
 )
+item_related_router.register(
+    "share-links",
+    viewsets.ShareLinkViewSet,
+    basename="item_share_links",
+)
 
 sdk_relay_router = DefaultRouter()
 sdk_relay_router.register(
@@ -59,6 +64,11 @@ urlpatterns = [
         ),
     ),
     path(f"api/{settings.API_VERSION}/config/", viewsets.ConfigView.as_view()),
+    path(
+        f"api/{settings.API_VERSION}/share-links/resolve/",
+        viewsets.ShareLinkResolveView.as_view(),
+        name="share_links_resolve",
+    ),
 ]
 
 
