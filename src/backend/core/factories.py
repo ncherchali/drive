@@ -170,3 +170,15 @@ class InvitationFactory(factory.django.DjangoModelFactory):
     item = factory.SubFactory(ItemFactory)
     role = factory.fuzzy.FuzzyChoice([role[0] for role in RoleChoices.choices])
     issuer = factory.SubFactory(UserFactory)
+
+
+class AuditEventFactory(factory.django.DjangoModelFactory):
+    """A factory to create audit events for testing purposes."""
+
+    class Meta:
+        model = models.AuditEvent
+
+    action = "item.create"
+    actor = factory.SubFactory(UserFactory)
+    actor_type = models.AuditActorTypeChoices.USER
+    target = factory.SubFactory(ItemFactory)

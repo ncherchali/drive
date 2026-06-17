@@ -14,7 +14,7 @@ from django.conf import settings
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.indexes import GistIndex
+from django.contrib.postgres.indexes import GinIndex, GistIndex
 from django.contrib.sites.models import Site
 from django.core import mail, validators
 from django.core.cache import cache
@@ -62,6 +62,15 @@ def get_trashbin_cutoff():
     return timezone.now() - timedelta(days=settings.TRASHBIN_CUTOFF_DAYS)
 
 
+def validate_metadata_object(value):
+    """Ensure item metadata is a JSON object (mapping), not a list or scalar."""
+    if not isinstance(value, dict):
+        raise ValidationError(
+            _("Metadata must be a JSON object."),
+            code="item_metadata_not_object",
+        )
+
+
 class ItemTypeChoices(models.TextChoices):
     """Defines the types of items that can be created."""
 
@@ -90,6 +99,15 @@ class MirrorItemTaskStatusChoices(models.TextChoices):
     PROCESSING = "processing", _("Processing")
     COMPLETED = "completed", _("Completed")
     FAILED = "failed", _("Failed")
+
+
+class AuditActorTypeChoices(models.TextChoices):
+    """Nature of the actor behind an audit event."""
+
+    USER = "user", _("User")
+    SYSTEM = "system", _("System")
+    API = "api", _("API key")
+    ANONYMOUS = "anonymous", _("Anonymous")
 
 
 class DuplicateEmailError(Exception):
@@ -594,6 +612,30 @@ class Item(TreeModel, BaseModel):
         help_text=_("Malware detection info when the analysis status is unsafe."),
     )
 
+    # --- Content object model (ADR-0001) ---------------------------------------
+    # `content_type` is the optional "content object type" axis: an extensible
+    # registry key (e.g. "room", "record") layered on top of the base
+    # FOLDER/FILE `type`. NULL means a plain file/folder. This is NOT Django's
+    # contenttypes framework; the governed registry + validation arrives with the
+    # metadata service (passe 2). Kept free-form here so the column exists and is
+    # indexed without locking the registry prematurely.
+    content_type = models.CharField(
+        _("content type"),
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text=_("Content object type key (ADR-0001); NULL for a plain file/folder."),
+    )
+    # Free-form, classable business metadata (template instances live here).
+    # GIN-indexed for containment/key lookups; governed validation against
+    # metadata templates is added by the metadata service (passe 2).
+    metadata = models.JSONField(
+        default=dict,
+        blank=True,
+        validators=[validate_metadata_object],
+        help_text=_("Business metadata as a JSON object (classable, GIN-indexed)."),
+    )
+
     # Remove them in a future release. They must be kept while the columns are not removed
     _deprecated_numchild = models.PositiveIntegerField(default=0, db_column="numchild")
     _deprecated_numchild_folder = models.PositiveIntegerField(
@@ -621,6 +663,8 @@ class Item(TreeModel, BaseModel):
         indexes = [
             GistIndex(fields=["path"]),
             models.Index(NLevel(models.F("path")), name="drive_item_path_nlevel_idx"),
+            GinIndex(fields=["metadata"], name="drive_item_metadata_gin"),
+            models.Index(fields=["content_type"], name="drive_item_content_type_idx"),
         ]
 
     def __str__(self):
@@ -1512,3 +1556,112 @@ class Invitation(BaseModel):
             "partial_update": is_owner_or_admin,
             "retrieve": is_owner_or_admin,
         }
+
+
+class AuditEvent(models.Model):
+    """Append-only audit log entry — foundation of the sovereign Sahla Audit.
+
+    Entries are appended **only** through the explicit
+    `core.services.audit.record()` service (never via Django signals) so every
+    audit point is an intentional, reviewed call site carrying accurate business
+    context. The model is immutable: updates and deletes are blocked here.
+
+    Scope of this story (A2-1): the model + the explicit recording service.
+    Later stories build on it without reshaping it: async media-access capture
+    via Celery (A2-5), native monthly partitioning + retention purge (A2-4), the
+    read API + export (A2-6), and optional tamper-evident hash chaining
+    (A2-7, FEATURES_AUDIT_TAMPER_EVIDENT).
+
+    `target` keeps a soft FK to the item for convenient joins while it exists,
+    but `target_id` / `target_type` / `path_snapshot` denormalize the essentials
+    so the trail survives a hard-deleted or non-Item target.
+    """
+
+    id = models.UUIDField(
+        verbose_name=_("id"),
+        help_text=_("primary key for the record as UUID"),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    created_at = models.DateTimeField(
+        verbose_name=_("recorded on"),
+        help_text=_("date and time at which the event was recorded"),
+        auto_now_add=True,
+        db_index=True,
+    )
+    actor = models.ForeignKey(
+        User,
+        verbose_name=_("actor"),
+        on_delete=models.SET_NULL,
+        related_name="audit_events",
+        null=True,
+        blank=True,
+        help_text=_("User behind the action; NULL for system/anonymous actors."),
+    )
+    actor_type = models.CharField(
+        max_length=20,
+        choices=AuditActorTypeChoices.choices,
+        default=AuditActorTypeChoices.USER,
+    )
+    action = models.CharField(
+        _("action"),
+        max_length=100,
+        help_text=_("Dotted action key, e.g. 'item.create', 'item.download'."),
+    )
+    target = models.ForeignKey(
+        Item,
+        verbose_name=_("target item"),
+        on_delete=models.SET_NULL,
+        related_name="audit_events",
+        null=True,
+        blank=True,
+    )
+    target_uuid = models.UUIDField(
+        _("target id"),
+        null=True,
+        blank=True,
+        help_text=_("Denormalized target id; survives a hard-deleted target."),
+    )
+    target_type = models.CharField(
+        _("target type"),
+        max_length=50,
+        blank=True,
+        default="",
+        help_text=_("Denormalized target kind, e.g. 'item', 'itemaccess'."),
+    )
+    path_snapshot = models.TextField(
+        _("path snapshot"),
+        blank=True,
+        default="",
+        help_text=_("ltree path of the target item at the time of the event."),
+    )
+    metadata = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("Additional structured context for the event."),
+    )
+
+    class Meta:
+        db_table = "drive_audit_event"
+        verbose_name = _("Audit event")
+        verbose_name_plural = _("Audit events")
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["target_uuid"], name="drive_audit_target_idx"),
+            models.Index(fields=["actor", "-created_at"], name="drive_audit_actor_idx"),
+            models.Index(fields=["action", "-created_at"], name="drive_audit_action_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.action} by {self.actor_type} at {self.created_at}"
+
+    def save(self, *args, **kwargs):
+        """Enforce append-only semantics: an event can be inserted, never updated."""
+        if not self._state.adding:
+            raise RuntimeError("AuditEvent is append-only and cannot be modified.")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Block deletion; retention purge is handled by a dedicated task (A2-4)."""
+        raise RuntimeError("AuditEvent is append-only and cannot be deleted.")
