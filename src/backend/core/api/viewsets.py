@@ -1849,7 +1849,14 @@ class ItemAccessViewSet(
             # We don't want to have two consecutive explicit accesses with the same role.
             # We have to delete the current access, this item will have an inherited access
             # with the correct role.
+            item = instance.item
             instance.delete()
+            audit.record(
+                "access.delete",
+                actor=request.user,
+                target=item,
+                metadata={"old_role": old_role, "reason": "inherited_role_dedup"},
+            )
             return drf.response.Response(status=drf.status.HTTP_204_NO_CONTENT)
 
         access = serializer.save()
@@ -1866,6 +1873,16 @@ class ItemAccessViewSet(
                     "old_role": old_role,
                 },
                 item=access.item,
+            )
+            audit.record(
+                "access.update",
+                actor=request.user,
+                target=access.item,
+                metadata={
+                    "access_id": str(access.id),
+                    "role": access.role,
+                    "old_role": old_role,
+                },
             )
 
         return drf.response.Response(serializer.data)
@@ -1916,6 +1933,20 @@ class ItemAccessViewSet(
 
         access = serializer.save(item_id=self.kwargs["resource_id"])
         self._syncronize_descendants_accesses(access)
+
+        # Audit the persisted access before any side effect (email) that could fail.
+        audit.record(
+            "access.create",
+            actor=self.request.user,
+            target=access.item,
+            metadata={
+                "access_id": str(access.id),
+                "role": access.role,
+                "grantee_user": access.user.sub if access.user else None,
+                "grantee_team": access.team or None,
+            },
+        )
+
         if access.user:
             access.item.send_invitation_email(
                 access.user.email,
@@ -1939,6 +1970,8 @@ class ItemAccessViewSet(
         access_id = instance.id
         item = instance.item
         role = instance.role
+        grantee_user = instance.user.sub if instance.user else None
+        grantee_team = instance.team or None
         super().perform_destroy(instance)
         posthog_capture(
             "item_access_deleted",
@@ -1948,6 +1981,17 @@ class ItemAccessViewSet(
                 "role": role,
             },
             item=item,
+        )
+        audit.record(
+            "access.delete",
+            actor=self.request.user,
+            target=item,
+            metadata={
+                "access_id": str(access_id),
+                "role": role,
+                "grantee_user": grantee_user,
+                "grantee_team": grantee_team,
+            },
         )
 
     def _syncronize_descendants_accesses(self, access):
@@ -2058,6 +2102,14 @@ class InvitationViewset(
         self._validate_provided_role(serializer.validated_data.get("role"))
         invitation = serializer.save()
 
+        # Audit the persisted invitation before the email side effect.
+        audit.record(
+            "invitation.create",
+            actor=self.request.user,
+            target=invitation.item,
+            metadata={"invitation_id": str(invitation.id), "role": invitation.role},
+        )
+
         invitation.item.send_invitation_email(
             invitation.email,
             invitation.role,
@@ -2093,6 +2145,16 @@ class InvitationViewset(
                 },
                 item=serializer.instance.item,
             )
+            audit.record(
+                "invitation.update",
+                actor=self.request.user,
+                target=serializer.instance.item,
+                metadata={
+                    "invitation_id": str(serializer.instance.id),
+                    "role": serializer.instance.role,
+                    "old_role": old_role,
+                },
+            )
 
     def perform_destroy(self, instance):
         """Delete the invitation and capture the event."""
@@ -2109,6 +2171,12 @@ class InvitationViewset(
                 "role": role,
             },
             item=item,
+        )
+        audit.record(
+            "invitation.delete",
+            actor=self.request.user,
+            target=item,
+            metadata={"invitation_id": str(invitation_id), "role": role},
         )
 
 
