@@ -45,6 +45,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from core import enums, models
 from core.entitlements import get_entitlements_backend
+from core.services import audit
 from core.services.sdk_relay import SDKRelayManager
 from core.services.search_indexers import (
     get_file_indexer,
@@ -618,10 +619,17 @@ class ItemViewSet(
             user=self.request.user,
             role=models.RoleChoices.OWNER,
         )
+        audit.record(
+            "item.create",
+            actor=self.request.user,
+            target=obj,
+            metadata={"type": obj.type},
+        )
 
     def perform_destroy(self, instance):
         """Override to implement a soft delete instead of dumping the record in database."""
         instance.soft_delete()
+        audit.record("item.trash", actor=self.request.user, target=instance)
 
     def perform_update(self, serializer):
         """Override to check if a file is renamed in order to rename file on storage."""
@@ -632,6 +640,7 @@ class ItemViewSet(
             title = serializer.validated_data.get("title")
             if title and old_title != title:
                 rename_file.delay(instance.id, title)
+        audit.record("item.update", actor=self.request.user, target=instance)
 
     @drf.decorators.action(detail=True, methods=["delete"], url_path="hard-delete")
     def hard_delete(self, request, *args, **kwargs):
@@ -640,6 +649,7 @@ class ItemViewSet(
         """
         instance = self.get_object()
         instance.hard_delete()
+        audit.record("item.hard_delete", actor=request.user, target=instance)
         process_item_purge.delay(instance.id)
         return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -963,6 +973,12 @@ class ItemViewSet(
             item.save(update_fields=update_fields)
 
         posthog_capture("item_moved", user, {}, item=item)
+        audit.record(
+            "item.move",
+            actor=user,
+            target=item,
+            metadata={"target_item_id": str(target_item_id) if target_item_id else None},
+        )
 
         return drf.response.Response(
             {"message": "item moved successfully."}, status=status.HTTP_200_OK
@@ -978,6 +994,7 @@ class ItemViewSet(
         """
         item = self.get_object()
         item.restore()
+        audit.record("item.restore", actor=request.user, target=item)
 
         return drf_response.Response(
             {"detail": "item has been successfully restored."},
@@ -1024,6 +1041,13 @@ class ItemViewSet(
 
             # Set the created instance to the serializer
             serializer.instance = child_item
+
+            audit.record(
+                "item.create",
+                actor=request.user,
+                target=child_item,
+                metadata={"type": child_item.type, "parent_id": str(item.pk)},
+            )
 
             headers = self.get_success_headers(serializer.data)
             return drf.response.Response(
@@ -1522,6 +1546,10 @@ class ItemViewSet(
 
         if item.upload_state == models.ItemUploadStateChoices.PENDING:
             raise drf.exceptions.PermissionDenied()
+
+        audit.record(
+            "item.download", actor=request.user, target=item, fail_silently=True
+        )
 
         redirect_url = f"{settings.MEDIA_BASE_URL}{settings.MEDIA_URL}{quote(item.file_key)}"
         return drf.response.Response(
