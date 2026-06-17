@@ -1557,6 +1557,29 @@ class ItemViewSet(
             headers={"Location": redirect_url},
         )
 
+    @drf.decorators.action(detail=True, methods=["get"], url_path="audit")
+    def audit(self, request, *args, **kwargs):
+        """
+        Return the audit trail (activity) of an item, newest first.
+
+        Restricted to users who can manage the item (owner/admin) via the
+        `audit` ability enforced by ItemPermission: the audit trail is a
+        governance view. Paginated and read-only. Async media-access capture
+        (A2-5) and richer reporting (E2.4) extend the underlying data.
+        """
+        item = self.get_object()
+        queryset = models.AuditEvent.objects.filter(target_uuid=item.id).select_related("actor")
+
+        page = self.paginate_queryset(queryset)
+        serializer = serializers.AuditEventSerializer(
+            page if page is not None else queryset,
+            many=True,
+            context=self.get_serializer_context(),
+        )
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return drf.response.Response(serializer.data)
+
     @drf.decorators.action(detail=False, methods=["get"], url_path="media-auth")
     def media_auth(self, request, *args, **kwargs):
         """

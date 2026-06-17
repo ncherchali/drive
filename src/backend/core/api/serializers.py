@@ -892,3 +892,24 @@ class SDKRelayEventSerializer(serializers.Serializer):
             )
 
         return value
+
+
+class AuditEventSerializer(serializers.ModelSerializer):
+    """Serialize an audit event for an item's activity feed (A2-6, read-only)."""
+
+    actor = UserLightSerializer(read_only=True)
+
+    class Meta:
+        model = models.AuditEvent
+        fields = [
+            "id",
+            "created_at",
+            "action",
+            "actor",
+            "actor_type",
+            "target_uuid",
+            "target_type",
+            "path_snapshot",
+            "metadata",
+        ]
+        read_only_fields = fields

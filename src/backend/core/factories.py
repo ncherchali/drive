@@ -182,3 +182,5 @@ class AuditEventFactory(factory.django.DjangoModelFactory):
     actor = factory.SubFactory(UserFactory)
     actor_type = models.AuditActorTypeChoices.USER
     target = factory.SubFactory(ItemFactory)
+    target_uuid = factory.LazyAttribute(lambda o: o.target.id if o.target else None)
+    target_type = factory.LazyAttribute(lambda o: "item" if o.target else "")
