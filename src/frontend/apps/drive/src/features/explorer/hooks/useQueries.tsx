@@ -26,6 +26,15 @@ export const useItemAccesses = (itemId: string) => {
   });
 };
 
+export const useItemAudit = (itemId: string, page: number = 1) => {
+  return useQuery({
+    queryKey: ["itemAudit", itemId, page],
+    queryFn: () => getDriver().getItemAudit(itemId, page),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useInfiniteItemInvitations = (itemId: string) => {
   const driver = getDriver();
   return useInfiniteQuery({

@@ -184,6 +184,22 @@ export type User = {
   column_preferences?: ColumnPreferences | null;
 };
 
+export type AuditActorType = "user" | "system" | "api" | "anonymous";
+
+// Une entrée du journal d'audit d'un item (A2-6). L'acteur est allégé
+// (UserLightSerializer) et peut être null (action système/anonyme).
+export type AuditEvent = {
+  id: string;
+  created_at: string;
+  action: string;
+  actor: Pick<User, "id" | "full_name" | "short_name"> | null;
+  actor_type: AuditActorType;
+  target_uuid: string | null;
+  target_type: string;
+  path_snapshot: string;
+  metadata: Record<string, unknown>;
+};
+
 export type LocalizedThemeCustomization<T> = {
   default: T;
   [key: string]: T;

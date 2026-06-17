@@ -192,6 +192,36 @@
           },
           "sharing": "Sharing",
           "share": "Share",
+          "tabs": {
+            "info": "Information",
+            "activity": "Activity"
+          },
+          "activity": {
+            "loading": "Loading activity…",
+            "error": "Could not load activity.",
+            "empty": "No activity yet.",
+            "actor_type": {
+              "user": "A user",
+              "system": "System",
+              "api": "API",
+              "anonymous": "Anonymous"
+            },
+            "actions": {
+              "item.create": "created this item",
+              "item.update": "updated this item",
+              "item.trash": "moved this item to the trash",
+              "item.hard_delete": "permanently deleted this item",
+              "item.move": "moved this item",
+              "item.restore": "restored this item",
+              "item.download": "downloaded this item",
+              "access.create": "granted an access",
+              "access.update": "changed an access",
+              "access.delete": "revoked an access",
+              "invitation.create": "sent an invitation",
+              "invitation.update": "changed an invitation",
+              "invitation.delete": "removed an invitation"
+            }
+          },
           "format": "Format",
           "updated_at": "Updated at",
           "created_at": "Created at",
@@ -806,6 +836,36 @@
           },
           "sharing": "Partage",
           "share": "Partager",
+          "tabs": {
+            "info": "Informations",
+            "activity": "Activité"
+          },
+          "activity": {
+            "loading": "Chargement de l'activité…",
+            "error": "Impossible de charger l'activité.",
+            "empty": "Aucune activité pour le moment.",
+            "actor_type": {
+              "user": "Un utilisateur",
+              "system": "Système",
+              "api": "API",
+              "anonymous": "Anonyme"
+            },
+            "actions": {
+              "item.create": "a créé cet élément",
+              "item.update": "a modifié cet élément",
+              "item.trash": "a mis cet élément à la corbeille",
+              "item.hard_delete": "a supprimé définitivement cet élément",
+              "item.move": "a déplacé cet élément",
+              "item.restore": "a restauré cet élément",
+              "item.download": "a téléchargé cet élément",
+              "access.create": "a accordé un accès",
+              "access.update": "a modifié un accès",
+              "access.delete": "a révoqué un accès",
+              "invitation.create": "a envoyé une invitation",
+              "invitation.update": "a modifié une invitation",
+              "invitation.delete": "a supprimé une invitation"
+            }
+          },
           "format": "Format",
           "updated_at": "Modification",
           "created_at": "Création",
@@ -1428,6 +1488,36 @@
           },
           "sharing": "Delen",
           "share": "Deel",
+          "tabs": {
+            "info": "Informatie",
+            "activity": "Activiteit"
+          },
+          "activity": {
+            "loading": "Activiteit laden…",
+            "error": "Kan activiteit niet laden.",
+            "empty": "Nog geen activiteit.",
+            "actor_type": {
+              "user": "Een gebruiker",
+              "system": "Systeem",
+              "api": "API",
+              "anonymous": "Anoniem"
+            },
+            "actions": {
+              "item.create": "heeft dit item aangemaakt",
+              "item.update": "heeft dit item bijgewerkt",
+              "item.trash": "heeft dit item naar de prullenbak verplaatst",
+              "item.hard_delete": "heeft dit item permanent verwijderd",
+              "item.move": "heeft dit item verplaatst",
+              "item.restore": "heeft dit item hersteld",
+              "item.download": "heeft dit item gedownload",
+              "access.create": "heeft toegang verleend",
+              "access.update": "heeft een toegang gewijzigd",
+              "access.delete": "heeft een toegang ingetrokken",
+              "invitation.create": "heeft een uitnodiging verzonden",
+              "invitation.update": "heeft een uitnodiging gewijzigd",
+              "invitation.delete": "heeft een uitnodiging verwijderd"
+            }
+          },
           "format": "Formaat",
           "updated_at": "Bijgewerkt op",
           "created_at": "Gecreëerd op",

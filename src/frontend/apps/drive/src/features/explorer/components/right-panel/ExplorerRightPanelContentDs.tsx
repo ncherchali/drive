@@ -17,8 +17,10 @@ import { useGlobalExplorer } from "../GlobalExplorerContext";
 import { useSelectedItems } from "../../stores/selectionStore";
 import { ItemShareModal } from "../modals/share/ItemShareModal";
 import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
+import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import multipleSelection from "@/assets/mutliple-selection.png";
 import emptySelection from "@/assets/empty-selection.png";
 
@@ -141,8 +143,31 @@ export const ExplorerRightPanelContentDs = ({
             )}
           </div>
 
-          {/* Métadonnées en DS (panneau de droite 100 % DS). */}
-          <ItemInfoDs item={firstSelectedItem} />
+          {/* Métadonnées + Activité en onglets DS. L'onglet Activité (journal
+              d'audit) n'est proposé qu'aux managers (owner/admin) ; le backend
+              renvoie 403 sinon. */}
+          {firstSelectedItem.abilities?.accesses_manage ? (
+            <Tabs defaultValue="info" className="border-t border-solid border-border pt-3">
+              <TabsList className="w-full">
+                <TabsTrigger value="info">
+                  {t("explorer.rightPanel.tabs.info")}
+                </TabsTrigger>
+                <TabsTrigger value="activity">
+                  {t("explorer.rightPanel.tabs.activity")}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="info">
+                <ItemInfoDs item={firstSelectedItem} />
+              </TabsContent>
+              <TabsContent value="activity">
+                <ItemActivityDs itemId={firstSelectedItem.id} />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="border-t border-solid border-border pt-3">
+              <ItemInfoDs item={firstSelectedItem} />
+            </div>
+          )}
         </div>
       </ScrollArea>
 

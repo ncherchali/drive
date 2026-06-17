@@ -20,6 +20,7 @@ import {
   Access,
   ApiConfig,
   APIList,
+  AuditEvent,
   Invitation,
   Item,
   ItemBreadcrumb,
@@ -163,6 +164,16 @@ export class StandardDriver extends Driver {
     const response = await fetchAPI(`items/${itemId}/accesses/`);
     const data = await response.json();
     return data;
+  }
+
+  async getItemAudit(
+    itemId: string,
+    page: number = 1,
+  ): Promise<APIList<AuditEvent>> {
+    const response = await fetchAPI(`items/${itemId}/audit/`, {
+      params: { page, page_size: 50 },
+    });
+    return await response.json();
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

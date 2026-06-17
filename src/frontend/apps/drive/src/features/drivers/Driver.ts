@@ -13,6 +13,7 @@ import {
   Access,
   ApiConfig,
   APIList,
+  AuditEvent,
   Invitation,
   Item,
   ItemBreadcrumb,
@@ -120,6 +121,10 @@ export abstract class Driver {
   abstract createFavoriteItem(itemId: string): Promise<void>;
   abstract deleteFavoriteItem(itemId: string): Promise<void>;
   abstract getItemAccesses(itemId: string): Promise<Access[]>;
+  abstract getItemAudit(
+    itemId: string,
+    page?: number,
+  ): Promise<APIList<AuditEvent>>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(
