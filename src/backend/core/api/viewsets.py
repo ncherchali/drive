@@ -6,10 +6,11 @@ import logging
 import os
 import re
 from io import BytesIO
-from urllib.parse import quote, unquote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
+from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
@@ -78,6 +79,23 @@ MEDIA_STORAGE_URL_PATTERN = re.compile(
     f"{settings.MEDIA_URL:s}(?P<preview>preview/)?"
     f"(?P<key>{ITEM_FOLDER:s}/(?P<pk>{UUID_REGEX:s})/.*{FILE_EXT_REGEX:s})$"
 )
+
+# Salt for the signed, short-lived media grant issued by a share-link
+# resolution (H1.3 byte-gating).
+SHARE_LINK_GRANT_SALT = "share-link-grant"
+
+
+def _verify_share_link_grant(grant, item):
+    """Return True when `grant` is a valid, unexpired media grant for `item`."""
+    if not grant:
+        return False
+    try:
+        data = signing.loads(
+            grant, salt=SHARE_LINK_GRANT_SALT, max_age=settings.SHARE_LINK_GRANT_TTL
+        )
+    except signing.BadSignature:
+        return False
+    return data.get("item") == str(item.id)
 
 
 # pylint: disable=too-many-ancestors
@@ -1524,7 +1542,12 @@ class ItemViewSet(
 
         user_abilities = item.get_abilities(request.user)
 
-        if not user_abilities.get(self.action, False):
+        # A valid share-link grant (H1.3) authorizes the file fetch on its own:
+        # the password/expiration/cap were enforced at resolution time.
+        grant = parse_qs(parsed_url.query).get("grant", [None])[0]
+        authorized_by_grant = _verify_share_link_grant(grant, item)
+
+        if not authorized_by_grant and not user_abilities.get(self.action, False):
             logger.debug("User '%s' lacks permission for item '%s'", request.user.id, pk)
             raise drf.exceptions.PermissionDenied()
 
@@ -2327,6 +2350,20 @@ class ShareLinkResolveView(drf.views.APIView):
         )
 
         item = link.item
+
+        # For files, issue a signed short-lived media grant so the byte fetch
+        # (media-auth) is authorized without re-checking the password.
+        download_url = None
+        if item.type == models.ItemTypeChoices.FILE:
+            grant = signing.dumps(
+                {"item": str(item.id), "link": str(link.id)},
+                salt=SHARE_LINK_GRANT_SALT,
+            )
+            download_url = (
+                f"{settings.MEDIA_BASE_URL}{settings.MEDIA_URL}"
+                f"{quote(item.file_key)}?grant={quote(grant, safe='')}"
+            )
+
         return drf.response.Response(
             {
                 "item": {
@@ -2336,9 +2373,7 @@ class ShareLinkResolveView(drf.views.APIView):
                     "type": item.type,
                 },
                 "role": link.role,
-                "download_url": (
-                    f"/api/{settings.API_VERSION}/items/{item.id!s}/download/"
-                ),
+                "download_url": download_url,
             }
         )
 

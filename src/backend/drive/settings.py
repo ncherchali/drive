@@ -968,6 +968,13 @@ class Base(Configuration):
         False, environ_name="FEATURES_AUDIT_TAMPER_EVIDENT", environ_prefix=None
     )
 
+    # H1.3: lifetime (seconds) of the signed media grant a share-link resolution
+    # issues so the file fetch (media-auth) is authorized without re-checking the
+    # password. Short by design — the grant is essentially session-scoped.
+    SHARE_LINK_GRANT_TTL = values.Value(
+        300, environ_name="SHARE_LINK_GRANT_TTL", environ_prefix=None
+    )
+
     # Mail
     EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")
     EMAIL_BRAND_NAME = values.Value(None)

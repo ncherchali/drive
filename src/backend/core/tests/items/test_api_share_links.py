@@ -1,6 +1,7 @@
 """Tests for advanced share links (H1.3)."""
 
 from datetime import timedelta
+from urllib.parse import parse_qs, urlparse
 
 from django.utils import timezone
 
@@ -12,12 +13,22 @@ from core import factories, models
 pytestmark = pytest.mark.django_db
 
 RESOLVE_URL = "/api/v1.0/share-links/resolve/"
+MEDIA_AUTH_URL = "/api/v1.0/items/media-auth/"
 
 
 def _client(user):
     client = APIClient()
     client.force_login(user)
     return client
+
+
+def _restricted_file(owner):
+    return factories.ItemFactory(
+        type=models.ItemTypeChoices.FILE,
+        link_reach="restricted",
+        users=[(owner, models.RoleChoices.OWNER)],
+        update_upload_state=models.ItemUploadStateChoices.READY,
+    )
 
 
 # --- model -----------------------------------------------------------------
@@ -181,4 +192,61 @@ def test_api_share_link_resolve_exhausted_is_denied():
     """A link that reached its download cap is denied."""
     link = factories.ShareLinkFactory(max_downloads=1, download_count=1)
     response = APIClient().post(RESOLVE_URL, {"token": link.token}, format="json")
+    assert response.status_code == 403
+
+
+# --- byte-gating via media-auth grant --------------------------------------
+
+
+def test_share_link_grant_authorizes_media_auth_for_restricted_file():
+    """A resolved share link's grant authorizes the file fetch on a restricted item."""
+    owner = factories.UserFactory()
+    item = _restricted_file(owner)
+    link = factories.ShareLinkFactory(item=item)
+
+    download_url = APIClient().post(
+        RESOLVE_URL, {"token": link.token}, format="json"
+    ).json()["download_url"]
+    assert download_url and "grant=" in download_url
+
+    # An anonymous user with no access on the restricted item is authorized by
+    # the grant carried in the (nginx-forwarded) media URL.
+    response = APIClient().get(MEDIA_AUTH_URL, HTTP_X_ORIGINAL_URL=download_url)
+    assert response.status_code == 200
+
+
+def test_media_auth_denies_restricted_file_without_grant():
+    """Without a grant, an anonymous user cannot fetch a restricted file."""
+    owner = factories.UserFactory()
+    item = _restricted_file(owner)
+
+    original_url = f"http://localhost/media/{item.file_key:s}"
+    response = APIClient().get(MEDIA_AUTH_URL, HTTP_X_ORIGINAL_URL=original_url)
+    assert response.status_code == 403
+
+
+def test_media_auth_rejects_grant_issued_for_another_item():
+    """A grant is item-scoped: it does not authorize a different item."""
+    owner = factories.UserFactory()
+    item_a = _restricted_file(owner)
+    item_b = _restricted_file(owner)
+    link = factories.ShareLinkFactory(item=item_a)
+
+    url_a = APIClient().post(
+        RESOLVE_URL, {"token": link.token}, format="json"
+    ).json()["download_url"]
+    grant = parse_qs(urlparse(url_a).query)["grant"][0]
+
+    original_b = f"http://localhost/media/{item_b.file_key:s}?grant={grant}"
+    response = APIClient().get(MEDIA_AUTH_URL, HTTP_X_ORIGINAL_URL=original_b)
+    assert response.status_code == 403
+
+
+def test_media_auth_rejects_tampered_grant():
+    """A malformed/forged grant is rejected."""
+    owner = factories.UserFactory()
+    item = _restricted_file(owner)
+
+    original_url = f"http://localhost/media/{item.file_key:s}?grant=forged.value"
+    response = APIClient().get(MEDIA_AUTH_URL, HTTP_X_ORIGINAL_URL=original_url)
     assert response.status_code == 403
