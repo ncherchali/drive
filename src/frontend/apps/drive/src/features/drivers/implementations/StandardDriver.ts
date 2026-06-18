@@ -34,6 +34,7 @@ import {
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
+  SignatureRequest,
   User,
   WopiInfo,
 } from "../types";
@@ -318,6 +319,39 @@ export class StandardDriver extends Driver {
   async getMetricsSummary(): Promise<MetricsSummary> {
     const response = await fetchAPI(`metrics/summary/`);
     return await response.json();
+  }
+
+  async getItemSignatures(itemId: string): Promise<SignatureRequest[]> {
+    const response = await fetchAPI(`items/${itemId}/signatures/`);
+    return await response.json();
+  }
+
+  async requestSignature(
+    itemId: string,
+    signerEmail: string,
+  ): Promise<SignatureRequest> {
+    const response = await fetchAPI(`items/${itemId}/signatures/`, {
+      method: "POST",
+      body: JSON.stringify({ signer_email: signerEmail }),
+    });
+    return await response.json();
+  }
+
+  async completeSignature(
+    itemId: string,
+    requestId: string,
+  ): Promise<SignatureRequest> {
+    const response = await fetchAPI(
+      `items/${itemId}/signatures/${requestId}/complete/`,
+      { method: "POST" },
+    );
+    return await response.json();
+  }
+
+  async cancelSignature(itemId: string, requestId: string): Promise<void> {
+    await fetchAPI(`items/${itemId}/signatures/${requestId}/`, {
+      method: "DELETE",
+    });
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

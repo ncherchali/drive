@@ -26,6 +26,7 @@ import {
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
+  SignatureRequest,
   User,
   WopiInfo,
   WorkspaceType,
@@ -176,6 +177,17 @@ export abstract class Driver {
   abstract deleteItemDataRoom(itemId: string): Promise<void>;
   // Observability (H1.9)
   abstract getMetricsSummary(): Promise<MetricsSummary>;
+  // E-signatures (H1.8)
+  abstract getItemSignatures(itemId: string): Promise<SignatureRequest[]>;
+  abstract requestSignature(
+    itemId: string,
+    signerEmail: string,
+  ): Promise<SignatureRequest>;
+  abstract completeSignature(
+    itemId: string,
+    requestId: string,
+  ): Promise<SignatureRequest>;
+  abstract cancelSignature(itemId: string, requestId: string): Promise<void>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

@@ -216,6 +216,7 @@
             "activity": "Activity",
             "links": "Links",
             "versions": "Versions",
+            "signatures": "Signature",
             "compliance": "Compliance",
             "data_room": "Room"
           },
@@ -262,6 +263,20 @@
             "enable": "View-only data room",
             "allow_download": "Allow download",
             "loading": "Loading…"
+          },
+          "signatures": {
+            "signer_email": "Signer's email",
+            "send": "Send for signature",
+            "loading": "Loading…",
+            "empty": "No signature request.",
+            "mark_signed": "Mark as signed",
+            "cancel": "Cancel",
+            "status": {
+              "pending": "Pending",
+              "signed": "Signed",
+              "refused": "Refused",
+              "cancelled": "Cancelled"
+            }
           },
           "activity": {
             "loading": "Loading activity…",
@@ -927,6 +942,7 @@
             "activity": "Activité",
             "links": "Liens",
             "versions": "Versions",
+            "signatures": "Signature",
             "compliance": "Conformité",
             "data_room": "Espace"
           },
@@ -973,6 +989,20 @@
             "enable": "Espace en lecture seule",
             "allow_download": "Autoriser le téléchargement",
             "loading": "Chargement…"
+          },
+          "signatures": {
+            "signer_email": "E-mail du signataire",
+            "send": "Envoyer en signature",
+            "loading": "Chargement…",
+            "empty": "Aucune demande de signature.",
+            "mark_signed": "Marquer comme signé",
+            "cancel": "Annuler",
+            "status": {
+              "pending": "En attente",
+              "signed": "Signé",
+              "refused": "Refusé",
+              "cancelled": "Annulé"
+            }
           },
           "activity": {
             "loading": "Chargement de l'activité…",
@@ -1646,6 +1676,7 @@
             "activity": "Activiteit",
             "links": "Links",
             "versions": "Versies",
+            "signatures": "Handtekening",
             "compliance": "Naleving",
             "data_room": "Ruimte"
           },
@@ -1692,6 +1723,20 @@
             "enable": "Alleen-lezen ruimte",
             "allow_download": "Downloaden toestaan",
             "loading": "Laden…"
+          },
+          "signatures": {
+            "signer_email": "E-mail van ondertekenaar",
+            "send": "Ter ondertekening versturen",
+            "loading": "Laden…",
+            "empty": "Geen handtekeningverzoek.",
+            "mark_signed": "Markeren als ondertekend",
+            "cancel": "Annuleren",
+            "status": {
+              "pending": "In afwachting",
+              "signed": "Ondertekend",
+              "refused": "Geweigerd",
+              "cancelled": "Geannuleerd"
+            }
           },
           "activity": {
             "loading": "Activiteit laden…",

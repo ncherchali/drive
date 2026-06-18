@@ -22,6 +22,7 @@ import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
 import { ItemVersionsDs } from "@/features/items/components/ItemVersionsDs";
 import { ItemComplianceDs } from "@/features/items/components/ItemComplianceDs";
 import { ItemDataRoomDs } from "@/features/items/components/ItemDataRoomDs";
+import { ItemSignaturesDs } from "@/features/items/components/ItemSignaturesDs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -167,6 +168,11 @@ export const ExplorerRightPanelContentDs = ({
                     {t("explorer.rightPanel.tabs.versions")}
                   </TabsTrigger>
                 )}
+                {firstSelectedItem.type === ItemType.FILE && (
+                  <TabsTrigger value="signatures">
+                    {t("explorer.rightPanel.tabs.signatures")}
+                  </TabsTrigger>
+                )}
                 <TabsTrigger value="compliance">
                   {t("explorer.rightPanel.tabs.compliance")}
                 </TabsTrigger>
@@ -193,6 +199,11 @@ export const ExplorerRightPanelContentDs = ({
                       firstSelectedItem.filename ?? firstSelectedItem.title
                     }
                   />
+                </TabsContent>
+              )}
+              {firstSelectedItem.type === ItemType.FILE && (
+                <TabsContent value="signatures">
+                  <ItemSignaturesDs itemId={firstSelectedItem.id} />
                 </TabsContent>
               )}
               <TabsContent value="compliance">

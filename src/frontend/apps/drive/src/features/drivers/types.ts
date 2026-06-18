@@ -244,6 +244,16 @@ export type LegalHold = {
   created_at: string;
 };
 
+// Demande de signature électronique (H1.8).
+export type SignatureRequest = {
+  id: string;
+  signer_email: string;
+  status: "pending" | "signed" | "refused" | "cancelled";
+  external_id: string;
+  signed_at: string | null;
+  created_at: string;
+};
+
 // Une version S3 du fichier d'un item (H1.4).
 export type ItemVersion = {
   version_id: string;
