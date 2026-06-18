@@ -15,6 +15,11 @@ from core.external_api import viewsets as external_api_viewsets
 router = DefaultRouter()
 router.register("items", viewsets.ItemViewSet, basename="items")
 router.register("users", viewsets.UserViewSet, basename="users")
+router.register(
+    "metadata-templates",
+    viewsets.MetadataTemplateViewSet,
+    basename="metadata_templates",
+)
 
 # - Routes nested under a item
 item_related_router = DefaultRouter()

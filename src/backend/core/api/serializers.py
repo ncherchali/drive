@@ -987,6 +987,23 @@ class TruthStateSerializer(serializers.Serializer):
     )
 
 
+class MetadataTemplateSerializer(serializers.ModelSerializer):
+    """A governed metadata template (E2.1)."""
+
+    class Meta:
+        model = models.MetadataTemplate
+        fields = ["id", "key", "name", "fields", "created_at"]
+        read_only_fields = ["id", "created_at"]
+
+
+class MetadataApplySerializer(serializers.Serializer):
+    """Input to apply a metadata template instance to an item (E2.1)."""
+
+    template = serializers.SlugField()
+    values = serializers.DictField()
+    cascade = serializers.BooleanField(default=False)
+
+
 class RetentionSerializer(serializers.Serializer):
     """Input to set/extend an item's retention deadline (H1.6)."""
 

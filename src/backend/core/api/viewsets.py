@@ -42,13 +42,14 @@ from lasuite.malware_detection import malware_detection
 from lasuite.oidc_login.decorators import refresh_oidc_access_token
 from rest_framework import response as drf_response
 from rest_framework import status, viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.throttling import UserRateThrottle
 from rest_framework_api_key.permissions import HasAPIKey
 
 from core import enums, models
 from core.entitlements import get_entitlements_backend
 from core.services import audit
+from core.services import metadata as metadata_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
 from core.services.search_indexers import (
@@ -1748,6 +1749,43 @@ class ItemViewSet(
         )
         return drf.response.Response({"truth_state": item.truth_state})
 
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="metadata")
+    def metadata(self, request, *args, **kwargs):
+        """Read or apply governed metadata (E2.1).
+
+        POST applies a `MetadataTemplate` instance (validated); `cascade` on a
+        folder propagates it to the whole subtree.
+        """
+        item = self.get_object()
+        if request.method == "GET":
+            return drf.response.Response(item.metadata or {})
+
+        serializer = serializers.MetadataApplySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            template = models.MetadataTemplate.objects.get(
+                key=serializer.validated_data["template"]
+            )
+        except models.MetadataTemplate.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+
+        values = serializer.validated_data["values"]
+        try:
+            if (
+                serializer.validated_data["cascade"]
+                and item.type == models.ItemTypeChoices.FOLDER
+            ):
+                count = metadata_service.cascade_to_subtree(
+                    item, template, values, actor=request.user
+                )
+                return drf.response.Response({"cascaded": count})
+            metadata_service.apply_to_item(
+                item, template, values, actor=request.user
+            )
+        except metadata_service.MetadataValidationError as excpt:
+            raise drf.exceptions.ValidationError(excpt.errors) from excpt
+        return drf.response.Response(item.metadata)
+
     @drf.decorators.action(detail=True, methods=["get", "post"], url_path="retention")
     def retention(self, request, *args, **kwargs):
         """Read, set or extend the retention deadline of an item (H1.6, extend-only)."""
@@ -2740,6 +2778,19 @@ class ShareLinkResolveView(drf.views.APIView):
                 "download_url": download_url,
             }
         )
+
+
+class MetadataTemplateViewSet(viewsets.ModelViewSet):
+    """Manage governed metadata templates (E2.1 / MetadataService). Admin-only."""
+
+    permission_classes = [IsAdminUser]
+    queryset = models.MetadataTemplate.objects.all()
+    serializer_class = serializers.MetadataTemplateSerializer
+    lookup_field = "key"
+    pagination_class = None
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
 
 class ConfigView(drf.views.APIView):

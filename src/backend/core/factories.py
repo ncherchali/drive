@@ -214,6 +214,23 @@ class ShareLinkFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
 
 
+class MetadataTemplateFactory(factory.django.DjangoModelFactory):
+    """A factory to create metadata templates for testing purposes (E2.1)."""
+
+    class Meta:
+        model = models.MetadataTemplate
+
+    key = factory.Sequence(lambda n: f"template-{n}")
+    name = factory.Faker("sentence", nb_words=3)
+    fields = factory.LazyFunction(
+        lambda: [
+            {"key": "owner", "type": "string", "required": True},
+            {"key": "year", "type": "number"},
+        ]
+    )
+    creator = factory.SubFactory(UserFactory)
+
+
 class AuditEventFactory(factory.django.DjangoModelFactory):
     """A factory to create audit events for testing purposes."""
 

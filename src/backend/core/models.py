@@ -1786,6 +1786,62 @@ class DataRoom(BaseModel):
         return f"DataRoom({self.item_id})"
 
 
+def validate_template_fields(value):
+    """Validate a metadata template's field schema (E2.1)."""
+    allowed = {"string", "number", "boolean", "date", "enum"}
+    if not isinstance(value, list):
+        raise ValidationError(
+            _("Template fields must be a list."), code="template_fields_not_list"
+        )
+    seen = set()
+    for field in value:
+        if not isinstance(field, dict) or "key" not in field or "type" not in field:
+            raise ValidationError(
+                _("Each field needs a 'key' and a 'type'."),
+                code="template_field_invalid",
+            )
+        if field["type"] not in allowed:
+            raise ValidationError(
+                _("Unknown field type '%(type)s'.") % {"type": field["type"]},
+                code="template_field_type_invalid",
+            )
+        if field["key"] in seen:
+            raise ValidationError(
+                _("Duplicate field key '%(key)s'.") % {"key": field["key"]},
+                code="template_field_duplicate",
+            )
+        seen.add(field["key"])
+
+
+class MetadataTemplate(BaseModel):
+    """A governed metadata schema (E2.1 / MetadataService — spine foundation #1).
+
+    Defines the fields that may be attached to items under its `key`. Item
+    metadata instances live in `Item.metadata` namespaced by the template key
+    (JSONB + GIN), validated against this schema by the MetadataService.
+    """
+
+    key = models.SlugField(max_length=100, unique=True)
+    name = models.CharField(max_length=255)
+    fields = models.JSONField(default=list, validators=[validate_template_fields])
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="metadata_templates_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_metadata_template"
+        verbose_name = _("Metadata template")
+        verbose_name_plural = _("Metadata templates")
+        ordering = ("name",)
+
+    def __str__(self):
+        return f"MetadataTemplate({self.key})"
+
+
 class SignatureRequest(BaseModel):
     """An e-signature request on a file item (H1.8 / Sahla Sign).
 
