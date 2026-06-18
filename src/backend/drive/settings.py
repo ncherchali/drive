@@ -805,6 +805,7 @@ class Base(Configuration):
 
     MIDDLEWARE = [
         "django.middleware.security.SecurityMiddleware",
+        "core.middleware.SecurityHeadersMiddleware",
         "whitenoise.middleware.WhiteNoiseMiddleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.locale.LocaleMiddleware",
@@ -1004,6 +1005,25 @@ class Base(Configuration):
     CORS_ALLOW_ALL_ORIGINS = values.BooleanValue(False)
     CORS_ALLOWED_ORIGINS = values.ListValue([])
     CORS_ALLOWED_ORIGIN_REGEXES = values.ListValue([])
+
+    # Security hardening (H1.5) — applied in every environment.
+    # Headers natively handled by Django's SecurityMiddleware:
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+    X_FRAME_OPTIONS = "DENY"
+    # Extra headers set by core.middleware.SecurityHeadersMiddleware (a value of
+    # "" disables that header). CSP is opt-in (it must be tuned per deployment).
+    SECURITY_PERMISSIONS_POLICY = values.Value(
+        "geolocation=(), microphone=(), camera=(), payment=()",
+        environ_name="SECURITY_PERMISSIONS_POLICY",
+        environ_prefix=None,
+    )
+    SECURITY_CONTENT_SECURITY_POLICY = values.Value(
+        "",
+        environ_name="SECURITY_CONTENT_SECURITY_POLICY",
+        environ_prefix=None,
+    )
 
     # Sentry
     SENTRY_DSN = values.Value(None, environ_name="SENTRY_DSN", environ_prefix=None)
@@ -1729,7 +1749,9 @@ class Production(Base):
     # In other cases, you should comment the following line to avoid security issues.
     # SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_HSTS_SECONDS = 60
+    SECURE_HSTS_SECONDS = values.IntegerValue(
+        31536000, environ_name="SECURE_HSTS_SECONDS", environ_prefix=None
+    )
     SECURE_HSTS_PRELOAD = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_SSL_REDIRECT = True
