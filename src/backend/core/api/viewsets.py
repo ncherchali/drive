@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+from datetime import timedelta
 from io import BytesIO
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
@@ -19,6 +20,7 @@ from django.db import models as db
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Coalesce
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import capfirst, slugify
@@ -1673,6 +1675,76 @@ class ItemViewSet(
             metadata={"truth_state": new_state},
         )
         return drf.response.Response({"truth_state": item.truth_state})
+
+    @drf.decorators.action(detail=True, methods=["post"], url_path="retention")
+    def retention(self, request, *args, **kwargs):
+        """Set or extend the retention deadline of an item (H1.6, extend-only)."""
+        item = self.get_object()
+        serializer = serializers.RetentionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        new_until = timezone.now() + timedelta(
+            days=serializer.validated_data["duration_days"]
+        )
+        if item.retention_until and item.retention_until >= new_until:
+            raise drf.exceptions.ValidationError(
+                {"duration_days": "Retention can only be extended, not shortened."}
+            )
+        item.retention_until = new_until
+        item.save(update_fields=["retention_until", "updated_at"])
+        audit.record(
+            "item.retention_set",
+            actor=request.user,
+            target=item,
+            metadata={"retention_until": new_until.isoformat()},
+        )
+        return drf.response.Response({"retention_until": item.retention_until})
+
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="legal-hold")
+    def legal_hold(self, request, *args, **kwargs):
+        """List the legal holds of an item, or place a new one (H1.6)."""
+        item = self.get_object()
+        if request.method == "POST":
+            serializer = serializers.LegalHoldSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            hold = models.LegalHold.objects.create(
+                item=item, creator=request.user, **serializer.validated_data
+            )
+            audit.record(
+                "legal_hold.place",
+                actor=request.user,
+                target=item,
+                metadata={"legal_hold_id": str(hold.id)},
+            )
+            return drf.response.Response(
+                serializers.LegalHoldSerializer(hold).data,
+                status=status.HTTP_201_CREATED,
+            )
+        holds = item.legal_holds.all()
+        return drf.response.Response(
+            serializers.LegalHoldSerializer(holds, many=True).data
+        )
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["delete"],
+        url_path="legal-hold/(?P<hold_id>[^/]+)",
+    )
+    def legal_hold_detail(self, request, *args, hold_id=None, **kwargs):
+        """Release (deactivate) a legal hold on an item (H1.6)."""
+        item = self.get_object()
+        try:
+            hold = item.legal_holds.get(id=hold_id)
+        except models.LegalHold.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        hold.is_active = False
+        hold.save(update_fields=["is_active", "updated_at"])
+        audit.record(
+            "legal_hold.release",
+            actor=request.user,
+            target=item,
+            metadata={"legal_hold_id": str(hold.id)},
+        )
+        return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
 
     @drf.decorators.action(detail=False, methods=["get"], url_path="media-auth")
     def media_auth(self, request, *args, **kwargs):

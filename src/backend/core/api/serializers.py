@@ -985,3 +985,18 @@ class TruthStateSerializer(serializers.Serializer):
     truth_state = serializers.ChoiceField(
         choices=models.TruthStateChoices.choices
     )
+
+
+class RetentionSerializer(serializers.Serializer):
+    """Input to set/extend an item's retention deadline (H1.6)."""
+
+    duration_days = serializers.IntegerField(min_value=1)
+
+
+class LegalHoldSerializer(serializers.ModelSerializer):
+    """A legal hold placed on an item (H1.6)."""
+
+    class Meta:
+        model = models.LegalHold
+        fields = ["id", "name", "reason", "is_active", "created_at"]
+        read_only_fields = ["id", "is_active", "created_at"]

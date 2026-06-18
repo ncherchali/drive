@@ -172,6 +172,17 @@ class InvitationFactory(factory.django.DjangoModelFactory):
     issuer = factory.SubFactory(UserFactory)
 
 
+class LegalHoldFactory(factory.django.DjangoModelFactory):
+    """A factory to create legal holds for testing purposes."""
+
+    class Meta:
+        model = models.LegalHold
+
+    item = factory.SubFactory(ItemFactory)
+    creator = factory.SubFactory(UserFactory)
+    reason = "litigation"
+
+
 class ShareLinkFactory(factory.django.DjangoModelFactory):
     """A factory to create advanced share links for testing purposes."""
 

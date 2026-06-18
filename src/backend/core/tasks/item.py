@@ -9,6 +9,7 @@ from os.path import splitext
 
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.db.models import Q
 from django.utils import timezone
 
 import boto3
@@ -43,6 +44,15 @@ def process_item_purge(item_id):
 
     # Compute cutoff only if relevant
     now = timezone.now()
+
+    # H1.6: never purge a subtree that holds an item under retention or legal hold.
+    if (
+        Item.objects.filter(path__descendants=root.path)
+        .filter(Q(retention_until__gt=now) | Q(legal_holds__is_active=True))
+        .exists()
+    ):
+        logger.info("Item %s is under retention or legal hold; skipping purge", item_id)
+        return
 
     is_hard_deleted = root.hard_deleted_at is not None
     is_soft_deleted_and_purgeable = root.deleted_at is not None and now >= (

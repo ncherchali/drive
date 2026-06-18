@@ -657,6 +657,9 @@ class Item(TreeModel, BaseModel):
         choices=TruthStateChoices.choices,
         default=TruthStateChoices.DRAFT,
     )
+    # Retention (H1.6 / Coffre): the item cannot be deleted before this date.
+    # Extend-only (compliance WORM); NULL means no retention.
+    retention_until = models.DateTimeField(null=True, blank=True)
 
     # Remove them in a future release. They must be kept while the columns are not removed
     _deprecated_numchild = models.PositiveIntegerField(default=0, db_column="numchild")
@@ -1068,12 +1071,41 @@ class Item(TreeModel, BaseModel):
 
         self.send_email(subject, [email], context, language)
 
+    @property
+    def is_under_retention(self):
+        """Whether a retention deadline is set and still in the future (H1.6)."""
+        return self.retention_until is not None and self.retention_until > timezone.now()
+
+    @property
+    def is_under_legal_hold(self):
+        """Whether the item is covered by at least one active legal hold (H1.6)."""
+        return self.legal_holds.filter(is_active=True).exists()
+
+    @property
+    def is_locked(self):
+        """Whether the item is protected from deletion (retention or legal hold)."""
+        return self.is_under_retention or self.is_under_legal_hold
+
+    def _check_not_locked(self):
+        """Raise if the item is protected by a retention deadline or a legal hold."""
+        if self.is_locked:
+            raise ValidationError(
+                {
+                    "item": ValidationError(
+                        _("This item is protected by a retention policy or a legal hold."),
+                        code="item_locked_for_deletion",
+                    )
+                }
+            )
+
     @transaction.atomic
     def soft_delete(self):
         """
         Soft delete the item, marking the deletion on descendants.
         We still keep the .delete() method untouched for programmatic purposes.
         """
+        self._check_not_locked()
+
         if self.deleted_at or self.ancestors_deleted_at:
             raise RuntimeError("This item is already deleted or has deleted ancestors.")
 
@@ -1098,6 +1130,8 @@ class Item(TreeModel, BaseModel):
         Hard delete the item, marking the deletion on descendants.
         We still keep the .delete() method untouched for programmatic purposes.
         """
+        self._check_not_locked()
+
         if self.hard_deleted_at:
             raise ValidationError(
                 {
@@ -1675,6 +1709,40 @@ class ShareLink(BaseModel):
         if updated:
             self.download_count += 1
         return bool(updated)
+
+
+class LegalHold(BaseModel):
+    """Legal hold placed on an item (H1.6 / Coffre).
+
+    An active hold prevents the item from being deleted, regardless of any
+    retention deadline, until it is released (``is_active=False``).
+    """
+
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="legal_holds"
+    )
+    name = models.CharField(max_length=255, blank=True, default="")
+    reason = models.TextField(blank=True, default="")
+    is_active = models.BooleanField(default=True)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="legal_holds_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_legal_hold"
+        verbose_name = _("Legal hold")
+        verbose_name_plural = _("Legal holds")
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["item", "is_active"], name="drive_legal_hold_item_idx"),
+        ]
+
+    def __str__(self):
+        return f"LegalHold({self.name or self.reason[:20]!r} on {self.item_id})"
 
 
 class AuditEvent(models.Model):
