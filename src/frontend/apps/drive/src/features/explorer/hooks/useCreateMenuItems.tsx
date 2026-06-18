@@ -14,10 +14,12 @@ import {
 } from "../components/modals/ExplorerCreateFileModal";
 import { ExplorerCreateFolderModal } from "../components/modals/ExplorerCreateFolderModal";
 import { ExplorerCreateWorkspaceModal } from "../components/modals/ExplorerCreateWorkspaceModal";
+import { ExplorerCreateRecordModalDs } from "../components/modals/ExplorerCreateRecordModalDs";
 import { useModal } from "@/components/use-modal";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { isMyFilesRoute } from "@/utils/defaultRoutes";
+import { Table2 } from "lucide-react";
 
 type UseCreateMenuItemsProps = {
   includeImport?: boolean;
@@ -59,6 +61,7 @@ export const useCreateMenuItems = ({
 
   const createWorkspaceModal = useModal();
   const createFolderModal = useModal();
+  const createRecordModal = useModal();
   const [createFileModalType, setCreateFileModalType] =
     useState<ExplorerCreateFileType>(ExplorerCreateFileType.DOC);
   const createFileModal = useModal();
@@ -138,6 +141,12 @@ export const useCreateMenuItems = ({
           label: t("explorer.tree.create.file.calc"),
           callback: () => openCreateFileModal(ExplorerCreateFileType.CALC),
         },
+        { type: "separator" },
+        {
+          icon: <Table2 className="size-5" />,
+          label: t("explorer.tree.create.record"),
+          callback: createRecordModal.open,
+        },
       );
     }
   }
@@ -158,6 +167,11 @@ export const useCreateMenuItems = ({
         parentId={effectiveParentId}
         redirectAfterCreate={shouldRedirectToCreated}
         type={createFileModalType}
+      />
+      <ExplorerCreateRecordModalDs
+        {...createRecordModal}
+        parentId={effectiveParentId}
+        redirectAfterCreate={shouldRedirectToCreated}
       />
     </>
   );

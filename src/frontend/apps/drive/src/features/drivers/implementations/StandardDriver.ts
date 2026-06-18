@@ -24,6 +24,7 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  ContentObjectType,
   ContentRelation,
   ContentTypeStatus,
   DataRoom,
@@ -428,6 +429,25 @@ export class StandardDriver extends Driver {
     await fetchAPI(`items/${itemId}/relations/${relationId}/`, {
       method: "DELETE",
     });
+  }
+
+  async getContentObjectTypes(): Promise<ContentObjectType[]> {
+    const response = await fetchAPI(`content-object-types/`);
+    return await response.json();
+  }
+
+  async createRecord(data: {
+    parentId: string;
+    title: string;
+    content_type?: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<Item> {
+    const { parentId, ...body } = data;
+    const response = await fetchAPI(`items/${parentId}/records/`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+    return jsonToItem(await response.json());
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

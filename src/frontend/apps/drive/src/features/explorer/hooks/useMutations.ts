@@ -132,6 +132,23 @@ export const useMutationCreateFolder = () => {
   });
 };
 
+export const useMutationCreateRecord = () => {
+  const driver = getDriver();
+  const refresh = useRefreshQueryCacheAfterMutation();
+
+  return useMutation({
+    mutationFn: (...payload: Parameters<typeof driver.createRecord>) => {
+      return driver.createRecord(...payload);
+    },
+    onSuccess: (_, variables) => {
+      refresh(variables.parentId);
+    },
+    meta: {
+      showErrorOn403: true,
+    },
+  });
+};
+
 export const useMutationUpdateLinkConfiguration = () => {
   const driver = getDriver();
   const queryClient = useQueryClient();

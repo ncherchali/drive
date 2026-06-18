@@ -257,6 +257,30 @@ export type SignatureRequest = {
 };
 
 // Content Object Model (ADR-0001).
+// Un champ typé d'un MetadataTemplate (E2.1).
+export type TemplateField = {
+  key: string;
+  type: "string" | "number" | "boolean" | "date" | "enum";
+  required?: boolean;
+  options?: string[];
+};
+
+// Type métier du registre (phases 1/4) + schéma de son template.
+export type ContentObjectType = {
+  id: string;
+  key: string;
+  label: string;
+  base: ItemType;
+  template_key: string | null;
+  template_fields: TemplateField[];
+  behavior_proxy: string;
+  allowed_child_types: string[];
+  required_roles: string[];
+  is_active: boolean;
+  description: string;
+  created_at: string;
+};
+
 // Métadonnées gouvernées (E2.1) : instances par template, indexées par clé.
 export type ItemMetadata = Record<string, Record<string, unknown>>;
 

@@ -16,6 +16,7 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  ContentObjectType,
   ContentRelation,
   ContentTypeStatus,
   DataRoom,
@@ -222,6 +223,13 @@ export abstract class Driver {
     itemId: string,
     relationId: string,
   ): Promise<void>;
+  abstract getContentObjectTypes(): Promise<ContentObjectType[]>;
+  abstract createRecord(data: {
+    parentId: string;
+    title: string;
+    content_type?: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<Item>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

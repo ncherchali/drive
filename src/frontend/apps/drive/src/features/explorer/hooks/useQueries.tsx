@@ -125,6 +125,13 @@ export const useItemManifest = (itemId: string) => {
   });
 };
 
+export const useContentObjectTypes = () => {
+  return useQuery({
+    queryKey: ["contentObjectTypes"],
+    queryFn: () => getDriver().getContentObjectTypes(),
+  });
+};
+
 export const useMetricsSummary = () => {
   return useQuery({
     queryKey: ["metricsSummary"],

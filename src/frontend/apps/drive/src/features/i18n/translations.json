@@ -430,6 +430,7 @@
             "label": "New",
             "folder": "New folder",
             "workspace": "New workspace",
+            "record": "New record",
             "file": {
               "doc": "New text document",
               "powerpoint": "New slides",
@@ -557,6 +558,16 @@
           }
         },
         "actions": {
+          "createRecord": {
+            "modal": {
+              "title": "Create record",
+              "label": "Record name",
+              "type": "Content type",
+              "no_type": "None",
+              "cancel": "Cancel",
+              "submit": "Create"
+            }
+          },
           "createFolder": {
             "modal": {
               "title": "Create folder",
@@ -1209,7 +1220,8 @@
               "powerpoint": "Nouvelles diapositives",
               "calc": "Nouveau tableau de calcul"
             },
-            "workspace": "Nouvel espace"
+            "workspace": "Nouvel espace",
+            "record": "Nouvel enregistrement"
           },
           "workspace": {
             "options": {
@@ -1318,6 +1330,16 @@
           }
         },
         "actions": {
+          "createRecord": {
+            "modal": {
+              "title": "Créer un enregistrement",
+              "label": "Nom de l'enregistrement",
+              "type": "Type de contenu",
+              "no_type": "Aucun",
+              "cancel": "Annuler",
+              "submit": "Créer"
+            }
+          },
           "createFolder": {
             "modal": {
               "title": "Créer un dossier",
@@ -1958,7 +1980,8 @@
               "powerpoint": "Nieuwe presentatie",
               "calc": "Nieuwe spreadsheet"
             },
-            "workspace": "Nieuwe werkruimte"
+            "workspace": "Nieuwe werkruimte",
+            "record": "Nieuw record"
           },
           "import": {
             "label": "Importeer",
@@ -2078,6 +2101,16 @@
           }
         },
         "actions": {
+          "createRecord": {
+            "modal": {
+              "title": "Record maken",
+              "label": "Recordnaam",
+              "type": "Inhoudstype",
+              "no_type": "Geen",
+              "cancel": "Annuleren",
+              "submit": "Maken"
+            }
+          },
           "createFolder": {
             "modal": {
               "title": "Map maken",
