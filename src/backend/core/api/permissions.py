@@ -24,6 +24,11 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
         "POST": "accesses_manage",
         "DELETE": "accesses_manage",
     },
+    # E-signatures (H1.8): request/complete/cancel require write access; listing
+    # is read-level.
+    "signatures": {"GET": "download", "POST": "update"},
+    "signature_complete": {"POST": "update"},
+    "signatures_detail": {"DELETE": "update"},
     "children": {"GET": "children_list", "POST": "children_create"},
     "audit": {"GET": "accesses_manage"},
 }

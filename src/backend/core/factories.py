@@ -172,6 +172,17 @@ class InvitationFactory(factory.django.DjangoModelFactory):
     issuer = factory.SubFactory(UserFactory)
 
 
+class SignatureRequestFactory(factory.django.DjangoModelFactory):
+    """A factory to create signature requests for testing purposes."""
+
+    class Meta:
+        model = models.SignatureRequest
+
+    item = factory.SubFactory(ItemFactory, type=models.ItemTypeChoices.FILE)
+    creator = factory.SubFactory(UserFactory)
+    signer_email = factory.Faker("email")
+
+
 class DataRoomFactory(factory.django.DjangoModelFactory):
     """A factory to create data rooms for testing purposes."""
 

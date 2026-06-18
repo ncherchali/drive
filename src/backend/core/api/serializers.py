@@ -1009,3 +1009,25 @@ class DataRoomSerializer(serializers.ModelSerializer):
         model = models.DataRoom
         fields = ["id", "allow_download", "watermark_enabled", "created_at"]
         read_only_fields = ["id", "created_at"]
+
+
+class SignatureRequestSerializer(serializers.ModelSerializer):
+    """A signature request on a file (H1.8)."""
+
+    class Meta:
+        model = models.SignatureRequest
+        fields = [
+            "id",
+            "signer_email",
+            "status",
+            "external_id",
+            "signed_at",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "status",
+            "external_id",
+            "signed_at",
+            "created_at",
+        ]

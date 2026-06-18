@@ -55,6 +55,7 @@ from core.services.search_indexers import (
     get_file_indexer,
     get_visited_items_ids_of,
 )
+from core.signature import get_signature_provider
 from core.storage import get_storage_compute_backend
 from core.tasks.audit import record_media_access
 from core.tasks.indexing import enqueue_indexing
@@ -1858,6 +1859,100 @@ class ItemViewSet(
             serializers.DataRoomSerializer(room).data,
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
+
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="signatures")
+    def signatures(self, request, *args, **kwargs):
+        """List the signature requests of a file, or open a new one (H1.8)."""
+        item = self.get_object()
+        if request.method == "POST":
+            if item.type != models.ItemTypeChoices.FILE:
+                raise drf.exceptions.ValidationError(
+                    {"item": "Only files can be sent for signature."}
+                )
+            serializer = serializers.SignatureRequestSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            external_id = get_signature_provider().create_request(
+                document_key=item.file_key,
+                signer_email=serializer.validated_data["signer_email"],
+                reference=str(item.id),
+            )
+            signature = models.SignatureRequest.objects.create(
+                item=item,
+                creator=request.user,
+                external_id=external_id,
+                **serializer.validated_data,
+            )
+            audit.record(
+                "signature.request",
+                actor=request.user,
+                target=item,
+                metadata={"signature_id": str(signature.id)},
+            )
+            return drf.response.Response(
+                serializers.SignatureRequestSerializer(signature).data,
+                status=status.HTTP_201_CREATED,
+            )
+        signatures = item.signature_requests.all()
+        return drf.response.Response(
+            serializers.SignatureRequestSerializer(signatures, many=True).data
+        )
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["post"],
+        url_path="signatures/(?P<request_id>[^/]+)/complete",
+    )
+    def signature_complete(self, request, *args, request_id=None, **kwargs):
+        """Mark a signature request as signed (mock/sandbox provider callback).
+
+        Stores the signed document as a new version of the file (H1.4) and
+        records the event.
+        """
+        item = self.get_object()
+        try:
+            signature = item.signature_requests.get(id=request_id)
+        except models.SignatureRequest.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        if signature.status != models.SignatureStatusChoices.PENDING:
+            raise drf.exceptions.ValidationError(
+                {"status": "This signature request is already finalized."}
+            )
+
+        item_versions.snapshot_current(item, metadata={"signed": "1"})
+        signature.status = models.SignatureStatusChoices.SIGNED
+        signature.signed_at = timezone.now()
+        signature.save(update_fields=["status", "signed_at", "updated_at"])
+        audit.record(
+            "signature.signed",
+            actor=request.user,
+            target=item,
+            metadata={"signature_id": str(signature.id)},
+        )
+        return drf.response.Response(
+            serializers.SignatureRequestSerializer(signature).data
+        )
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["delete"],
+        url_path="signatures/(?P<request_id>[^/]+)",
+    )
+    def signatures_detail(self, request, *args, request_id=None, **kwargs):
+        """Cancel a pending signature request (H1.8)."""
+        item = self.get_object()
+        try:
+            signature = item.signature_requests.get(id=request_id)
+        except models.SignatureRequest.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        signature.status = models.SignatureStatusChoices.CANCELLED
+        signature.save(update_fields=["status", "updated_at"])
+        audit.record(
+            "signature.cancel",
+            actor=request.user,
+            target=item,
+            metadata={"signature_id": str(signature.id)},
+        )
+        return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
 
     @drf.decorators.action(detail=False, methods=["get"], url_path="media-auth")
     def media_auth(self, request, *args, **kwargs):

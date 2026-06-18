@@ -67,3 +67,19 @@ def restore_version(item, version_id):
         CopySource={"Bucket": bucket, "Key": item.file_key, "VersionId": version_id},
         MetadataDirective="COPY",
     )
+
+
+def snapshot_current(item, metadata=None):
+    """Create a new S3 version from the current content (e.g. after signing).
+
+    Copies the key onto itself with replaced metadata (S3 requires a change to
+    copy onto the same key), producing a new object version.
+    """
+    bucket = default_storage.bucket_name
+    _client().copy_object(
+        Bucket=bucket,
+        Key=item.file_key,
+        CopySource={"Bucket": bucket, "Key": item.file_key},
+        Metadata=metadata or {"snapshot": "1"},
+        MetadataDirective="REPLACE",
+    )

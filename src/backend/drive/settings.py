@@ -1533,6 +1533,15 @@ class Base(Configuration):
         environ_prefix=None,
     )
 
+    # Signature (H1.8 / Sahla Sign): pluggable e-signature provider. Sovereign
+    # mock by default; a foreign sandbox adapter is wired (dummy documents only,
+    # loi 25-11) until a DZ provider ships a public API.
+    SIGNATURE_PROVIDER_CLASS = values.Value(
+        "core.signature.backends.mock.MockSignatureProvider",
+        environ_name="SIGNATURE_PROVIDER_CLASS",
+        environ_prefix=None,
+    )
+
     # Entitlements
     ENTITLEMENTS_BACKEND = values.Value(
         "core.entitlements.backends.static.StaticEntitlementsBackend",

@@ -114,6 +114,15 @@ class MirrorItemTaskStatusChoices(models.TextChoices):
     FAILED = "failed", _("Failed")
 
 
+class SignatureStatusChoices(models.TextChoices):
+    """Lifecycle status of a signature request (H1.8)."""
+
+    PENDING = "pending", _("Pending")
+    SIGNED = "signed", _("Signed")
+    REFUSED = "refused", _("Refused")
+    CANCELLED = "cancelled", _("Cancelled")
+
+
 class AuditActorTypeChoices(models.TextChoices):
     """Nature of the actor behind an audit event."""
 
@@ -1775,6 +1784,45 @@ class DataRoom(BaseModel):
 
     def __str__(self):
         return f"DataRoom({self.item_id})"
+
+
+class SignatureRequest(BaseModel):
+    """An e-signature request on a file item (H1.8 / Sahla Sign).
+
+    Tracks the provider's external id and the lifecycle status. When signed, the
+    signed document is stored as a new version of the file (S3 versioning, H1.4).
+    """
+
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="signature_requests"
+    )
+    signer_email = models.EmailField()
+    status = models.CharField(
+        max_length=20,
+        choices=SignatureStatusChoices.choices,
+        default=SignatureStatusChoices.PENDING,
+    )
+    external_id = models.CharField(max_length=255, blank=True, default="")
+    signed_at = models.DateTimeField(null=True, blank=True)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="signature_requests_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_signature_request"
+        verbose_name = _("Signature request")
+        verbose_name_plural = _("Signature requests")
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["item", "status"], name="drive_signature_item_idx"),
+        ]
+
+    def __str__(self):
+        return f"SignatureRequest({self.item_id}, {self.status})"
 
 
 class ItemEmbedding(BaseModel):
