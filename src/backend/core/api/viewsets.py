@@ -51,6 +51,7 @@ from core.entitlements import get_entitlements_backend
 from core.services import audit
 from core.services import content_types as content_types_service
 from core.services import metadata as metadata_service
+from core.services import relations as relations_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
 from core.services.search_indexers import (
@@ -1812,6 +1813,79 @@ class ItemViewSet(
         except content_types_service.ContentTypeError as excpt:
             raise drf.exceptions.ValidationError(str(excpt)) from excpt
         return drf.response.Response({"content_type": item.content_type})
+
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="relations")
+    def relations(self, request, *args, **kwargs):
+        """List or add content graph edges from this item (E2.2 / ADR-0001 §5).
+
+        The composition graph is distinct from containment (ltree): edges are
+        multi-parent and shareable. Adding an edge requires read access to the
+        target item.
+        """
+        item = self.get_object()
+        if request.method == "GET":
+            queryset = item.relations_from.select_related("to_item").order_by(
+                "relation_type", "order"
+            )
+            serializer = serializers.ContentRelationSerializer(queryset, many=True)
+            return drf.response.Response(serializer.data)
+
+        serializer = serializers.ContentRelationCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        try:
+            to_item = models.Item.objects.get(pk=data["to_item"])
+        except models.Item.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound("Target item not found.") from excpt
+        if not to_item.get_abilities(request.user).get("retrieve"):
+            raise drf.exceptions.PermissionDenied(
+                "You must be able to read the target item to relate to it."
+            )
+
+        try:
+            relation = relations_service.add_relation(
+                item,
+                to_item,
+                data["relation_type"],
+                attributes={
+                    "role": data["role"],
+                    "order": data["order"],
+                    "pinned_version": data["pinned_version"],
+                },
+                actor=request.user,
+            )
+        except relations_service.ContentRelationError as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        return drf.response.Response(
+            serializers.ContentRelationSerializer(relation).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["delete"],
+        url_path="relations/(?P<relation_id>[^/.]+)",
+    )
+    def relations_detail(self, request, *args, relation_id=None, **kwargs):
+        """Remove a content graph edge from this item (E2.2)."""
+        item = self.get_object()
+        try:
+            relation = item.relations_from.get(pk=relation_id)
+        except models.ContentRelation.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        relations_service.remove_relation(relation, actor=request.user)
+        return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
+
+    @drf.decorators.action(detail=True, methods=["get"], url_path="manifest")
+    def manifest(self, request, *args, **kwargs):
+        """Return the composite's manifest and completeness (ADR-0001 §5.3)."""
+        item = self.get_object()
+        status_data = relations_service.manifest_status(item)
+        parts = serializers.ContentRelationSerializer(
+            status_data.pop("relations"), many=True
+        ).data
+        return drf.response.Response({"parts": parts, **status_data})
 
     @drf.decorators.action(detail=True, methods=["get", "post"], url_path="retention")
     def retention(self, request, *args, **kwargs):

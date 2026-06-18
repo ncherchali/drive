@@ -243,6 +243,18 @@ class ContentObjectTypeFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
 
 
+class ContentRelationFactory(factory.django.DjangoModelFactory):
+    """A factory to create content relations for testing purposes (E2.2)."""
+
+    class Meta:
+        model = models.ContentRelation
+
+    from_item = factory.SubFactory(ItemFactory, type=models.ItemTypeChoices.FOLDER)
+    to_item = factory.SubFactory(ItemFactory)
+    relation_type = models.RelationTypeChoices.PART_OF
+    creator = factory.SubFactory(UserFactory)
+
+
 class AuditEventFactory(factory.django.DjangoModelFactory):
     """A factory to create audit events for testing purposes."""
 

@@ -17,6 +17,11 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "truth_state": {"POST": "update"},
     "metadata": {"GET": "download", "POST": "update"},
     "content_type": {"GET": "download", "POST": "update"},
+    # Content graph / composite manifest (ADR-0001 §5): read to list/inspect,
+    # write to add/remove edges.
+    "relations": {"GET": "download", "POST": "update"},
+    "relations_detail": {"DELETE": "update"},
+    "manifest": {"GET": "download"},
     # Retention & legal holds (H1.6 / Coffre) are governance acts: managers only.
     "retention": {"GET": "accesses_manage", "POST": "accesses_manage"},
     "legal_hold": {"GET": "accesses_manage", "POST": "accesses_manage"},

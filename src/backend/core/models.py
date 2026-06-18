@@ -1880,6 +1880,14 @@ class ContentObjectType(BaseModel):
         blank=True,
         help_text=_("Content-type keys allowed as children; empty = unrestricted."),
     )
+    required_roles = models.JSONField(
+        default=list,
+        blank=True,
+        help_text=_(
+            "Manifest roles a composite of this type must carry to be complete "
+            "(ADR-0001 §5.3)."
+        ),
+    )
     is_active = models.BooleanField(default=True)
     description = models.TextField(blank=True, default="")
     creator = models.ForeignKey(
@@ -1935,6 +1943,79 @@ class Workspace(Item):
     def members(self):
         """Accesses granted on this workspace (its members)."""
         return self.accesses.all()
+
+
+class RelationTypeChoices(models.TextChoices):
+    """Edge types of the content composition/reference graph (ADR-0001 §2)."""
+
+    PART_OF = "part_of", _("Part of")
+    REFERENCES = "references", _("References")
+    DERIVED_FROM = "derived_from", _("Derived from")
+    VERSION_OF = "version_of", _("Version of")
+    RENDERS_TO = "renders_to", _("Renders to")
+
+
+class ContentRelation(BaseModel):
+    """An edge of the content composition/reference graph (E2.2 / ADR-0001 §5).
+
+    Distinct from containment (the ltree `path`, mono-parent): a relation
+    assembles items BY REFERENCE — multi-parent, ordered, with parts shareable
+    across composites without duplication. The `part_of` edges of a composite
+    form its MANIFEST (logical structure, independent of the physical tree).
+    """
+
+    from_item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="relations_from"
+    )
+    to_item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="relations_to"
+    )
+    relation_type = models.CharField(
+        max_length=20, choices=RelationTypeChoices.choices
+    )
+    role = models.CharField(max_length=100, blank=True, default="")
+    order = models.PositiveIntegerField(default=0)
+    pinned_version = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=_("S3 version id of the pinned part; empty = follow latest."),
+    )
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="content_relations_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_content_relation"
+        verbose_name = _("Content relation")
+        verbose_name_plural = _("Content relations")
+        ordering = ("from_item", "order")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["from_item", "to_item", "relation_type", "role"],
+                name="drive_content_relation_unique_edge",
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(from_item=models.F("to_item")),
+                name="drive_content_relation_no_self_loop",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["from_item", "relation_type"],
+                name="drive_relation_from_idx",
+            ),
+            models.Index(
+                fields=["to_item", "relation_type"], name="drive_relation_to_idx"
+            ),
+        ]
+
+    def __str__(self):
+        return f"ContentRelation({self.relation_type}: {self.from_item_id}→{self.to_item_id})"
 
 
 class SignatureRequest(BaseModel):

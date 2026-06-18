@@ -1,6 +1,7 @@
 """Client serializers for the drive core app."""
 
 # pylint: disable=no-name-in-module
+# pylint: disable=too-many-lines
 
 import json
 import logging
@@ -1028,6 +1029,46 @@ class ContentTypeAssignSerializer(serializers.Serializer):
     """Input to assign (or clear) an item's content type (E2.2)."""
 
     content_type = serializers.SlugField(allow_null=True, required=False)
+
+
+class ContentRelationSerializer(serializers.ModelSerializer):
+    """A content graph edge / manifest part (E2.2 / ADR-0001 §5)."""
+
+    to_item_title = serializers.CharField(source="to_item.title", read_only=True)
+    to_item_missing = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.ContentRelation
+        fields = [
+            "id",
+            "to_item",
+            "to_item_title",
+            "to_item_missing",
+            "relation_type",
+            "role",
+            "order",
+            "pinned_version",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+
+    def get_to_item_missing(self, obj):
+        """True when the referenced part has been (soft-)deleted."""
+        return obj.to_item.deleted_at is not None
+
+
+class ContentRelationCreateSerializer(serializers.Serializer):
+    """Input to add a content graph edge from the current item (E2.2)."""
+
+    to_item = serializers.UUIDField()
+    relation_type = serializers.ChoiceField(
+        choices=models.RelationTypeChoices.choices
+    )
+    role = serializers.CharField(required=False, allow_blank=True, default="")
+    order = serializers.IntegerField(required=False, default=0, min_value=0)
+    pinned_version = serializers.CharField(
+        required=False, allow_blank=True, default=""
+    )
 
 
 class RetentionSerializer(serializers.Serializer):

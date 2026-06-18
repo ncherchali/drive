@@ -273,6 +273,36 @@ class ContentObjectTypeAdmin(admin.ModelAdmin):
         obj.save()
 
 
+@admin.register(models.ContentRelation)
+class ContentRelationAdmin(admin.ModelAdmin):
+    """Admin console for the content composition/reference graph (E2.2)."""
+
+    fields = (
+        "from_item",
+        "to_item",
+        "relation_type",
+        "role",
+        "order",
+        "pinned_version",
+        "creator",
+        "created_at",
+    )
+    readonly_fields = ("from_item", "to_item", "creator", "created_at")
+    list_display = (
+        "from_item",
+        "relation_type",
+        "to_item",
+        "role",
+        "order",
+        "created_at",
+    )
+    list_filter = ("relation_type",)
+    search_fields = ("from_item__title", "to_item__title", "role")
+
+    def has_add_permission(self, request):
+        return False
+
+
 @admin.register(models.SignatureRequest)
 class SignatureRequestAdmin(admin.ModelAdmin):
     """Read-only view over e-signature requests (H1.8)."""
