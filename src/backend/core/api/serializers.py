@@ -977,3 +977,11 @@ class ItemVersionSerializer(serializers.Serializer):
     size = serializers.IntegerField()
     is_latest = serializers.BooleanField()
     etag = serializers.CharField()
+
+
+class TruthStateSerializer(serializers.Serializer):
+    """Input to set an item's canonical status (B1-2)."""
+
+    truth_state = serializers.ChoiceField(
+        choices=models.TruthStateChoices.choices
+    )

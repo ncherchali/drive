@@ -94,6 +94,17 @@ class ItemUploadStateChoices(models.TextChoices):
     READY = "ready", _("Ready")
 
 
+class TruthStateChoices(models.TextChoices):
+    """Canonical status of a content object (B1-2, precursor of TruthState).
+
+    DRAFT = work in progress; CANONICAL = the authoritative version that a
+    governed/agentic system may treat as the source of truth (ADR-0001).
+    """
+
+    DRAFT = "draft", _("Draft")
+    CANONICAL = "canonical", _("Canonical")
+
+
 class MirrorItemTaskStatusChoices(models.TextChoices):
     """Defines the possible statuses for a mirroring task."""
 
@@ -637,6 +648,15 @@ class Item(TreeModel, BaseModel):
         validators=[validate_metadata_object],
         help_text=_("Business metadata as a JSON object (classable, GIN-indexed)."),
     )
+    # Canonical status (B1-2): every item carries one from creation. New content
+    # is a DRAFT until explicitly promoted to CANONICAL (the governed source of
+    # truth). Governed promotion workflows arrive later (pre-H2.1).
+    truth_state = models.CharField(
+        _("truth state"),
+        max_length=20,
+        choices=TruthStateChoices.choices,
+        default=TruthStateChoices.DRAFT,
+    )
 
     # Remove them in a future release. They must be kept while the columns are not removed
     _deprecated_numchild = models.PositiveIntegerField(default=0, db_column="numchild")
@@ -667,6 +687,7 @@ class Item(TreeModel, BaseModel):
             models.Index(NLevel(models.F("path")), name="drive_item_path_nlevel_idx"),
             GinIndex(fields=["metadata"], name="drive_item_metadata_gin"),
             models.Index(fields=["content_type"], name="drive_item_content_type_idx"),
+            models.Index(fields=["truth_state"], name="drive_item_truth_state_idx"),
         ]
 
     def __str__(self):

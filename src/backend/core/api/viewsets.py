@@ -1657,6 +1657,23 @@ class ItemViewSet(
         )
         return drf.response.Response({"detail": "Version restored."})
 
+    @drf.decorators.action(detail=True, methods=["post"], url_path="truth-state")
+    def truth_state(self, request, *args, **kwargs):
+        """Set the canonical status (draft/canonical) of an item (B1-2)."""
+        item = self.get_object()
+        serializer = serializers.TruthStateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        new_state = serializer.validated_data["truth_state"]
+        item.truth_state = new_state
+        item.save(update_fields=["truth_state", "updated_at"])
+        audit.record(
+            "item.truth_state",
+            actor=request.user,
+            target=item,
+            metadata={"truth_state": new_state},
+        )
+        return drf.response.Response({"truth_state": item.truth_state})
+
     @drf.decorators.action(detail=False, methods=["get"], url_path="media-auth")
     def media_auth(self, request, *args, **kwargs):
         """

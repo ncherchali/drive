@@ -14,6 +14,7 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "versions": {"GET": "download"},
     "versions_detail": {"GET": "download", "DELETE": "accesses_manage"},
     "versions_restore": {"POST": "update"},
+    "truth_state": {"POST": "update"},
     "children": {"GET": "children_list", "POST": "children_create"},
     "audit": {"GET": "accesses_manage"},
 }
