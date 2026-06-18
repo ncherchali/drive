@@ -152,8 +152,11 @@ export const ExplorerRightPanelContentDs = ({
               d'audit) n'est proposé qu'aux managers (owner/admin) ; le backend
               renvoie 403 sinon. */}
           {firstSelectedItem.abilities?.accesses_manage ? (
-            <Tabs defaultValue="info" className="border-t border-solid border-border pt-3">
-              <TabsList className="w-full">
+            <Tabs
+              defaultValue="info"
+              className="w-full min-w-0 border-t border-solid border-border pt-3"
+            >
+              <TabsList className="h-auto w-full flex-wrap">
                 <TabsTrigger value="info">
                   {t("explorer.rightPanel.tabs.info")}
                 </TabsTrigger>
