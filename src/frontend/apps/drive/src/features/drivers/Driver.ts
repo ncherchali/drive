@@ -17,6 +17,7 @@ import {
   AuditEvent,
   Invitation,
   ContentObjectType,
+  ContentObjectTypeInput,
   ContentRelation,
   ContentTypeStatus,
   DataRoom,
@@ -28,6 +29,7 @@ import {
   LegalHold,
   Manifest,
   MetadataProposal,
+  MetadataTemplate,
   MetricsSummary,
   RetentionStatus,
   ShareLink,
@@ -224,6 +226,15 @@ export abstract class Driver {
     relationId: string,
   ): Promise<void>;
   abstract getContentObjectTypes(): Promise<ContentObjectType[]>;
+  abstract getMetadataTemplates(): Promise<MetadataTemplate[]>;
+  abstract createContentObjectType(
+    payload: ContentObjectTypeInput,
+  ): Promise<ContentObjectType>;
+  abstract updateContentObjectType(
+    key: string,
+    payload: ContentObjectTypeInput,
+  ): Promise<ContentObjectType>;
+  abstract deleteContentObjectType(key: string): Promise<void>;
   abstract createRecord(data: {
     parentId: string;
     title: string;

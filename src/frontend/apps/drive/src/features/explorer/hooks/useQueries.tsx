@@ -132,6 +132,13 @@ export const useContentObjectTypes = () => {
   });
 };
 
+export const useMetadataTemplates = () => {
+  return useQuery({
+    queryKey: ["metadataTemplates"],
+    queryFn: () => getDriver().getMetadataTemplates(),
+  });
+};
+
 export const useMetricsSummary = () => {
   return useQuery({
     queryKey: ["metricsSummary"],

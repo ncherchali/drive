@@ -25,6 +25,7 @@ import {
   AuditEvent,
   Invitation,
   ContentObjectType,
+  ContentObjectTypeInput,
   ContentRelation,
   ContentTypeStatus,
   DataRoom,
@@ -36,6 +37,7 @@ import {
   LegalHold,
   Manifest,
   MetadataProposal,
+  MetadataTemplate,
   MetricsSummary,
   RetentionStatus,
   ShareLink,
@@ -434,6 +436,36 @@ export class StandardDriver extends Driver {
   async getContentObjectTypes(): Promise<ContentObjectType[]> {
     const response = await fetchAPI(`content-object-types/`);
     return await response.json();
+  }
+
+  async getMetadataTemplates(): Promise<MetadataTemplate[]> {
+    const response = await fetchAPI(`metadata-templates/`);
+    return await response.json();
+  }
+
+  async createContentObjectType(
+    payload: ContentObjectTypeInput,
+  ): Promise<ContentObjectType> {
+    const response = await fetchAPI(`content-object-types/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async updateContentObjectType(
+    key: string,
+    payload: ContentObjectTypeInput,
+  ): Promise<ContentObjectType> {
+    const response = await fetchAPI(`content-object-types/${key}/`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async deleteContentObjectType(key: string): Promise<void> {
+    await fetchAPI(`content-object-types/${key}/`, { method: "DELETE" });
   }
 
   async createRecord(data: {

@@ -265,12 +265,21 @@ export type TemplateField = {
   options?: string[];
 };
 
+// Un schéma de métadonnées gouverné (E2.1).
+export type MetadataTemplate = {
+  id: string;
+  key: string;
+  name: string;
+  fields: TemplateField[];
+};
+
 // Type métier du registre (phases 1/4) + schéma de son template.
 export type ContentObjectType = {
   id: string;
   key: string;
   label: string;
   base: ItemType;
+  metadata_template: string | null;
   template_key: string | null;
   template_fields: TemplateField[];
   behavior_proxy: string;
@@ -279,6 +288,19 @@ export type ContentObjectType = {
   is_active: boolean;
   description: string;
   created_at: string;
+};
+
+// Entrée d'écriture du registre (création / mise à jour d'un type).
+export type ContentObjectTypeInput = {
+  key: string;
+  label: string;
+  base: ItemType;
+  metadata_template: string | null;
+  behavior_proxy?: string;
+  allowed_child_types?: string[];
+  required_roles?: string[];
+  is_active?: boolean;
+  description?: string;
 };
 
 // Métadonnées gouvernées (E2.1) : instances par template, indexées par clé.

@@ -15,4 +15,6 @@ export interface User {
   main_workspace: Item;
   last_release_note_seen?: string | null;
   column_preferences?: ColumnPreferences | null;
+  // Exposé par /users/me ; pilote l'accès aux zones d'administration.
+  is_staff?: boolean;
 }

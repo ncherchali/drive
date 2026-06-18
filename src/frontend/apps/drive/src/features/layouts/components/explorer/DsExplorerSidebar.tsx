@@ -11,7 +11,7 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
-import { Plus, Settings, Trash2 } from "lucide-react";
+import { Plus, Settings, Shield, Trash2 } from "lucide-react";
 import { useDropdownMenu } from "@/components/ds-menu";
 
 import {
@@ -195,6 +195,14 @@ export function DsExplorerSidebar({
         {user && (
           <div className="flex items-center gap-2 px-1 py-1">
             <UserMenu name={user.email} onLogout={logout}>
+              {user.is_staff && (
+                <DropdownMenuItem
+                  onSelect={() => router.push("/admin/content-types")}
+                >
+                  <Shield />
+                  {t("admin.content_types.menu", "Administration")}
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onSelect={() => setSettingsOpen(true)}>
                 <Settings />
                 {t("settings.title", "Paramètres")}

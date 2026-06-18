@@ -24,6 +24,42 @@
         "data_rooms": "Data rooms",
         "celery_queue": "Celery queue"
       },
+      "admin": {
+        "content_types": {
+          "menu": "Administration",
+          "title": "Content types",
+          "create": "New type",
+          "loading": "Loading…",
+          "forbidden": "This area is reserved for administrators.",
+          "confirm_delete": "Delete the type \"{{key}}\"?",
+          "yes": "Yes",
+          "no": "No",
+          "edit": "Edit",
+          "delete": "Delete",
+          "col_key": "Key",
+          "col_label": "Label",
+          "col_base": "Base",
+          "col_template": "Template",
+          "col_active": "Active",
+          "col_actions": "Actions",
+          "form": {
+            "title_new": "New content type",
+            "title_edit": "Edit content type",
+            "key": "Key",
+            "label": "Label",
+            "base": "Structural base",
+            "template": "Metadata template",
+            "no_template": "None",
+            "required_roles": "Required roles (comma-separated)",
+            "allowed_child_types": "Allowed child types (comma-separated)",
+            "behavior_proxy": "Behaviour proxy (dotted path)",
+            "description": "Description",
+            "active": "Active",
+            "cancel": "Cancel",
+            "submit": "Save"
+          }
+        }
+      },
       "403": {
         "title": "You don't have the necessary permissions to access this page.",
         "button": "Home"
@@ -792,6 +828,42 @@
         "legal_holds": "Conservations actives",
         "data_rooms": "Data rooms",
         "celery_queue": "File Celery"
+      },
+      "admin": {
+        "content_types": {
+          "menu": "Administration",
+          "title": "Types de contenu",
+          "create": "Nouveau type",
+          "loading": "Chargement…",
+          "forbidden": "Cet espace est réservé aux administrateurs.",
+          "confirm_delete": "Supprimer le type « {{key}} » ?",
+          "yes": "Oui",
+          "no": "Non",
+          "edit": "Modifier",
+          "delete": "Supprimer",
+          "col_key": "Clé",
+          "col_label": "Libellé",
+          "col_base": "Base",
+          "col_template": "Template",
+          "col_active": "Actif",
+          "col_actions": "Actions",
+          "form": {
+            "title_new": "Nouveau type de contenu",
+            "title_edit": "Modifier le type de contenu",
+            "key": "Clé",
+            "label": "Libellé",
+            "base": "Base structurelle",
+            "template": "Template de métadonnées",
+            "no_template": "Aucun",
+            "required_roles": "Rôles requis (séparés par des virgules)",
+            "allowed_child_types": "Types d'enfants autorisés (séparés par des virgules)",
+            "behavior_proxy": "Proxy de comportement (chemin pointé)",
+            "description": "Description",
+            "active": "Actif",
+            "cancel": "Annuler",
+            "submit": "Enregistrer"
+          }
+        }
       },
       "403": {
         "title": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
@@ -1569,6 +1641,42 @@
         "legal_holds": "Actieve bewaringen",
         "data_rooms": "Datarooms",
         "celery_queue": "Celery-wachtrij"
+      },
+      "admin": {
+        "content_types": {
+          "menu": "Beheer",
+          "title": "Inhoudstypes",
+          "create": "Nieuw type",
+          "loading": "Laden…",
+          "forbidden": "Dit gedeelte is alleen voor beheerders.",
+          "confirm_delete": "Type \"{{key}}\" verwijderen?",
+          "yes": "Ja",
+          "no": "Nee",
+          "edit": "Bewerken",
+          "delete": "Verwijderen",
+          "col_key": "Sleutel",
+          "col_label": "Label",
+          "col_base": "Basis",
+          "col_template": "Sjabloon",
+          "col_active": "Actief",
+          "col_actions": "Acties",
+          "form": {
+            "title_new": "Nieuw inhoudstype",
+            "title_edit": "Inhoudstype bewerken",
+            "key": "Sleutel",
+            "label": "Label",
+            "base": "Structurele basis",
+            "template": "Metadatasjabloon",
+            "no_template": "Geen",
+            "required_roles": "Vereiste rollen (komma-gescheiden)",
+            "allowed_child_types": "Toegestane onderliggende types (komma-gescheiden)",
+            "behavior_proxy": "Gedrag-proxy (gestippeld pad)",
+            "description": "Beschrijving",
+            "active": "Actief",
+            "cancel": "Annuleren",
+            "submit": "Opslaan"
+          }
+        }
       },
       "403": {
         "title": "U beschikt niet over de benodigde rechten om dit bestand te openen.",
