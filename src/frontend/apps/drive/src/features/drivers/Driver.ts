@@ -9,6 +9,7 @@ import {
   DTODeleteInvitation,
   DTOUpdateInvitation,
 } from "./DTOs/InvitationDTO";
+import { DTOCreateShareLink, DTODeleteShareLink } from "./DTOs/ShareLinksDTO";
 import {
   Access,
   ApiConfig,
@@ -18,6 +19,8 @@ import {
   Item,
   ItemBreadcrumb,
   ItemType,
+  ShareLink,
+  ShareLinkResolution,
   User,
   WopiInfo,
   WorkspaceType,
@@ -125,6 +128,14 @@ export abstract class Driver {
     itemId: string,
     page?: number,
   ): Promise<APIList<AuditEvent>>;
+  // Share links (H1.3)
+  abstract getItemShareLinks(itemId: string): Promise<ShareLink[]>;
+  abstract createShareLink(data: DTOCreateShareLink): Promise<ShareLink>;
+  abstract deleteShareLink(payload: DTODeleteShareLink): Promise<void>;
+  abstract resolveShareLink(
+    token: string,
+    password?: string,
+  ): Promise<ShareLinkResolution>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

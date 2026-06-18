@@ -18,6 +18,7 @@ import { useSelectedItems } from "../../stores/selectionStore";
 import { ItemShareModal } from "../modals/share/ItemShareModal";
 import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
 import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
+import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -155,12 +156,18 @@ export const ExplorerRightPanelContentDs = ({
                 <TabsTrigger value="activity">
                   {t("explorer.rightPanel.tabs.activity")}
                 </TabsTrigger>
+                <TabsTrigger value="links">
+                  {t("explorer.rightPanel.tabs.links")}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="info">
                 <ItemInfoDs item={firstSelectedItem} />
               </TabsContent>
               <TabsContent value="activity">
                 <ItemActivityDs itemId={firstSelectedItem.id} />
+              </TabsContent>
+              <TabsContent value="links">
+                <ItemShareLinksDs itemId={firstSelectedItem.id} />
               </TabsContent>
             </Tabs>
           ) : (

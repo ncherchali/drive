@@ -16,6 +16,7 @@ import {
   DTOUpdateLinkConfiguration,
 } from "../DTOs/AccessesDTO";
 import { DTOUpdateAccess } from "../DTOs/AccessesDTO";
+import { DTOCreateShareLink, DTODeleteShareLink } from "../DTOs/ShareLinksDTO";
 import {
   Access,
   ApiConfig,
@@ -25,6 +26,8 @@ import {
   Item,
   ItemBreadcrumb,
   ItemType,
+  ShareLink,
+  ShareLinkResolution,
   User,
   WopiInfo,
 } from "../types";
@@ -172,6 +175,41 @@ export class StandardDriver extends Driver {
   ): Promise<APIList<AuditEvent>> {
     const response = await fetchAPI(`items/${itemId}/audit/`, {
       params: { page, page_size: 50 },
+    });
+    return await response.json();
+  }
+
+  async getItemShareLinks(itemId: string): Promise<ShareLink[]> {
+    const response = await fetchAPI(`items/${itemId}/share-links/`);
+    return await response.json();
+  }
+
+  async createShareLink(data: DTOCreateShareLink): Promise<ShareLink> {
+    const response = await fetchAPI(`items/${data.itemId}/share-links/`, {
+      method: "POST",
+      body: JSON.stringify({
+        role: data.role,
+        password: data.password,
+        expires_at: data.expires_at,
+        max_downloads: data.max_downloads,
+      }),
+    });
+    return await response.json();
+  }
+
+  async deleteShareLink(payload: DTODeleteShareLink): Promise<void> {
+    await fetchAPI(`items/${payload.itemId}/share-links/${payload.linkId}/`, {
+      method: "DELETE",
+    });
+  }
+
+  async resolveShareLink(
+    token: string,
+    password?: string,
+  ): Promise<ShareLinkResolution> {
+    const response = await fetchAPI(`share-links/resolve/`, {
+      method: "POST",
+      body: JSON.stringify({ token, password }),
     });
     return await response.json();
   }

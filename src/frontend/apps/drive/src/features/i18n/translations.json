@@ -5,6 +5,14 @@
         "title": "You need to be logged in to access the documents.",
         "button": "Login"
       },
+      "share": {
+        "title": "Access a shared file",
+        "password": "Password (if required)",
+        "access": "Access",
+        "download": "Download",
+        "folder": "This link points to a folder.",
+        "error": "Invalid link, wrong password, or the link has expired."
+      },
       "403": {
         "title": "You don't have the necessary permissions to access this page.",
         "button": "Home"
@@ -194,7 +202,26 @@
           "share": "Share",
           "tabs": {
             "info": "Information",
-            "activity": "Activity"
+            "activity": "Activity",
+            "links": "Links"
+          },
+          "share_links": {
+            "role": "Permission",
+            "role_reader": "Reader",
+            "role_editor": "Editor",
+            "password": "Password",
+            "password_optional": "Optional",
+            "expires": "Expires on",
+            "max_downloads": "Download limit",
+            "create": "Create link",
+            "loading": "Loading…",
+            "empty": "No share link yet.",
+            "copy": "Copy link",
+            "revoke": "Revoke",
+            "downloads": "{{n}} / {{max}} downloads",
+            "protected": "Password",
+            "expires_on": "Expires {{date}}",
+            "invalid": "Expired or exhausted"
           },
           "activity": {
             "loading": "Loading activity…",
@@ -649,6 +676,14 @@
         "title": "Connectez-vous pour accéder aux documents.",
         "button": "Se connecter"
       },
+      "share": {
+        "title": "Accéder à un fichier partagé",
+        "password": "Mot de passe (si requis)",
+        "access": "Accéder",
+        "download": "Télécharger",
+        "folder": "Ce lien pointe vers un dossier.",
+        "error": "Lien invalide, mot de passe incorrect ou lien expiré."
+      },
       "403": {
         "title": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
         "button": "Accueil"
@@ -838,7 +873,26 @@
           "share": "Partager",
           "tabs": {
             "info": "Informations",
-            "activity": "Activité"
+            "activity": "Activité",
+            "links": "Liens"
+          },
+          "share_links": {
+            "role": "Permission",
+            "role_reader": "Lecteur",
+            "role_editor": "Éditeur",
+            "password": "Mot de passe",
+            "password_optional": "Optionnel",
+            "expires": "Expire le",
+            "max_downloads": "Limite de téléchargements",
+            "create": "Créer le lien",
+            "loading": "Chargement…",
+            "empty": "Aucun lien de partage.",
+            "copy": "Copier le lien",
+            "revoke": "Révoquer",
+            "downloads": "{{n}} / {{max}} téléchargements",
+            "protected": "Mot de passe",
+            "expires_on": "Expire le {{date}}",
+            "invalid": "Expiré ou épuisé"
           },
           "activity": {
             "loading": "Chargement de l'activité…",
@@ -1301,6 +1355,14 @@
         "title": "U moet ingelogd zijn om toegang te krijgen tot de bestanden.",
         "button": "Login"
       },
+      "share": {
+        "title": "Een gedeeld bestand openen",
+        "password": "Wachtwoord (indien vereist)",
+        "access": "Openen",
+        "download": "Downloaden",
+        "folder": "Deze link verwijst naar een map.",
+        "error": "Ongeldige link, verkeerd wachtwoord of de link is verlopen."
+      },
       "403": {
         "title": "U beschikt niet over de benodigde rechten om dit bestand te openen.",
         "button": "Home"
@@ -1490,7 +1552,26 @@
           "share": "Deel",
           "tabs": {
             "info": "Informatie",
-            "activity": "Activiteit"
+            "activity": "Activiteit",
+            "links": "Links"
+          },
+          "share_links": {
+            "role": "Toestemming",
+            "role_reader": "Lezer",
+            "role_editor": "Bewerker",
+            "password": "Wachtwoord",
+            "password_optional": "Optioneel",
+            "expires": "Verloopt op",
+            "max_downloads": "Downloadlimiet",
+            "create": "Link aanmaken",
+            "loading": "Laden…",
+            "empty": "Nog geen deellink.",
+            "copy": "Link kopiëren",
+            "revoke": "Intrekken",
+            "downloads": "{{n}} / {{max}} downloads",
+            "protected": "Wachtwoord",
+            "expires_on": "Verloopt {{date}}",
+            "invalid": "Verlopen of uitgeput"
           },
           "activity": {
             "loading": "Activiteit laden…",

@@ -200,6 +200,31 @@ export type AuditEvent = {
   metadata: Record<string, unknown>;
 };
 
+// Lien de partage avancé (H1.3) : token, mot de passe, expiration, plafond.
+export type ShareLink = {
+  id: string;
+  token: string;
+  role: string;
+  has_password: boolean;
+  expires_at: string | null;
+  max_downloads: number | null;
+  download_count: number;
+  is_valid: boolean;
+  created_at: string;
+};
+
+// Réponse de la résolution publique d'un lien de partage.
+export type ShareLinkResolution = {
+  item: {
+    id: string;
+    title: string;
+    filename: string | null;
+    type: string;
+  };
+  role: string;
+  download_url: string | null;
+};
+
 export type LocalizedThemeCustomization<T> = {
   default: T;
   [key: string]: T;
