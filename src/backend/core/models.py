@@ -78,6 +78,10 @@ class ItemTypeChoices(models.TextChoices):
 
     FOLDER = "folder", _("Folder")
     FILE = "file", _("File")
+    # A structured, byte-less object (ADR-0001 phase 4): lives in the tree
+    # (sharing/access/search apply) but has no S3 object — its data are its
+    # (governed) metadata fields.
+    RECORD = "record", _("Record")
 
 
 class ItemUploadStateChoices(models.TextChoices):

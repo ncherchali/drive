@@ -1113,6 +1113,14 @@ class MetadataProposeSerializer(serializers.Serializer):
     prompt = serializers.CharField(required=False, allow_blank=True, default="")
 
 
+class RecordCreateSerializer(serializers.Serializer):
+    """Input to create a structured RECORD child (E2.2 / ADR-0001 phase 4)."""
+
+    title = serializers.CharField(max_length=255)
+    content_type = serializers.SlugField(required=False, allow_null=True)
+    metadata = serializers.DictField(required=False)
+
+
 class RetentionSerializer(serializers.Serializer):
     """Input to set/extend an item's retention deadline (H1.6)."""
 

@@ -27,6 +27,8 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "metadata_proposals": {"GET": "download", "POST": "update"},
     "metadata_proposal_accept": {"POST": "accesses_manage"},
     "metadata_proposal_reject": {"POST": "accesses_manage"},
+    # Structured records (ADR-0001 phase 4) are created as children of a folder.
+    "records": {"POST": "children_create"},
     # Retention & legal holds (H1.6 / Coffre) are governance acts: managers only.
     "retention": {"GET": "accesses_manage", "POST": "accesses_manage"},
     "legal_hold": {"GET": "accesses_manage", "POST": "accesses_manage"},

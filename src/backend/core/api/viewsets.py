@@ -52,6 +52,7 @@ from core.services import audit
 from core.services import content_types as content_types_service
 from core.services import metadata as metadata_service
 from core.services import provenance as provenance_service
+from core.services import records as records_service
 from core.services import relations as relations_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
@@ -1972,6 +1973,39 @@ class ItemViewSet(
             raise drf.exceptions.ValidationError(str(excpt)) from excpt
         return drf.response.Response(
             serializers.MetadataProposalSerializer(proposal).data
+        )
+
+    @drf.decorators.action(detail=True, methods=["post"], url_path="records")
+    def records(self, request, *args, **kwargs):
+        """Create a structured RECORD child (byte-less; ADR-0001 phase 4).
+
+        Optionally types it (a content type whose base is RECORD) and validates
+        its initial metadata against that type's template — all in one act.
+        """
+        parent = self.get_object()
+        serializer = serializers.RecordCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        try:
+            record = records_service.create_record(
+                parent,
+                data["title"],
+                content_type=data.get("content_type"),
+                metadata_values=data.get("metadata"),
+                actor=request.user,
+            )
+        except (
+            records_service.RecordError,
+            content_types_service.ContentTypeError,
+        ) as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        except metadata_service.MetadataValidationError as excpt:
+            raise drf.exceptions.ValidationError(excpt.errors) from excpt
+        return drf.response.Response(
+            serializers.CreateItemSerializer(
+                record, context=self.get_serializer_context()
+            ).data,
+            status=status.HTTP_201_CREATED,
         )
 
     @drf.decorators.action(detail=True, methods=["get", "post"], url_path="retention")
