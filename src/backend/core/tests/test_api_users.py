@@ -266,6 +266,7 @@ def test_api_users_retrieve_me_authenticated():
         "language": user.language,
         "last_release_note_seen": None,
         "column_preferences": None,
+        "is_staff": False,
     }
 
 
@@ -287,6 +288,7 @@ def test_api_users_retrieve_me_authenticated_with_release_note():
         "language": user.language,
         "last_release_note_seen": "0.11.1",
         "column_preferences": None,
+        "is_staff": False,
     }
 
 
@@ -318,6 +320,7 @@ def test_api_users_retrieve_me_authenticated_with_column_preferences():
         "language": user.language,
         "last_release_note_seen": None,
         "column_preferences": {"columns": ["file_size", "last_modified"]},
+        "is_staff": False,
     }
 
 

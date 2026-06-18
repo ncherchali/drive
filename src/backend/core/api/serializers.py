@@ -731,8 +731,10 @@ class UserMeSerializer(UserSerializer):
 
     class Meta:
         model = models.User
-        fields = UserSerializer.Meta.fields
-        read_only_fields = UserSerializer.Meta.read_only_fields
+        # Expose is_staff on /me so the UI can gate admin-only areas (e.g. the
+        # content type registry console).
+        fields = UserSerializer.Meta.fields + ["is_staff"]
+        read_only_fields = UserSerializer.Meta.read_only_fields + ["is_staff"]
 
 
 class LinkItemSerializer(serializers.ModelSerializer):
