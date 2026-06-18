@@ -20,6 +20,7 @@ import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
 import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
 import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
 import { ItemVersionsDs } from "@/features/items/components/ItemVersionsDs";
+import { ItemComplianceDs } from "@/features/items/components/ItemComplianceDs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -165,6 +166,9 @@ export const ExplorerRightPanelContentDs = ({
                     {t("explorer.rightPanel.tabs.versions")}
                   </TabsTrigger>
                 )}
+                <TabsTrigger value="compliance">
+                  {t("explorer.rightPanel.tabs.compliance")}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="info">
                 <ItemInfoDs item={firstSelectedItem} />
@@ -185,6 +189,9 @@ export const ExplorerRightPanelContentDs = ({
                   />
                 </TabsContent>
               )}
+              <TabsContent value="compliance">
+                <ItemComplianceDs itemId={firstSelectedItem.id} />
+              </TabsContent>
             </Tabs>
           ) : (
             <div className="border-t border-solid border-border pt-3">

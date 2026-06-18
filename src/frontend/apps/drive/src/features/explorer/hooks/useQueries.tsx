@@ -53,6 +53,24 @@ export const useItemVersions = (itemId: string) => {
   });
 };
 
+export const useItemRetention = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemRetention", itemId],
+    queryFn: () => getDriver().getItemRetention(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
+export const useItemLegalHolds = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemLegalHolds", itemId],
+    queryFn: () => getDriver().getItemLegalHolds(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useInfiniteItemInvitations = (itemId: string) => {
   const driver = getDriver();
   return useInfiniteQuery({

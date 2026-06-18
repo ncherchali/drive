@@ -20,6 +20,8 @@ import {
   ItemBreadcrumb,
   ItemType,
   ItemVersion,
+  LegalHold,
+  RetentionStatus,
   ShareLink,
   ShareLinkResolution,
   User,
@@ -148,6 +150,21 @@ export abstract class Driver {
     versionId: string,
   ): Promise<void>;
   abstract deleteItemVersion(itemId: string, versionId: string): Promise<void>;
+  // Compliance — retention & legal holds (H1.6)
+  abstract getItemRetention(itemId: string): Promise<RetentionStatus>;
+  abstract setItemRetention(
+    itemId: string,
+    durationDays: number,
+  ): Promise<RetentionStatus>;
+  abstract getItemLegalHolds(itemId: string): Promise<LegalHold[]>;
+  abstract placeItemLegalHold(
+    itemId: string,
+    reason: string,
+  ): Promise<LegalHold>;
+  abstract releaseItemLegalHold(
+    itemId: string,
+    holdId: string,
+  ): Promise<void>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

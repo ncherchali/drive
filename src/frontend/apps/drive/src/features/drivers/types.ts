@@ -213,6 +213,19 @@ export type ShareLink = {
   created_at: string;
 };
 
+// Conformité (H1.6) : rétention + legal holds.
+export type RetentionStatus = {
+  retention_until: string | null;
+};
+
+export type LegalHold = {
+  id: string;
+  name: string;
+  reason: string;
+  is_active: boolean;
+  created_at: string;
+};
+
 // Une version S3 du fichier d'un item (H1.4).
 export type ItemVersion = {
   version_id: string;

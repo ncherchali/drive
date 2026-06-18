@@ -27,6 +27,8 @@ import {
   ItemBreadcrumb,
   ItemType,
   ItemVersion,
+  LegalHold,
+  RetentionStatus,
   ShareLink,
   ShareLinkResolution,
   User,
@@ -239,6 +241,44 @@ export class StandardDriver extends Driver {
 
   async deleteItemVersion(itemId: string, versionId: string): Promise<void> {
     await fetchAPI(`items/${itemId}/versions/${versionId}/`, {
+      method: "DELETE",
+    });
+  }
+
+  async getItemRetention(itemId: string): Promise<RetentionStatus> {
+    const response = await fetchAPI(`items/${itemId}/retention/`);
+    return await response.json();
+  }
+
+  async setItemRetention(
+    itemId: string,
+    durationDays: number,
+  ): Promise<RetentionStatus> {
+    const response = await fetchAPI(`items/${itemId}/retention/`, {
+      method: "POST",
+      body: JSON.stringify({ duration_days: durationDays }),
+    });
+    return await response.json();
+  }
+
+  async getItemLegalHolds(itemId: string): Promise<LegalHold[]> {
+    const response = await fetchAPI(`items/${itemId}/legal-hold/`);
+    return await response.json();
+  }
+
+  async placeItemLegalHold(
+    itemId: string,
+    reason: string,
+  ): Promise<LegalHold> {
+    const response = await fetchAPI(`items/${itemId}/legal-hold/`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+    return await response.json();
+  }
+
+  async releaseItemLegalHold(itemId: string, holdId: string): Promise<void> {
+    await fetchAPI(`items/${itemId}/legal-hold/${holdId}/`, {
       method: "DELETE",
     });
   }

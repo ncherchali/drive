@@ -204,7 +204,8 @@
             "info": "Information",
             "activity": "Activity",
             "links": "Links",
-            "versions": "Versions"
+            "versions": "Versions",
+            "compliance": "Compliance"
           },
           "share_links": {
             "role": "Permission",
@@ -231,6 +232,18 @@
             "download": "Download",
             "restore": "Restore",
             "delete": "Delete"
+          },
+          "compliance": {
+            "retention": "Retention",
+            "retention_until": "Retained until {{date}}",
+            "no_retention": "No retention set.",
+            "duration_days": "Duration (days)",
+            "apply": "Apply",
+            "legal_holds": "Legal holds",
+            "no_hold": "No active hold.",
+            "release": "Release",
+            "reason": "Reason",
+            "place_hold": "Place hold"
           },
           "activity": {
             "loading": "Loading activity…",
@@ -884,7 +897,8 @@
             "info": "Informations",
             "activity": "Activité",
             "links": "Liens",
-            "versions": "Versions"
+            "versions": "Versions",
+            "compliance": "Conformité"
           },
           "share_links": {
             "role": "Permission",
@@ -911,6 +925,18 @@
             "download": "Télécharger",
             "restore": "Restaurer",
             "delete": "Supprimer"
+          },
+          "compliance": {
+            "retention": "Rétention",
+            "retention_until": "Conservé jusqu'au {{date}}",
+            "no_retention": "Aucune rétention définie.",
+            "duration_days": "Durée (jours)",
+            "apply": "Appliquer",
+            "legal_holds": "Conservations légales",
+            "no_hold": "Aucune conservation active.",
+            "release": "Lever",
+            "reason": "Motif",
+            "place_hold": "Placer une conservation"
           },
           "activity": {
             "loading": "Chargement de l'activité…",
@@ -1572,7 +1598,8 @@
             "info": "Informatie",
             "activity": "Activiteit",
             "links": "Links",
-            "versions": "Versies"
+            "versions": "Versies",
+            "compliance": "Naleving"
           },
           "share_links": {
             "role": "Toestemming",
@@ -1599,6 +1626,18 @@
             "download": "Downloaden",
             "restore": "Herstellen",
             "delete": "Verwijderen"
+          },
+          "compliance": {
+            "retention": "Bewaring",
+            "retention_until": "Bewaard tot {{date}}",
+            "no_retention": "Geen bewaring ingesteld.",
+            "duration_days": "Duur (dagen)",
+            "apply": "Toepassen",
+            "legal_holds": "Juridische bewaring",
+            "no_hold": "Geen actieve bewaring.",
+            "release": "Opheffen",
+            "reason": "Reden",
+            "place_hold": "Bewaring plaatsen"
           },
           "activity": {
             "loading": "Activiteit laden…",
