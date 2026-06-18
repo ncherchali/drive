@@ -1000,3 +1000,12 @@ class LegalHoldSerializer(serializers.ModelSerializer):
         model = models.LegalHold
         fields = ["id", "name", "reason", "is_active", "created_at"]
         read_only_fields = ["id", "is_active", "created_at"]
+
+
+class DataRoomSerializer(serializers.ModelSerializer):
+    """Settings of a data room (H1.7)."""
+
+    class Meta:
+        model = models.DataRoom
+        fields = ["id", "allow_download", "watermark_enabled", "created_at"]
+        read_only_fields = ["id", "created_at"]

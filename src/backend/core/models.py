@@ -1745,6 +1745,38 @@ class LegalHold(BaseModel):
         return f"LegalHold({self.name or self.reason[:20]!r} on {self.item_id})"
 
 
+class DataRoom(BaseModel):
+    """A data room (H1.7 / Sahla Rooms).
+
+    A curated folder shared with (often external) guests. View-only by default
+    (`allow_download=False`): guests may preview the content but not download it,
+    enforced at the media-auth layer. Guest isolation relies on the regular
+    access model (a guest only has access to the room folder). Watermarking is a
+    later, costlier story.
+    """
+
+    item = models.OneToOneField(
+        Item, on_delete=models.CASCADE, related_name="data_room"
+    )
+    allow_download = models.BooleanField(default=False)
+    watermark_enabled = models.BooleanField(default=False)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="data_rooms_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_data_room"
+        verbose_name = _("Data room")
+        verbose_name_plural = _("Data rooms")
+
+    def __str__(self):
+        return f"DataRoom({self.item_id})"
+
+
 class AuditEvent(models.Model):
     """Append-only audit log entry — foundation of the sovereign Sahla Audit.
 

@@ -19,6 +19,11 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "retention": {"GET": "accesses_manage", "POST": "accesses_manage"},
     "legal_hold": {"GET": "accesses_manage", "POST": "accesses_manage"},
     "legal_hold_detail": {"DELETE": "accesses_manage"},
+    "data_room": {
+        "GET": "accesses_manage",
+        "POST": "accesses_manage",
+        "DELETE": "accesses_manage",
+    },
     "children": {"GET": "children_list", "POST": "children_create"},
     "audit": {"GET": "accesses_manage"},
 }

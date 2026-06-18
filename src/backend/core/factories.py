@@ -172,6 +172,16 @@ class InvitationFactory(factory.django.DjangoModelFactory):
     issuer = factory.SubFactory(UserFactory)
 
 
+class DataRoomFactory(factory.django.DjangoModelFactory):
+    """A factory to create data rooms for testing purposes."""
+
+    class Meta:
+        model = models.DataRoom
+
+    item = factory.SubFactory(ItemFactory, type=models.ItemTypeChoices.FOLDER)
+    creator = factory.SubFactory(UserFactory)
+
+
 class LegalHoldFactory(factory.django.DjangoModelFactory):
     """A factory to create legal holds for testing purposes."""
 

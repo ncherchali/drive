@@ -1748,6 +1748,46 @@ class ItemViewSet(
         )
         return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
 
+    @drf.decorators.action(
+        detail=True, methods=["get", "post", "delete"], url_path="data-room"
+    )
+    def data_room(self, request, *args, **kwargs):
+        """Read, configure or remove the data-room settings of a folder (H1.7)."""
+        item = self.get_object()
+
+        if request.method == "GET":
+            room = models.DataRoom.objects.filter(item=item).first()
+            if room is None:
+                raise drf.exceptions.NotFound()
+            return drf.response.Response(serializers.DataRoomSerializer(room).data)
+
+        if request.method == "DELETE":
+            models.DataRoom.objects.filter(item=item).delete()
+            audit.record("room.delete", actor=request.user, target=item)
+            return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
+
+        if item.type != models.ItemTypeChoices.FOLDER:
+            raise drf.exceptions.ValidationError(
+                {"item": "A data room can only be created on a folder."}
+            )
+        serializer = serializers.DataRoomSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        room, created = models.DataRoom.objects.update_or_create(
+            item=item,
+            defaults=serializer.validated_data,
+            create_defaults={**serializer.validated_data, "creator": request.user},
+        )
+        audit.record(
+            "room.create" if created else "room.update",
+            actor=request.user,
+            target=item,
+            metadata={"allow_download": room.allow_download},
+        )
+        return drf.response.Response(
+            serializers.DataRoomSerializer(room).data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
+
     @drf.decorators.action(detail=False, methods=["get"], url_path="media-auth")
     def media_auth(self, request, *args, **kwargs):
         """
@@ -1759,7 +1799,7 @@ class ItemViewSet(
         annotation. The request will then be proxied to the object storage backend who will
         respond with the file after checking the signature included in headers.
         """
-        url_params, _, user_id, item = self._authorize_subrequest(
+        url_params, user_abilities, user_id, item = self._authorize_subrequest(
             request, MEDIA_STORAGE_URL_PATTERN
         )
         if item.type != models.ItemTypeChoices.FILE:
@@ -1777,6 +1817,19 @@ class ItemViewSet(
         # Audit actual content downloads asynchronously (off the request path).
         # Previews (thumbnails, etc.) are skipped to avoid flooding the trail.
         if not url_params.get("preview"):
+            # H1.7: a view-only data room (on this item or an ancestor) blocks the
+            # actual download for guests while still allowing previews. Managers
+            # (who configured the room) are exempt.
+            if (
+                not user_abilities.get("accesses_manage")
+                and models.DataRoom.objects.filter(
+                    allow_download=False,
+                    item__in=models.Item.objects.filter(path__ancestors=item.path),
+                ).exists()
+            ):
+                logger.debug("Download blocked: item '%s' is in a view-only room", item.id)
+                raise drf.exceptions.PermissionDenied()
+
             record_media_access.delay(
                 "item.download",
                 str(user_id) if user_id else None,
