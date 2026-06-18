@@ -9,7 +9,11 @@ from rest_framework import permissions
 from core.models import RoleChoices, get_trashbin_cutoff
 
 ACTION_FOR_METHOD_TO_PERMISSION = {
-    "versions_detail": {"DELETE": "versions_destroy", "GET": "versions_retrieve"},
+    # File versions (H1.4): list/download for any reader, restore for editors,
+    # delete for managers. Mapped to existing abilities (no new ability key).
+    "versions": {"GET": "download"},
+    "versions_detail": {"GET": "download", "DELETE": "accesses_manage"},
+    "versions_restore": {"POST": "update"},
     "children": {"GET": "children_list", "POST": "children_create"},
     "audit": {"GET": "accesses_manage"},
 }

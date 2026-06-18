@@ -47,6 +47,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from core import enums, models
 from core.entitlements import get_entitlements_backend
 from core.services import audit
+from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
 from core.services.search_indexers import (
     get_file_indexer,
@@ -1602,6 +1603,59 @@ class ItemViewSet(
         if page is not None:
             return self.get_paginated_response(serializer.data)
         return drf.response.Response(serializer.data)
+
+    def _version_file_or_403(self):
+        """Return the item, ensuring it is a file (versions only apply to files)."""
+        item = self.get_object()
+        if item.type != models.ItemTypeChoices.FILE:
+            raise drf.exceptions.PermissionDenied()
+        return item
+
+    @drf.decorators.action(detail=True, methods=["get"], url_path="versions")
+    def versions(self, request, *args, **kwargs):
+        """List the stored versions of an item's file, newest first."""
+        item = self._version_file_or_403()
+        data = item_versions.list_versions(item)
+        return drf.response.Response(serializers.ItemVersionSerializer(data, many=True).data)
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["get", "delete"],
+        url_path="versions/(?P<version_id>[^/]+)",
+    )
+    def versions_detail(self, request, *args, version_id=None, **kwargs):
+        """Download (GET) or permanently delete (DELETE) a specific version."""
+        item = self._version_file_or_403()
+
+        if request.method == "DELETE":
+            item_versions.delete_version(item, version_id)
+            audit.record(
+                "version.delete",
+                actor=request.user,
+                target=item,
+                metadata={"version_id": version_id},
+            )
+            return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
+
+        url = item_versions.presigned_version_url(item, version_id)
+        return drf.response.Response({"url": url})
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["post"],
+        url_path="versions/(?P<version_id>[^/]+)/restore",
+    )
+    def versions_restore(self, request, *args, version_id=None, **kwargs):
+        """Restore a previous version as the new current file content."""
+        item = self._version_file_or_403()
+        item_versions.restore_version(item, version_id)
+        audit.record(
+            "version.restore",
+            actor=request.user,
+            target=item,
+            metadata={"version_id": version_id},
+        )
+        return drf.response.Response({"detail": "Version restored."})
 
     @drf.decorators.action(detail=False, methods=["get"], url_path="media-auth")
     def media_auth(self, request, *args, **kwargs):

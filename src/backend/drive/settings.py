@@ -975,6 +975,12 @@ class Base(Configuration):
         300, environ_name="SHARE_LINK_GRANT_TTL", environ_prefix=None
     )
 
+    # H1.4: number of days non-current S3 object versions are kept before the
+    # bucket lifecycle expires them (applied via `configure_media_versioning`).
+    MEDIA_VERSION_RETENTION_DAYS = values.Value(
+        90, environ_name="MEDIA_VERSION_RETENTION_DAYS", environ_prefix=None
+    )
+
     # Mail
     EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")
     EMAIL_BRAND_NAME = values.Value(None)

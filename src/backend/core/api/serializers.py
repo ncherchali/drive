@@ -967,3 +967,13 @@ class ShareLinkResolveSerializer(serializers.Serializer):
     password = serializers.CharField(
         required=False, allow_blank=True, allow_null=True
     )
+
+
+class ItemVersionSerializer(serializers.Serializer):
+    """Serialize an S3 object version of an item's file (H1.4, read-only)."""
+
+    version_id = serializers.CharField()
+    last_modified = serializers.DateTimeField()
+    size = serializers.IntegerField()
+    is_latest = serializers.BooleanField()
+    etag = serializers.CharField()
