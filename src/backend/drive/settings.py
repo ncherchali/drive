@@ -982,6 +982,12 @@ class Base(Configuration):
         90, environ_name="MEDIA_VERSION_RETENTION_DAYS", environ_prefix=None
     )
 
+    # H1.9: bearer token protecting the Prometheus /metrics endpoint. Empty
+    # (default) disables the endpoint (404).
+    OBSERVABILITY_METRICS_TOKEN = values.Value(
+        "", environ_name="OBSERVABILITY_METRICS_TOKEN", environ_prefix=None
+    )
+
     # Mail
     EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")
     EMAIL_BRAND_NAME = values.Value(None)

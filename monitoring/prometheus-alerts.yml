@@ -1,0 +1,33 @@
+# Prometheus alerting rules for Drive (H1.9 / A9-2).
+# Load via Prometheus `rule_files:` and wire Alertmanager for notifications.
+# Metrics are exposed by GET /api/v1.0/metrics/ (bearer token, see
+# OBSERVABILITY_METRICS_TOKEN).
+groups:
+  - name: drive
+    rules:
+      - alert: DriveMetricsDown
+        expr: up{job="drive"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Drive metrics endpoint is unreachable"
+          description: "Prometheus cannot scrape the Drive /metrics endpoint."
+
+      - alert: CeleryQueueSaturated
+        expr: drive_celery_queue_length{queue="celery"} > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Celery queue saturated"
+          description: "{{ $value }} tasks pending in the default Celery queue for 5 minutes."
+
+      - alert: CeleryQueueCritical
+        expr: drive_celery_queue_length{queue="celery"} > 1000
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Celery queue critically saturated"
+          description: "{{ $value }} tasks pending in the default Celery queue."

@@ -8,6 +8,7 @@ from lasuite.oidc_resource_server.urls import urlpatterns as oidc_resource_serve
 from rest_framework.routers import DefaultRouter
 
 from core.api import viewsets
+from core.api.metrics import PrometheusMetricsView
 from core.external_api import viewsets as external_api_viewsets
 
 # - Main endpoints
@@ -68,6 +69,11 @@ urlpatterns = [
         f"api/{settings.API_VERSION}/share-links/resolve/",
         viewsets.ShareLinkResolveView.as_view(),
         name="share_links_resolve",
+    ),
+    path(
+        f"api/{settings.API_VERSION}/metrics/",
+        PrometheusMetricsView.as_view(),
+        name="prometheus_metrics",
     ),
 ]
 
