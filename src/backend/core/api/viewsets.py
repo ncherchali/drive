@@ -1676,10 +1676,12 @@ class ItemViewSet(
         )
         return drf.response.Response({"truth_state": item.truth_state})
 
-    @drf.decorators.action(detail=True, methods=["post"], url_path="retention")
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="retention")
     def retention(self, request, *args, **kwargs):
-        """Set or extend the retention deadline of an item (H1.6, extend-only)."""
+        """Read, set or extend the retention deadline of an item (H1.6, extend-only)."""
         item = self.get_object()
+        if request.method == "GET":
+            return drf.response.Response({"retention_until": item.retention_until})
         serializer = serializers.RetentionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         new_until = timezone.now() + timedelta(

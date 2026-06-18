@@ -88,6 +88,24 @@ def test_api_retention_blocks_deletion_and_audits():
     assert deleted.status_code == 400
 
 
+def test_api_retention_get_reads_current_deadline():
+    owner = factories.UserFactory()
+    item = _folder(owner)
+    client = _client(owner)
+
+    assert client.get(f"/api/v1.0/items/{item.id!s}/retention/").json() == {
+        "retention_until": None
+    }
+    client.post(
+        f"/api/v1.0/items/{item.id!s}/retention/",
+        {"duration_days": 30},
+        format="json",
+    )
+    assert client.get(f"/api/v1.0/items/{item.id!s}/retention/").json()[
+        "retention_until"
+    ] is not None
+
+
 def test_api_retention_is_extend_only():
     owner = factories.UserFactory()
     item = _folder(owner)
