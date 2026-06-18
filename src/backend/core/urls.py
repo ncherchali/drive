@@ -8,7 +8,7 @@ from lasuite.oidc_resource_server.urls import urlpatterns as oidc_resource_serve
 from rest_framework.routers import DefaultRouter
 
 from core.api import viewsets
-from core.api.metrics import PrometheusMetricsView
+from core.api.metrics import MetricsSummaryView, PrometheusMetricsView
 from core.external_api import viewsets as external_api_viewsets
 
 # - Main endpoints
@@ -74,6 +74,11 @@ urlpatterns = [
         f"api/{settings.API_VERSION}/metrics/",
         PrometheusMetricsView.as_view(),
         name="prometheus_metrics",
+    ),
+    path(
+        f"api/{settings.API_VERSION}/metrics/summary/",
+        MetricsSummaryView.as_view(),
+        name="metrics_summary",
     ),
 ]
 

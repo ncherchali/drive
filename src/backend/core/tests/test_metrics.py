@@ -39,3 +39,29 @@ def test_metrics_returns_prometheus_text():
     assert "drive_items_total " in body
     assert "drive_audit_events_total " in body
     assert "drive_legal_holds_active_total " in body
+
+
+SUMMARY_URL = "/api/v1.0/metrics/summary/"
+
+
+def test_metrics_summary_forbidden_for_non_staff():
+    """The JSON summary is staff-only."""
+    user = factories.UserFactory()
+    client = APIClient()
+    client.force_login(user)
+    assert client.get(SUMMARY_URL).status_code == 403
+
+
+def test_metrics_summary_for_staff_returns_json():
+    """A staff member gets the metrics as JSON."""
+    staff = factories.UserFactory(is_staff=True)
+    factories.ItemFactory()
+    client = APIClient()
+    client.force_login(staff)
+
+    response = client.get(SUMMARY_URL)
+    assert response.status_code == 200
+    body = response.json()
+    assert "items_total" in body
+    assert "audit_events_total" in body
+    assert "data_rooms_total" in body
