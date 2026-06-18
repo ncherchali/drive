@@ -24,12 +24,15 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  ContentTypeStatus,
   DataRoom,
   Item,
   ItemBreadcrumb,
+  ItemMetadata,
   ItemType,
   ItemVersion,
   LegalHold,
+  MetadataProposal,
   MetricsSummary,
   RetentionStatus,
   ShareLink,
@@ -352,6 +355,46 @@ export class StandardDriver extends Driver {
     await fetchAPI(`items/${itemId}/signatures/${requestId}/`, {
       method: "DELETE",
     });
+  }
+
+  // Content object model (ADR-0001)
+  async getItemMetadata(itemId: string): Promise<ItemMetadata> {
+    const response = await fetchAPI(`items/${itemId}/metadata/`);
+    return await response.json();
+  }
+
+  async getItemContentType(itemId: string): Promise<ContentTypeStatus> {
+    const response = await fetchAPI(`items/${itemId}/content-type/`);
+    return await response.json();
+  }
+
+  async getItemMetadataProposals(
+    itemId: string,
+  ): Promise<MetadataProposal[]> {
+    const response = await fetchAPI(`items/${itemId}/metadata-proposals/`);
+    return await response.json();
+  }
+
+  async acceptMetadataProposal(
+    itemId: string,
+    proposalId: string,
+  ): Promise<MetadataProposal> {
+    const response = await fetchAPI(
+      `items/${itemId}/metadata-proposals/${proposalId}/accept/`,
+      { method: "POST" },
+    );
+    return await response.json();
+  }
+
+  async rejectMetadataProposal(
+    itemId: string,
+    proposalId: string,
+  ): Promise<MetadataProposal> {
+    const response = await fetchAPI(
+      `items/${itemId}/metadata-proposals/${proposalId}/reject/`,
+      { method: "POST" },
+    );
+    return await response.json();
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

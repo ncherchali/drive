@@ -19,6 +19,7 @@ import { ItemShareModal } from "../modals/share/ItemShareModal";
 import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
 import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
 import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
+import { ItemMetadataDs } from "@/features/items/components/ItemMetadataDs";
 import { ItemVersionsDs } from "@/features/items/components/ItemVersionsDs";
 import { ItemComplianceDs } from "@/features/items/components/ItemComplianceDs";
 import { ItemDataRoomDs } from "@/features/items/components/ItemDataRoomDs";
@@ -166,6 +167,9 @@ export const ExplorerRightPanelContentDs = ({
                 <TabsTrigger value="links">
                   {t("explorer.rightPanel.tabs.links")}
                 </TabsTrigger>
+                <TabsTrigger value="metadata">
+                  {t("explorer.rightPanel.tabs.metadata")}
+                </TabsTrigger>
                 {firstSelectedItem.type === ItemType.FILE && (
                   <TabsTrigger value="versions">
                     {t("explorer.rightPanel.tabs.versions")}
@@ -193,6 +197,9 @@ export const ExplorerRightPanelContentDs = ({
               </TabsContent>
               <TabsContent value="links">
                 <ItemShareLinksDs itemId={firstSelectedItem.id} />
+              </TabsContent>
+              <TabsContent value="metadata">
+                <ItemMetadataDs itemId={firstSelectedItem.id} />
               </TabsContent>
               {firstSelectedItem.type === ItemType.FILE && (
                 <TabsContent value="versions">

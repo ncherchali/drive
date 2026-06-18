@@ -16,12 +16,15 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  ContentTypeStatus,
   DataRoom,
   Item,
   ItemBreadcrumb,
+  ItemMetadata,
   ItemType,
   ItemVersion,
   LegalHold,
+  MetadataProposal,
   MetricsSummary,
   RetentionStatus,
   ShareLink,
@@ -188,6 +191,20 @@ export abstract class Driver {
     requestId: string,
   ): Promise<SignatureRequest>;
   abstract cancelSignature(itemId: string, requestId: string): Promise<void>;
+  // Content object model (ADR-0001)
+  abstract getItemMetadata(itemId: string): Promise<ItemMetadata>;
+  abstract getItemContentType(itemId: string): Promise<ContentTypeStatus>;
+  abstract getItemMetadataProposals(
+    itemId: string,
+  ): Promise<MetadataProposal[]>;
+  abstract acceptMetadataProposal(
+    itemId: string,
+    proposalId: string,
+  ): Promise<MetadataProposal>;
+  abstract rejectMetadataProposal(
+    itemId: string,
+    proposalId: string,
+  ): Promise<MetadataProposal>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

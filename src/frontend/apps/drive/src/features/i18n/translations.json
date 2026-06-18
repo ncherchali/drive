@@ -215,6 +215,7 @@
             "info": "Information",
             "activity": "Activity",
             "links": "Links",
+            "metadata": "Metadata",
             "versions": "Versions",
             "signatures": "Signature",
             "compliance": "Compliance",
@@ -257,6 +258,22 @@
             "release": "Release",
             "reason": "Reason",
             "place_hold": "Place hold"
+          },
+          "metadata": {
+            "content_type": "Content type",
+            "no_content_type": "Plain file or folder.",
+            "fields": "Metadata",
+            "no_metadata": "No metadata yet.",
+            "proposals": "Proposals",
+            "no_proposal": "No pending proposal.",
+            "accept": "Accept",
+            "reject": "Reject",
+            "source": {
+              "human": "Human",
+              "system": "System",
+              "agent": "Agent",
+              "extraction_job": "Extraction job"
+            }
           },
           "data_room": {
             "description": "A view-only space: invited guests can preview the content but not download it.",
@@ -941,6 +958,7 @@
             "info": "Informations",
             "activity": "Activité",
             "links": "Liens",
+            "metadata": "Métadonnées",
             "versions": "Versions",
             "signatures": "Signature",
             "compliance": "Conformité",
@@ -983,6 +1001,22 @@
             "release": "Lever",
             "reason": "Motif",
             "place_hold": "Placer une conservation"
+          },
+          "metadata": {
+            "content_type": "Type de contenu",
+            "no_content_type": "Simple fichier ou dossier.",
+            "fields": "Métadonnées",
+            "no_metadata": "Aucune métadonnée.",
+            "proposals": "Propositions",
+            "no_proposal": "Aucune proposition en attente.",
+            "accept": "Accepter",
+            "reject": "Rejeter",
+            "source": {
+              "human": "Humain",
+              "system": "Système",
+              "agent": "Agent",
+              "extraction_job": "Tâche d'extraction"
+            }
           },
           "data_room": {
             "description": "Un espace en lecture seule : les invités peuvent consulter le contenu mais pas le télécharger.",
@@ -1675,6 +1709,7 @@
             "info": "Informatie",
             "activity": "Activiteit",
             "links": "Links",
+            "metadata": "Metadata",
             "versions": "Versies",
             "signatures": "Handtekening",
             "compliance": "Naleving",
@@ -1717,6 +1752,22 @@
             "release": "Opheffen",
             "reason": "Reden",
             "place_hold": "Bewaring plaatsen"
+          },
+          "metadata": {
+            "content_type": "Inhoudstype",
+            "no_content_type": "Gewoon bestand of map.",
+            "fields": "Metadata",
+            "no_metadata": "Nog geen metadata.",
+            "proposals": "Voorstellen",
+            "no_proposal": "Geen openstaand voorstel.",
+            "accept": "Accepteren",
+            "reject": "Afwijzen",
+            "source": {
+              "human": "Mens",
+              "system": "Systeem",
+              "agent": "Agent",
+              "extraction_job": "Extractietaak"
+            }
           },
           "data_room": {
             "description": "Een alleen-lezen ruimte: genodigden kunnen de inhoud bekijken maar niet downloaden.",

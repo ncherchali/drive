@@ -89,6 +89,33 @@ export const useItemSignatures = (itemId: string) => {
   });
 };
 
+export const useItemMetadata = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemMetadata", itemId],
+    queryFn: () => getDriver().getItemMetadata(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
+export const useItemContentType = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemContentType", itemId],
+    queryFn: () => getDriver().getItemContentType(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
+export const useItemMetadataProposals = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemMetadataProposals", itemId],
+    queryFn: () => getDriver().getItemMetadataProposals(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useMetricsSummary = () => {
   return useQuery({
     queryKey: ["metricsSummary"],

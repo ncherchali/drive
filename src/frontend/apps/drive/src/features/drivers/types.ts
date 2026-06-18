@@ -16,6 +16,8 @@ export type FooterProps = {
 export enum ItemType {
   FILE = "file",
   FOLDER = "folder",
+  // Objet structuré sans octets (ADR-0001 phase 4) : sa donnée = ses métadonnées.
+  RECORD = "record",
 }
 
 export enum LinkReach {
@@ -251,6 +253,32 @@ export type SignatureRequest = {
   status: "pending" | "signed" | "refused" | "cancelled";
   external_id: string;
   signed_at: string | null;
+  created_at: string;
+};
+
+// Content Object Model (ADR-0001).
+// Métadonnées gouvernées (E2.1) : instances par template, indexées par clé.
+export type ItemMetadata = Record<string, Record<string, unknown>>;
+
+// Type métier de l'objet de contenu (phases 1/4) ; null = simple fichier/dossier.
+export type ContentTypeStatus = {
+  content_type: string | null;
+};
+
+// Proposition d'enrichissement de métadonnées + provenance (phase 3, §6).
+export type MetadataProposal = {
+  id: string;
+  template: string | null;
+  template_key: string | null;
+  values: Record<string, unknown>;
+  source: "human" | "system" | "agent" | "extraction_job";
+  source_ref: string;
+  model: string;
+  confidence: number | null;
+  prompt: string;
+  status: "proposed" | "accepted" | "rejected";
+  validated_by: string | null;
+  validated_at: string | null;
   created_at: string;
 };
 
