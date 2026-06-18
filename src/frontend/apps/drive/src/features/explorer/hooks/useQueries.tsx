@@ -71,6 +71,15 @@ export const useItemLegalHolds = (itemId: string) => {
   });
 };
 
+export const useItemDataRoom = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemDataRoom", itemId],
+    queryFn: () => getDriver().getItemDataRoom(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useInfiniteItemInvitations = (itemId: string) => {
   const driver = getDriver();
   return useInfiniteQuery({

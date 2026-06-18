@@ -16,6 +16,7 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  DataRoom,
   Item,
   ItemBreadcrumb,
   ItemType,
@@ -165,6 +166,13 @@ export abstract class Driver {
     itemId: string,
     holdId: string,
   ): Promise<void>;
+  // Data room (H1.7)
+  abstract getItemDataRoom(itemId: string): Promise<DataRoom | null>;
+  abstract setItemDataRoom(
+    itemId: string,
+    settings: { allow_download: boolean },
+  ): Promise<DataRoom>;
+  abstract deleteItemDataRoom(itemId: string): Promise<void>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

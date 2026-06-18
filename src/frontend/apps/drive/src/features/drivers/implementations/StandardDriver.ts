@@ -1,3 +1,4 @@
+import { APIError } from "@/features/api/APIError";
 import { fetchAPI } from "@/features/api/fetchApi";
 import {
   Driver,
@@ -23,6 +24,7 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  DataRoom,
   Item,
   ItemBreadcrumb,
   ItemType,
@@ -281,6 +283,35 @@ export class StandardDriver extends Driver {
     await fetchAPI(`items/${itemId}/legal-hold/${holdId}/`, {
       method: "DELETE",
     });
+  }
+
+  async getItemDataRoom(itemId: string): Promise<DataRoom | null> {
+    try {
+      const response = await fetchAPI(`items/${itemId}/data-room/`, undefined, {
+        redirectOn40x: false,
+      });
+      return await response.json();
+    } catch (error) {
+      if (error instanceof APIError && error.code === 404) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async setItemDataRoom(
+    itemId: string,
+    settings: { allow_download: boolean },
+  ): Promise<DataRoom> {
+    const response = await fetchAPI(`items/${itemId}/data-room/`, {
+      method: "POST",
+      body: JSON.stringify(settings),
+    });
+    return await response.json();
+  }
+
+  async deleteItemDataRoom(itemId: string): Promise<void> {
+    await fetchAPI(`items/${itemId}/data-room/`, { method: "DELETE" });
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

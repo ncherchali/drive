@@ -205,7 +205,8 @@
             "activity": "Activity",
             "links": "Links",
             "versions": "Versions",
-            "compliance": "Compliance"
+            "compliance": "Compliance",
+            "data_room": "Room"
           },
           "share_links": {
             "role": "Permission",
@@ -244,6 +245,12 @@
             "release": "Release",
             "reason": "Reason",
             "place_hold": "Place hold"
+          },
+          "data_room": {
+            "description": "A view-only space: invited guests can preview the content but not download it.",
+            "enable": "View-only data room",
+            "allow_download": "Allow download",
+            "loading": "Loading…"
           },
           "activity": {
             "loading": "Loading activity…",
@@ -898,7 +905,8 @@
             "activity": "Activité",
             "links": "Liens",
             "versions": "Versions",
-            "compliance": "Conformité"
+            "compliance": "Conformité",
+            "data_room": "Espace"
           },
           "share_links": {
             "role": "Permission",
@@ -937,6 +945,12 @@
             "release": "Lever",
             "reason": "Motif",
             "place_hold": "Placer une conservation"
+          },
+          "data_room": {
+            "description": "Un espace en lecture seule : les invités peuvent consulter le contenu mais pas le télécharger.",
+            "enable": "Espace en lecture seule",
+            "allow_download": "Autoriser le téléchargement",
+            "loading": "Chargement…"
           },
           "activity": {
             "loading": "Chargement de l'activité…",
@@ -1599,7 +1613,8 @@
             "activity": "Activiteit",
             "links": "Links",
             "versions": "Versies",
-            "compliance": "Naleving"
+            "compliance": "Naleving",
+            "data_room": "Ruimte"
           },
           "share_links": {
             "role": "Toestemming",
@@ -1638,6 +1653,12 @@
             "release": "Opheffen",
             "reason": "Reden",
             "place_hold": "Bewaring plaatsen"
+          },
+          "data_room": {
+            "description": "Een alleen-lezen ruimte: genodigden kunnen de inhoud bekijken maar niet downloaden.",
+            "enable": "Alleen-lezen ruimte",
+            "allow_download": "Downloaden toestaan",
+            "loading": "Laden…"
           },
           "activity": {
             "loading": "Activiteit laden…",

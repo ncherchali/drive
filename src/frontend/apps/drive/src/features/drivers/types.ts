@@ -213,6 +213,14 @@ export type ShareLink = {
   created_at: string;
 };
 
+// Data room (H1.7) : réglages d'un espace view-only.
+export type DataRoom = {
+  id: string;
+  allow_download: boolean;
+  watermark_enabled: boolean;
+  created_at: string;
+};
+
 // Conformité (H1.6) : rétention + legal holds.
 export type RetentionStatus = {
   retention_until: string | null;
