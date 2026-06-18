@@ -282,6 +282,34 @@ export type MetadataProposal = {
   created_at: string;
 };
 
+// Graphe de composition (ADR-0001 §5) : une arête / partie de manifeste.
+export type ContentRelation = {
+  id: string;
+  to_item: string;
+  to_item_title: string;
+  to_item_missing: boolean;
+  relation_type:
+    | "part_of"
+    | "references"
+    | "derived_from"
+    | "version_of"
+    | "renders_to";
+  role: string;
+  order: number;
+  pinned_version: string;
+  created_at: string;
+};
+
+// Manifeste d'un document composé + état de complétude (§5.3/§5.4).
+export type Manifest = {
+  parts: ContentRelation[];
+  required_roles: string[];
+  present_roles: string[];
+  missing_roles: string[];
+  broken_part_ids: string[];
+  complete: boolean;
+};
+
 // Une version S3 du fichier d'un item (H1.4).
 export type ItemVersion = {
   version_id: string;

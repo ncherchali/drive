@@ -24,6 +24,7 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  ContentRelation,
   ContentTypeStatus,
   DataRoom,
   Item,
@@ -32,6 +33,7 @@ import {
   ItemType,
   ItemVersion,
   LegalHold,
+  Manifest,
   MetadataProposal,
   MetricsSummary,
   RetentionStatus,
@@ -395,6 +397,37 @@ export class StandardDriver extends Driver {
       { method: "POST" },
     );
     return await response.json();
+  }
+
+  async getItemManifest(itemId: string): Promise<Manifest> {
+    const response = await fetchAPI(`items/${itemId}/manifest/`);
+    return await response.json();
+  }
+
+  async addItemRelation(
+    itemId: string,
+    payload: {
+      to_item: string;
+      relation_type: string;
+      role?: string;
+      order?: number;
+      pinned_version?: string;
+    },
+  ): Promise<ContentRelation> {
+    const response = await fetchAPI(`items/${itemId}/relations/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async removeItemRelation(
+    itemId: string,
+    relationId: string,
+  ): Promise<void> {
+    await fetchAPI(`items/${itemId}/relations/${relationId}/`, {
+      method: "DELETE",
+    });
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

@@ -16,6 +16,7 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  ContentRelation,
   ContentTypeStatus,
   DataRoom,
   Item,
@@ -24,6 +25,7 @@ import {
   ItemType,
   ItemVersion,
   LegalHold,
+  Manifest,
   MetadataProposal,
   MetricsSummary,
   RetentionStatus,
@@ -205,6 +207,21 @@ export abstract class Driver {
     itemId: string,
     proposalId: string,
   ): Promise<MetadataProposal>;
+  abstract getItemManifest(itemId: string): Promise<Manifest>;
+  abstract addItemRelation(
+    itemId: string,
+    payload: {
+      to_item: string;
+      relation_type: string;
+      role?: string;
+      order?: number;
+      pinned_version?: string;
+    },
+  ): Promise<ContentRelation>;
+  abstract removeItemRelation(
+    itemId: string,
+    relationId: string,
+  ): Promise<void>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

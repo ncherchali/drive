@@ -116,6 +116,15 @@ export const useItemMetadataProposals = (itemId: string) => {
   });
 };
 
+export const useItemManifest = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemManifest", itemId],
+    queryFn: () => getDriver().getItemManifest(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useMetricsSummary = () => {
   return useQuery({
     queryKey: ["metricsSummary"],

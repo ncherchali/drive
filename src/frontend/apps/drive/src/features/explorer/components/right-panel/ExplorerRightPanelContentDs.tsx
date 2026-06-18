@@ -20,6 +20,7 @@ import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
 import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
 import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
 import { ItemMetadataDs } from "@/features/items/components/ItemMetadataDs";
+import { ItemCompositionDs } from "@/features/items/components/ItemCompositionDs";
 import { ItemVersionsDs } from "@/features/items/components/ItemVersionsDs";
 import { ItemComplianceDs } from "@/features/items/components/ItemComplianceDs";
 import { ItemDataRoomDs } from "@/features/items/components/ItemDataRoomDs";
@@ -184,6 +185,11 @@ export const ExplorerRightPanelContentDs = ({
                   {t("explorer.rightPanel.tabs.compliance")}
                 </TabsTrigger>
                 {firstSelectedItem.type === ItemType.FOLDER && (
+                  <TabsTrigger value="composition">
+                    {t("explorer.rightPanel.tabs.composition")}
+                  </TabsTrigger>
+                )}
+                {firstSelectedItem.type === ItemType.FOLDER && (
                   <TabsTrigger value="data-room">
                     {t("explorer.rightPanel.tabs.data_room")}
                   </TabsTrigger>
@@ -219,6 +225,11 @@ export const ExplorerRightPanelContentDs = ({
               <TabsContent value="compliance">
                 <ItemComplianceDs itemId={firstSelectedItem.id} />
               </TabsContent>
+              {firstSelectedItem.type === ItemType.FOLDER && (
+                <TabsContent value="composition">
+                  <ItemCompositionDs itemId={firstSelectedItem.id} />
+                </TabsContent>
+              )}
               {firstSelectedItem.type === ItemType.FOLDER && (
                 <TabsContent value="data-room">
                   <ItemDataRoomDs itemId={firstSelectedItem.id} />
