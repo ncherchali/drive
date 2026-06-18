@@ -1071,6 +1071,48 @@ class ContentRelationCreateSerializer(serializers.Serializer):
     )
 
 
+class MetadataProposalSerializer(serializers.ModelSerializer):
+    """A metadata enrichment proposal with its provenance (E2.2 / ADR-0001 §6)."""
+
+    template_key = serializers.CharField(source="template.key", read_only=True)
+
+    class Meta:
+        model = models.MetadataProposal
+        fields = [
+            "id",
+            "template",
+            "template_key",
+            "values",
+            "source",
+            "source_ref",
+            "model",
+            "confidence",
+            "prompt",
+            "status",
+            "validated_by",
+            "validated_at",
+            "created_at",
+        ]
+        read_only_fields = ["id", "status", "validated_by", "validated_at", "created_at"]
+
+
+class MetadataProposeSerializer(serializers.Serializer):
+    """Input to record a proposed metadata enrichment (E2.2 / ADR-0001 §6)."""
+
+    template = serializers.SlugField()
+    values = serializers.DictField()
+    source = serializers.ChoiceField(
+        choices=models.MetadataSourceChoices.choices,
+        default=models.MetadataSourceChoices.HUMAN,
+    )
+    source_ref = serializers.CharField(required=False, allow_blank=True, default="")
+    model = serializers.CharField(required=False, allow_blank=True, default="")
+    confidence = serializers.FloatField(
+        required=False, allow_null=True, min_value=0, max_value=1
+    )
+    prompt = serializers.CharField(required=False, allow_blank=True, default="")
+
+
 class RetentionSerializer(serializers.Serializer):
     """Input to set/extend an item's retention deadline (H1.6)."""
 

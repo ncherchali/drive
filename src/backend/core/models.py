@@ -2018,6 +2018,101 @@ class ContentRelation(BaseModel):
         return f"ContentRelation({self.relation_type}: {self.from_item_id}→{self.to_item_id})"
 
 
+class MetadataSourceChoices(models.TextChoices):
+    """Where a metadata proposal came from (provenance — ADR-0001 §6.2)."""
+
+    HUMAN = "human", _("Human")
+    SYSTEM = "system", _("System")
+    AGENT = "agent", _("Agent")
+    EXTRACTION_JOB = "extraction_job", _("Extraction job")
+
+
+class ProposalStatusChoices(models.TextChoices):
+    """Lifecycle of a metadata proposal (promotion workflow — ADR-0001 §6.2)."""
+
+    PROPOSED = "proposed", _("Proposed")
+    ACCEPTED = "accepted", _("Accepted")
+    REJECTED = "rejected", _("Rejected")
+
+
+class MetadataProposal(BaseModel):
+    """A proposed metadata enrichment awaiting governance (E2.2 / ADR-0001 §6).
+
+    Derived/agentic writes NEVER touch authoritative metadata directly: they
+    land here as `proposed`, carrying full provenance (source, model,
+    confidence, prompt). A governance act then promotes them (accept → applied
+    to the item's authoritative `metadata` via the MetadataService) or rejects
+    them — keeping the source of truth governed, traceable and reversible.
+    """
+
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="metadata_proposals"
+    )
+    template = models.ForeignKey(
+        MetadataTemplate,
+        on_delete=models.SET_NULL,
+        related_name="proposals",
+        null=True,
+        blank=True,
+    )
+    values = models.JSONField(default=dict, blank=True)
+    source = models.CharField(
+        max_length=20,
+        choices=MetadataSourceChoices.choices,
+        default=MetadataSourceChoices.HUMAN,
+    )
+    source_ref = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=_("Opaque ref to the producing agent/job (e.g. its id)."),
+    )
+    model = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=_("LLM/model that produced the proposal (if any)."),
+    )
+    confidence = models.FloatField(
+        null=True, blank=True, help_text=_("Producer confidence in [0, 1].")
+    )
+    prompt = models.TextField(blank=True, default="")
+    status = models.CharField(
+        max_length=20,
+        choices=ProposalStatusChoices.choices,
+        default=ProposalStatusChoices.PROPOSED,
+    )
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="metadata_proposals_created",
+        null=True,
+        blank=True,
+    )
+    validated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="metadata_proposals_validated",
+        null=True,
+        blank=True,
+    )
+    validated_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "drive_metadata_proposal"
+        verbose_name = _("Metadata proposal")
+        verbose_name_plural = _("Metadata proposals")
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(
+                fields=["item", "status"], name="drive_metadata_proposal_idx"
+            ),
+        ]
+
+    def __str__(self):
+        return f"MetadataProposal({self.status}: {self.item_id})"
+
+
 class SignatureRequest(BaseModel):
     """An e-signature request on a file item (H1.8 / Sahla Sign).
 

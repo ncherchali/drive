@@ -255,6 +255,19 @@ class ContentRelationFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
 
 
+class MetadataProposalFactory(factory.django.DjangoModelFactory):
+    """A factory to create metadata proposals for testing purposes (E2.2)."""
+
+    class Meta:
+        model = models.MetadataProposal
+
+    item = factory.SubFactory(ItemFactory)
+    template = factory.SubFactory(MetadataTemplateFactory)
+    values = factory.LazyFunction(dict)
+    source = models.MetadataSourceChoices.HUMAN
+    creator = factory.SubFactory(UserFactory)
+
+
 class AuditEventFactory(factory.django.DjangoModelFactory):
     """A factory to create audit events for testing purposes."""
 

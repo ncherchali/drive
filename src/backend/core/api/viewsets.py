@@ -51,6 +51,7 @@ from core.entitlements import get_entitlements_backend
 from core.services import audit
 from core.services import content_types as content_types_service
 from core.services import metadata as metadata_service
+from core.services import provenance as provenance_service
 from core.services import relations as relations_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
@@ -1886,6 +1887,92 @@ class ItemViewSet(
             status_data.pop("relations"), many=True
         ).data
         return drf.response.Response({"parts": parts, **status_data})
+
+    @drf.decorators.action(
+        detail=True, methods=["get", "post"], url_path="metadata-proposals"
+    )
+    def metadata_proposals(self, request, *args, **kwargs):
+        """List or record proposed metadata enrichments (ADR-0001 §6).
+
+        Derived/agentic writes land here as `proposed` (with provenance) — they
+        never touch the item's authoritative metadata until promoted.
+        """
+        item = self.get_object()
+        if request.method == "GET":
+            queryset = item.metadata_proposals.all()
+            serializer = serializers.MetadataProposalSerializer(queryset, many=True)
+            return drf.response.Response(serializer.data)
+
+        serializer = serializers.MetadataProposeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        try:
+            template = models.MetadataTemplate.objects.get(key=data["template"])
+        except models.MetadataTemplate.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        try:
+            proposal = provenance_service.propose(
+                item,
+                template,
+                data["values"],
+                provenance={
+                    "source": data["source"],
+                    "source_ref": data["source_ref"],
+                    "model": data["model"],
+                    "confidence": data.get("confidence"),
+                    "prompt": data["prompt"],
+                },
+                actor=request.user,
+            )
+        except metadata_service.MetadataValidationError as excpt:
+            raise drf.exceptions.ValidationError(excpt.errors) from excpt
+        return drf.response.Response(
+            serializers.MetadataProposalSerializer(proposal).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    def _get_proposal(self, item, proposal_id):
+        """Fetch a proposal scoped to the item, or raise 404."""
+        try:
+            return item.metadata_proposals.get(pk=proposal_id)
+        except models.MetadataProposal.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["post"],
+        url_path="metadata-proposals/(?P<proposal_id>[^/.]+)/accept",
+    )
+    def metadata_proposal_accept(self, request, *args, proposal_id=None, **kwargs):
+        """Promote a proposal into the item's authoritative metadata (§6)."""
+        item = self.get_object()
+        proposal = self._get_proposal(item, proposal_id)
+        try:
+            provenance_service.accept(proposal, actor=request.user)
+        except provenance_service.ProvenanceError as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        except metadata_service.MetadataValidationError as excpt:
+            raise drf.exceptions.ValidationError(excpt.errors) from excpt
+        return drf.response.Response(
+            serializers.MetadataProposalSerializer(proposal).data
+        )
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["post"],
+        url_path="metadata-proposals/(?P<proposal_id>[^/.]+)/reject",
+    )
+    def metadata_proposal_reject(self, request, *args, proposal_id=None, **kwargs):
+        """Reject a proposal without touching authoritative metadata (§6)."""
+        item = self.get_object()
+        proposal = self._get_proposal(item, proposal_id)
+        try:
+            provenance_service.reject(proposal, actor=request.user)
+        except provenance_service.ProvenanceError as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        return drf.response.Response(
+            serializers.MetadataProposalSerializer(proposal).data
+        )
 
     @drf.decorators.action(detail=True, methods=["get", "post"], url_path="retention")
     def retention(self, request, *args, **kwargs):

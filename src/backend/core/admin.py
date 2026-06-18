@@ -303,6 +303,38 @@ class ContentRelationAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(models.MetadataProposal)
+class MetadataProposalAdmin(admin.ModelAdmin):
+    """Read-only view over metadata proposals & their provenance (E2.2 §6).
+
+    Promotion (accept/reject) is a governed act performed through the API, not
+    by editing rows here.
+    """
+
+    fields = (
+        "item",
+        "template",
+        "values",
+        "source",
+        "source_ref",
+        "model",
+        "confidence",
+        "prompt",
+        "status",
+        "creator",
+        "validated_by",
+        "validated_at",
+        "created_at",
+    )
+    readonly_fields = fields
+    list_display = ("item", "template", "source", "status", "confidence", "created_at")
+    list_filter = ("status", "source")
+    search_fields = ("item__title", "model", "source_ref")
+
+    def has_add_permission(self, request):
+        return False
+
+
 @admin.register(models.SignatureRequest)
 class SignatureRequestAdmin(admin.ModelAdmin):
     """Read-only view over e-signature requests (H1.8)."""

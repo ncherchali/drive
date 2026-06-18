@@ -22,6 +22,11 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "relations": {"GET": "download", "POST": "update"},
     "relations_detail": {"DELETE": "update"},
     "manifest": {"GET": "download"},
+    # Metadata provenance (ADR-0001 §6): proposing is a write; promoting
+    # (accept/reject) into the authoritative source of truth is a governance act.
+    "metadata_proposals": {"GET": "download", "POST": "update"},
+    "metadata_proposal_accept": {"POST": "accesses_manage"},
+    "metadata_proposal_reject": {"POST": "accesses_manage"},
     # Retention & legal holds (H1.6 / Coffre) are governance acts: managers only.
     "retention": {"GET": "accesses_manage", "POST": "accesses_manage"},
     "legal_hold": {"GET": "accesses_manage", "POST": "accesses_manage"},
