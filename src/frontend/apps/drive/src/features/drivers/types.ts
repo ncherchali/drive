@@ -213,6 +213,15 @@ export type ShareLink = {
   created_at: string;
 };
 
+// Une version S3 du fichier d'un item (H1.4).
+export type ItemVersion = {
+  version_id: string;
+  last_modified: string;
+  size: number;
+  is_latest: boolean;
+  etag: string;
+};
+
 // Réponse de la résolution publique d'un lien de partage.
 export type ShareLinkResolution = {
   item: {

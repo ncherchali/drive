@@ -19,6 +19,7 @@ import {
   Item,
   ItemBreadcrumb,
   ItemType,
+  ItemVersion,
   ShareLink,
   ShareLinkResolution,
   User,
@@ -136,6 +137,17 @@ export abstract class Driver {
     token: string,
     password?: string,
   ): Promise<ShareLinkResolution>;
+  // File versions (H1.4)
+  abstract getItemVersions(itemId: string): Promise<ItemVersion[]>;
+  abstract getItemVersionDownloadUrl(
+    itemId: string,
+    versionId: string,
+  ): Promise<string>;
+  abstract restoreItemVersion(
+    itemId: string,
+    versionId: string,
+  ): Promise<void>;
+  abstract deleteItemVersion(itemId: string, versionId: string): Promise<void>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(

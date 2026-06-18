@@ -203,7 +203,8 @@
           "tabs": {
             "info": "Information",
             "activity": "Activity",
-            "links": "Links"
+            "links": "Links",
+            "versions": "Versions"
           },
           "share_links": {
             "role": "Permission",
@@ -222,6 +223,14 @@
             "protected": "Password",
             "expires_on": "Expires {{date}}",
             "invalid": "Expired or exhausted"
+          },
+          "versions": {
+            "loading": "Loading…",
+            "empty": "No version yet.",
+            "current": "Current",
+            "download": "Download",
+            "restore": "Restore",
+            "delete": "Delete"
           },
           "activity": {
             "loading": "Loading activity…",
@@ -874,7 +883,8 @@
           "tabs": {
             "info": "Informations",
             "activity": "Activité",
-            "links": "Liens"
+            "links": "Liens",
+            "versions": "Versions"
           },
           "share_links": {
             "role": "Permission",
@@ -893,6 +903,14 @@
             "protected": "Mot de passe",
             "expires_on": "Expire le {{date}}",
             "invalid": "Expiré ou épuisé"
+          },
+          "versions": {
+            "loading": "Chargement…",
+            "empty": "Aucune version.",
+            "current": "Actuelle",
+            "download": "Télécharger",
+            "restore": "Restaurer",
+            "delete": "Supprimer"
           },
           "activity": {
             "loading": "Chargement de l'activité…",
@@ -1553,7 +1571,8 @@
           "tabs": {
             "info": "Informatie",
             "activity": "Activiteit",
-            "links": "Links"
+            "links": "Links",
+            "versions": "Versies"
           },
           "share_links": {
             "role": "Toestemming",
@@ -1572,6 +1591,14 @@
             "protected": "Wachtwoord",
             "expires_on": "Verloopt {{date}}",
             "invalid": "Verlopen of uitgeput"
+          },
+          "versions": {
+            "loading": "Laden…",
+            "empty": "Nog geen versie.",
+            "current": "Huidige",
+            "download": "Downloaden",
+            "restore": "Herstellen",
+            "delete": "Verwijderen"
           },
           "activity": {
             "loading": "Activiteit laden…",

@@ -11,7 +11,7 @@ import { X, Users } from "lucide-react";
 import { useModal } from "@/components/use-modal";
 import { useTranslation } from "react-i18next";
 import { IconSize } from "@/features/ui/components/icon/Icon";
-import { Item, ItemUploadState } from "@/features/drivers/types";
+import { Item, ItemType, ItemUploadState } from "@/features/drivers/types";
 import { ItemIcon } from "../icons/ItemIcon";
 import { useGlobalExplorer } from "../GlobalExplorerContext";
 import { useSelectedItems } from "../../stores/selectionStore";
@@ -19,6 +19,7 @@ import { ItemShareModal } from "../modals/share/ItemShareModal";
 import { ItemInfoDs } from "@/features/items/components/ItemInfoDs";
 import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
 import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
+import { ItemVersionsDs } from "@/features/items/components/ItemVersionsDs";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -159,6 +160,11 @@ export const ExplorerRightPanelContentDs = ({
                 <TabsTrigger value="links">
                   {t("explorer.rightPanel.tabs.links")}
                 </TabsTrigger>
+                {firstSelectedItem.type === ItemType.FILE && (
+                  <TabsTrigger value="versions">
+                    {t("explorer.rightPanel.tabs.versions")}
+                  </TabsTrigger>
+                )}
               </TabsList>
               <TabsContent value="info">
                 <ItemInfoDs item={firstSelectedItem} />
@@ -169,6 +175,16 @@ export const ExplorerRightPanelContentDs = ({
               <TabsContent value="links">
                 <ItemShareLinksDs itemId={firstSelectedItem.id} />
               </TabsContent>
+              {firstSelectedItem.type === ItemType.FILE && (
+                <TabsContent value="versions">
+                  <ItemVersionsDs
+                    itemId={firstSelectedItem.id}
+                    filename={
+                      firstSelectedItem.filename ?? firstSelectedItem.title
+                    }
+                  />
+                </TabsContent>
+              )}
             </Tabs>
           ) : (
             <div className="border-t border-solid border-border pt-3">

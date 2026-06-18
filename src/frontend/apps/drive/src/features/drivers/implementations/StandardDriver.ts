@@ -26,6 +26,7 @@ import {
   Item,
   ItemBreadcrumb,
   ItemType,
+  ItemVersion,
   ShareLink,
   ShareLinkResolution,
   User,
@@ -212,6 +213,34 @@ export class StandardDriver extends Driver {
       body: JSON.stringify({ token, password }),
     });
     return await response.json();
+  }
+
+  async getItemVersions(itemId: string): Promise<ItemVersion[]> {
+    const response = await fetchAPI(`items/${itemId}/versions/`);
+    return await response.json();
+  }
+
+  async getItemVersionDownloadUrl(
+    itemId: string,
+    versionId: string,
+  ): Promise<string> {
+    const response = await fetchAPI(
+      `items/${itemId}/versions/${versionId}/`,
+    );
+    const data = await response.json();
+    return data.url;
+  }
+
+  async restoreItemVersion(itemId: string, versionId: string): Promise<void> {
+    await fetchAPI(`items/${itemId}/versions/${versionId}/restore/`, {
+      method: "POST",
+    });
+  }
+
+  async deleteItemVersion(itemId: string, versionId: string): Promise<void> {
+    await fetchAPI(`items/${itemId}/versions/${versionId}/`, {
+      method: "DELETE",
+    });
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

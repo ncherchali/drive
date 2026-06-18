@@ -44,6 +44,15 @@ export const useItemShareLinks = (itemId: string) => {
   });
 };
 
+export const useItemVersions = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemVersions", itemId],
+    queryFn: () => getDriver().getItemVersions(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useInfiniteItemInvitations = (itemId: string) => {
   const driver = getDriver();
   return useInfiniteQuery({
