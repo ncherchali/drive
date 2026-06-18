@@ -1008,6 +1008,11 @@ class MetadataApplySerializer(serializers.Serializer):
 class ContentObjectTypeSerializer(serializers.ModelSerializer):
     """A governed content object type from the registry (E2.2 / ADR-0001)."""
 
+    template_key = serializers.SlugField(
+        source="metadata_template.key", read_only=True, allow_null=True
+    )
+    template_fields = serializers.SerializerMethodField()
+
     class Meta:
         model = models.ContentObjectType
         fields = [
@@ -1016,13 +1021,20 @@ class ContentObjectTypeSerializer(serializers.ModelSerializer):
             "label",
             "base",
             "metadata_template",
+            "template_key",
+            "template_fields",
             "behavior_proxy",
             "allowed_child_types",
+            "required_roles",
             "is_active",
             "description",
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
+
+    def get_template_fields(self, obj):
+        """The schema fields of the attached metadata template (or empty)."""
+        return obj.metadata_template.fields if obj.metadata_template else []
 
 
 class ContentTypeAssignSerializer(serializers.Serializer):

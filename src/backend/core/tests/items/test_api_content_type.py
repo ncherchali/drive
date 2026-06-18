@@ -50,6 +50,23 @@ def test_api_registry_lists_seeded_workspace():
     assert "workspace" in keys
 
 
+def test_api_registry_is_readable_by_any_authenticated_user():
+    """Reading the registry is open (the UI offers types when creating items)."""
+    user = factories.UserFactory()
+    response = _client(user).get(REGISTRY_URL)
+    assert response.status_code == 200
+    keys = [t["key"] for t in response.json()]
+    assert "fiche_client" in keys
+
+
+def test_api_registry_exposes_template_fields():
+    user = factories.UserFactory()
+    response = _client(user).get(REGISTRY_URL)
+    fiche = next(t for t in response.json() if t["key"] == "fiche_client")
+    field_keys = [field["key"] for field in fiche["template_fields"]]
+    assert "raison_sociale" in field_keys
+
+
 # --- Item assignment ---------------------------------------------------------
 
 

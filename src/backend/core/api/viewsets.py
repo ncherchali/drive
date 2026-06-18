@@ -3016,13 +3016,21 @@ class MetadataTemplateViewSet(viewsets.ModelViewSet):
 
 
 class ContentObjectTypeViewSet(viewsets.ModelViewSet):
-    """Manage the content object type registry (E2.2 / ADR-0001). Admin-only."""
+    """The content object type registry (E2.2 / ADR-0001).
 
-    permission_classes = [IsAdminUser]
+    Reading is open to any authenticated user (so the UI can offer record/folder
+    types when creating items); writing the registry remains admin-only.
+    """
+
     queryset = models.ContentObjectType.objects.all()
     serializer_class = serializers.ContentObjectTypeSerializer
     lookup_field = "key"
     pagination_class = None
+
+    def get_permissions(self):
+        if self.action in ("list", "retrieve"):
+            return [permissions.IsAuthenticated()]
+        return [IsAdminUser()]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
