@@ -217,3 +217,134 @@ class InvitationAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.issuer = request.user
         obj.save()
+
+
+@admin.register(models.MetadataTemplate)
+class MetadataTemplateAdmin(admin.ModelAdmin):
+    """Admin console for governed metadata templates (E2.1).
+
+    The schema lives in the `fields` JSON: a list of
+    `{"key", "type"[, "required", "options"]}` (type in string/number/
+    boolean/date/enum), validated on save by the model validator.
+    """
+
+    fields = ("key", "name", "fields", "creator", "created_at", "updated_at")
+    readonly_fields = ("creator", "created_at", "updated_at")
+    list_display = ("key", "name", "creator", "created_at")
+    search_fields = ("key", "name")
+    ordering = ("name",)
+
+    def save_model(self, request, obj, form, change):
+        if not change and obj.creator_id is None:
+            obj.creator = request.user
+        obj.save()
+
+
+@admin.register(models.SignatureRequest)
+class SignatureRequestAdmin(admin.ModelAdmin):
+    """Read-only view over e-signature requests (H1.8)."""
+
+    fields = (
+        "item",
+        "signer_email",
+        "status",
+        "external_id",
+        "signed_at",
+        "creator",
+        "created_at",
+    )
+    readonly_fields = fields
+    list_display = ("item", "signer_email", "status", "signed_at", "created_at")
+    list_filter = ("status",)
+    search_fields = ("item__title", "signer_email", "external_id")
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(models.DataRoom)
+class DataRoomAdmin(admin.ModelAdmin):
+    """Admin console for data rooms (H1 / secured folders)."""
+
+    fields = (
+        "item",
+        "allow_download",
+        "watermark_enabled",
+        "creator",
+        "created_at",
+    )
+    readonly_fields = ("item", "creator", "created_at")
+    list_display = ("item", "allow_download", "watermark_enabled", "created_at")
+    list_filter = ("allow_download", "watermark_enabled")
+    search_fields = ("item__title",)
+
+
+@admin.register(models.LegalHold)
+class LegalHoldAdmin(admin.ModelAdmin):
+    """Admin console for legal holds (H1.6 / Coffre)."""
+
+    fields = ("item", "name", "reason", "is_active", "creator", "created_at")
+    readonly_fields = ("item", "creator", "created_at")
+    list_display = ("item", "name", "is_active", "creator", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("item__title", "name", "reason")
+
+
+@admin.register(models.ShareLink)
+class ShareLinkAdmin(admin.ModelAdmin):
+    """Read-only view over advanced share links (H1.3)."""
+
+    fields = (
+        "item",
+        "token",
+        "role",
+        "expires_at",
+        "max_downloads",
+        "download_count",
+        "creator",
+        "created_at",
+    )
+    readonly_fields = fields
+    list_display = ("item", "role", "expires_at", "download_count", "created_at")
+    list_filter = ("role",)
+    search_fields = ("item__title", "token")
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(models.AuditEvent)
+class AuditEventAdmin(admin.ModelAdmin):
+    """Strictly read-only audit log (H1.5).
+
+    The audit trail is append-only and tamper-evident (hash chain); the admin
+    must never create, edit or delete entries — only consult them.
+    """
+
+    fields = (
+        "created_at",
+        "action",
+        "actor",
+        "actor_type",
+        "target",
+        "target_uuid",
+        "target_type",
+        "path_snapshot",
+        "metadata",
+        "prev_hash",
+        "entry_hash",
+    )
+    readonly_fields = fields
+    list_display = ("created_at", "action", "actor_type", "actor", "target_type")
+    list_filter = ("action", "actor_type", "target_type")
+    search_fields = ("action", "target_uuid", "actor__email")
+    date_hierarchy = "created_at"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
