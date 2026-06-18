@@ -988,6 +988,16 @@ class Base(Configuration):
         "", environ_name="OBSERVABILITY_METRICS_TOKEN", environ_prefix=None
     )
 
+    # H1.11 (AI-ready foundations): fixed embedding dimension (frozen before the
+    # HNSW index, B1-3) and the semantic-indexing feature flag. The real pipeline
+    # and the pgvector VectorField/HNSW migration land in H2.2.
+    EMBEDDING_DIMENSION = values.IntegerValue(
+        1024, environ_name="EMBEDDING_DIMENSION", environ_prefix=None
+    )
+    FEATURES_SEMANTIC_INDEX = values.BooleanValue(
+        False, environ_name="FEATURES_SEMANTIC_INDEX", environ_prefix=None
+    )
+
     # Mail
     EMAIL_BACKEND = values.Value("django.core.mail.backends.smtp.EmailBackend")
     EMAIL_BRAND_NAME = values.Value(None)

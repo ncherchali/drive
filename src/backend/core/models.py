@@ -1777,6 +1777,38 @@ class DataRoom(BaseModel):
         return f"DataRoom({self.item_id})"
 
 
+class ItemEmbedding(BaseModel):
+    """Semantic embedding of an item's content (H1.11 / B1-3, AI-ready).
+
+    Foundation only: the table is empty until the semantic-indexing pipeline
+    lands (H2.2). The vector is stored as a native Postgres float array here; it
+    migrates to a pgvector ``VectorField`` with an HNSW index once the
+    environment ships pgvector. The dimension is fixed (see EMBEDDING_DIMENSION)
+    before any index is built.
+    """
+
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="embeddings"
+    )
+    model_name = models.CharField(max_length=100)
+    dimension = models.PositiveIntegerField()
+    embedding = ArrayField(
+        models.FloatField(),
+        help_text=_("Embedding vector (pgvector VectorField + HNSW in H2.2)."),
+    )
+
+    class Meta:
+        db_table = "drive_item_embedding"
+        verbose_name = _("Item embedding")
+        verbose_name_plural = _("Item embeddings")
+        indexes = [
+            models.Index(fields=["item"], name="drive_item_embedding_item_idx"),
+        ]
+
+    def __str__(self):
+        return f"ItemEmbedding({self.item_id}, {self.model_name})"
+
+
 class AuditEvent(models.Model):
     """Append-only audit log entry — foundation of the sovereign Sahla Audit.
 

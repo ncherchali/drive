@@ -57,6 +57,7 @@ from core.services.search_indexers import (
 )
 from core.storage import get_storage_compute_backend
 from core.tasks.audit import record_media_access
+from core.tasks.indexing import enqueue_indexing
 from core.tasks.item import duplicate_file, process_item_purge, rename_file
 from core.utils.analytics import posthog_capture
 from wopi.services import access as access_service
@@ -860,6 +861,9 @@ class ItemViewSet(
         item.size = file_size
 
         item.save(update_fields=["upload_state", "mimetype", "size"])
+
+        # H1.11: post a semantic-indexing message (no-op until H2.2) on upload.
+        enqueue_indexing(item)
 
         if head_response["ContentType"] != mimetype:
             logger.info(
