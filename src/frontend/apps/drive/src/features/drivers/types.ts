@@ -174,6 +174,16 @@ export enum Role {
   OWNER = "owner",
 }
 
+// Résumé des métriques de supervision (H1.9, staff).
+export type MetricsSummary = {
+  items_total: number;
+  users_total: number;
+  audit_events_total: number;
+  legal_holds_active_total: number;
+  data_rooms_total: number;
+  celery_queue_length?: number;
+};
+
 export type User = {
   id: string;
   email: string;

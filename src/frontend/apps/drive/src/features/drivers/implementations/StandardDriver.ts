@@ -30,6 +30,7 @@ import {
   ItemType,
   ItemVersion,
   LegalHold,
+  MetricsSummary,
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
@@ -312,6 +313,11 @@ export class StandardDriver extends Driver {
 
   async deleteItemDataRoom(itemId: string): Promise<void> {
     await fetchAPI(`items/${itemId}/data-room/`, { method: "DELETE" });
+  }
+
+  async getMetricsSummary(): Promise<MetricsSummary> {
+    const response = await fetchAPI(`metrics/summary/`);
+    return await response.json();
   }
 
   async createAccess(data: DTOCreateAccess): Promise<void> {

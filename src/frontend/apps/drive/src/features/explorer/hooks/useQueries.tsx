@@ -80,6 +80,15 @@ export const useItemDataRoom = (itemId: string) => {
   });
 };
 
+export const useMetricsSummary = () => {
+  return useQuery({
+    queryKey: ["metricsSummary"],
+    queryFn: () => getDriver().getMetricsSummary(),
+    retry: false,
+    refetchInterval: 30000,
+  });
+};
+
 export const useInfiniteItemInvitations = (itemId: string) => {
   const driver = getDriver();
   return useInfiniteQuery({

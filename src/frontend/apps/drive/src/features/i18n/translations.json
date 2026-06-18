@@ -13,6 +13,17 @@
         "folder": "This link points to a folder.",
         "error": "Invalid link, wrong password, or the link has expired."
       },
+      "supervision": {
+        "title": "Supervision",
+        "loading": "Loading metrics…",
+        "error": "Metrics are reserved for administrators.",
+        "items": "Items",
+        "users": "Users",
+        "audit_events": "Audit events",
+        "legal_holds": "Active legal holds",
+        "data_rooms": "Data rooms",
+        "celery_queue": "Celery queue"
+      },
       "403": {
         "title": "You don't have the necessary permissions to access this page.",
         "button": "Home"
@@ -712,6 +723,17 @@
         "download": "Télécharger",
         "folder": "Ce lien pointe vers un dossier.",
         "error": "Lien invalide, mot de passe incorrect ou lien expiré."
+      },
+      "supervision": {
+        "title": "Supervision",
+        "loading": "Chargement des métriques…",
+        "error": "Les métriques sont réservées aux administrateurs.",
+        "items": "Éléments",
+        "users": "Utilisateurs",
+        "audit_events": "Événements d'audit",
+        "legal_holds": "Conservations actives",
+        "data_rooms": "Data rooms",
+        "celery_queue": "File Celery"
       },
       "403": {
         "title": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
@@ -1420,6 +1442,17 @@
         "download": "Downloaden",
         "folder": "Deze link verwijst naar een map.",
         "error": "Ongeldige link, verkeerd wachtwoord of de link is verlopen."
+      },
+      "supervision": {
+        "title": "Supervisie",
+        "loading": "Statistieken laden…",
+        "error": "Statistieken zijn alleen voor beheerders.",
+        "items": "Items",
+        "users": "Gebruikers",
+        "audit_events": "Auditgebeurtenissen",
+        "legal_holds": "Actieve bewaringen",
+        "data_rooms": "Datarooms",
+        "celery_queue": "Celery-wachtrij"
       },
       "403": {
         "title": "U beschikt niet over de benodigde rechten om dit bestand te openen.",

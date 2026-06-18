@@ -22,6 +22,7 @@ import {
   ItemType,
   ItemVersion,
   LegalHold,
+  MetricsSummary,
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
@@ -173,6 +174,8 @@ export abstract class Driver {
     settings: { allow_download: boolean },
   ): Promise<DataRoom>;
   abstract deleteItemDataRoom(itemId: string): Promise<void>;
+  // Observability (H1.9)
+  abstract getMetricsSummary(): Promise<MetricsSummary>;
   abstract createAccess(data: DTOCreateAccess): Promise<void>;
   abstract updateAccess(payload: DTOUpdateAccess): Promise<Access | void>;
   abstract updateLinkConfiguration(
