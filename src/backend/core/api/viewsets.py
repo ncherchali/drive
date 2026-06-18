@@ -49,6 +49,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from core import enums, models
 from core.entitlements import get_entitlements_backend
 from core.services import audit
+from core.services import content_types as content_types_service
 from core.services import metadata as metadata_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
@@ -1786,6 +1787,32 @@ class ItemViewSet(
             raise drf.exceptions.ValidationError(excpt.errors) from excpt
         return drf.response.Response(item.metadata)
 
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="content-type")
+    def content_type(self, request, *args, **kwargs):
+        """Read or assign an item's governed content type (E2.2 / ADR-0001).
+
+        POST with `content_type=null` clears it back to a plain file/folder; a
+        non-null key is validated against the registry (the item's structural
+        type must match the type's base).
+        """
+        item = self.get_object()
+        if request.method == "GET":
+            return drf.response.Response({"content_type": item.content_type})
+
+        serializer = serializers.ContentTypeAssignSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        type_key = serializer.validated_data.get("content_type")
+        try:
+            if type_key:
+                content_types_service.assign_content_type(
+                    item, type_key, actor=request.user
+                )
+            else:
+                content_types_service.clear_content_type(item, actor=request.user)
+        except content_types_service.ContentTypeError as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        return drf.response.Response({"content_type": item.content_type})
+
     @drf.decorators.action(detail=True, methods=["get", "post"], url_path="retention")
     def retention(self, request, *args, **kwargs):
         """Read, set or extend the retention deadline of an item (H1.6, extend-only)."""
@@ -2786,6 +2813,19 @@ class MetadataTemplateViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = models.MetadataTemplate.objects.all()
     serializer_class = serializers.MetadataTemplateSerializer
+    lookup_field = "key"
+    pagination_class = None
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
+
+class ContentObjectTypeViewSet(viewsets.ModelViewSet):
+    """Manage the content object type registry (E2.2 / ADR-0001). Admin-only."""
+
+    permission_classes = [IsAdminUser]
+    queryset = models.ContentObjectType.objects.all()
+    serializer_class = serializers.ContentObjectTypeSerializer
     lookup_field = "key"
     pagination_class = None
 

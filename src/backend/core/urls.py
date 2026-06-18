@@ -20,6 +20,11 @@ router.register(
     viewsets.MetadataTemplateViewSet,
     basename="metadata_templates",
 )
+router.register(
+    "content-object-types",
+    viewsets.ContentObjectTypeViewSet,
+    basename="content_object_types",
+)
 
 # - Routes nested under a item
 item_related_router = DefaultRouter()

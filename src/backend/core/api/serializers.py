@@ -1004,6 +1004,32 @@ class MetadataApplySerializer(serializers.Serializer):
     cascade = serializers.BooleanField(default=False)
 
 
+class ContentObjectTypeSerializer(serializers.ModelSerializer):
+    """A governed content object type from the registry (E2.2 / ADR-0001)."""
+
+    class Meta:
+        model = models.ContentObjectType
+        fields = [
+            "id",
+            "key",
+            "label",
+            "base",
+            "metadata_template",
+            "behavior_proxy",
+            "allowed_child_types",
+            "is_active",
+            "description",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+
+
+class ContentTypeAssignSerializer(serializers.Serializer):
+    """Input to assign (or clear) an item's content type (E2.2)."""
+
+    content_type = serializers.SlugField(allow_null=True, required=False)
+
+
 class RetentionSerializer(serializers.Serializer):
     """Input to set/extend an item's retention deadline (H1.6)."""
 

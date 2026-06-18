@@ -21,6 +21,7 @@ pytestmark = pytest.mark.django_db
     "model",
     [
         models.MetadataTemplate,
+        models.ContentObjectType,
         models.SignatureRequest,
         models.DataRoom,
         models.LegalHold,

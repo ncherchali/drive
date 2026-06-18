@@ -240,6 +240,39 @@ class MetadataTemplateAdmin(admin.ModelAdmin):
         obj.save()
 
 
+@admin.register(models.ContentObjectType)
+class ContentObjectTypeAdmin(admin.ModelAdmin):
+    """Admin console for the content object type registry (E2.2 / ADR-0001).
+
+    Types are defined as data here (base + metadata template + behaviour proxy
+    + containment rules) — never as Python subclasses.
+    """
+
+    fields = (
+        "key",
+        "label",
+        "base",
+        "metadata_template",
+        "behavior_proxy",
+        "allowed_child_types",
+        "is_active",
+        "description",
+        "creator",
+        "created_at",
+        "updated_at",
+    )
+    readonly_fields = ("creator", "created_at", "updated_at")
+    list_display = ("key", "label", "base", "is_active", "created_at")
+    list_filter = ("base", "is_active")
+    search_fields = ("key", "label", "description")
+    ordering = ("label",)
+
+    def save_model(self, request, obj, form, change):
+        if not change and obj.creator_id is None:
+            obj.creator = request.user
+        obj.save()
+
+
 @admin.register(models.SignatureRequest)
 class SignatureRequestAdmin(admin.ModelAdmin):
     """Read-only view over e-signature requests (H1.8)."""

@@ -1842,6 +1842,101 @@ class MetadataTemplate(BaseModel):
         return f"MetadataTemplate({self.key})"
 
 
+class ContentObjectType(BaseModel):
+    """A business content-object type (E2.2 / ADR-0001 §2 — registry-in-data).
+
+    Layers business semantics on top of an Item's structural `type`: it pins a
+    structural `base` (FOLDER/FILE), an optional governed `MetadataTemplate`
+    schema, an optional behaviour `behavior_proxy` (dotted path to a Django
+    proxy model), and containment rules. Defined as DATA (a row), never as a
+    Python class hierarchy — there is NO multi-table inheritance (the single
+    `drive_item` table / ltree is preserved).
+    """
+
+    key = models.SlugField(max_length=100, unique=True)
+    label = models.CharField(max_length=255)
+    base = models.CharField(
+        _("structural base"),
+        max_length=30,
+        choices=ItemTypeChoices.choices,
+        default=ItemTypeChoices.FOLDER,
+        help_text=_("Structural type this content type inherits from (ADR-0001)."),
+    )
+    metadata_template = models.ForeignKey(
+        MetadataTemplate,
+        on_delete=models.SET_NULL,
+        related_name="content_object_types",
+        null=True,
+        blank=True,
+    )
+    behavior_proxy = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=_("Dotted path to a Django proxy model implementing behaviour."),
+    )
+    allowed_child_types = models.JSONField(
+        default=list,
+        blank=True,
+        help_text=_("Content-type keys allowed as children; empty = unrestricted."),
+    )
+    is_active = models.BooleanField(default=True)
+    description = models.TextField(blank=True, default="")
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="content_object_types_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_content_object_type"
+        verbose_name = _("Content object type")
+        verbose_name_plural = _("Content object types")
+        ordering = ("label",)
+
+    def __str__(self):
+        return f"ContentObjectType({self.key})"
+
+
+# Built-in content type keys (ADR-0001 §9 phase 1 — start with WORKSPACE only).
+WORKSPACE_CONTENT_TYPE = "workspace"
+
+
+class WorkspaceManager(ItemManager):
+    """Scopes items to the WORKSPACE content type (ADR-0001 §4, Ex.1)."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(content_type=WORKSPACE_CONTENT_TYPE)
+
+
+class Workspace(Item):
+    """A FOLDER elevated to a first-class workspace (E2.2 / ADR-0001 Ex.1).
+
+    Proxy over the single `drive_item` table (NEVER MTI): same rows, richer
+    behaviour. A workspace is an Item with `type=FOLDER` and
+    `content_type="workspace"`; it inherits the whole container (sharing,
+    trashbin, search, ltree cascade) and adds its own properties/rules.
+    """
+
+    objects = WorkspaceManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = _("Workspace")
+        verbose_name_plural = _("Workspaces")
+
+    @property
+    def branding(self):
+        """Branding block from the governed workspace metadata namespace."""
+        return (self.metadata or {}).get(WORKSPACE_CONTENT_TYPE, {}).get("branding")
+
+    def members(self):
+        """Accesses granted on this workspace (its members)."""
+        return self.accesses.all()
+
+
 class SignatureRequest(BaseModel):
     """An e-signature request on a file item (H1.8 / Sahla Sign).
 

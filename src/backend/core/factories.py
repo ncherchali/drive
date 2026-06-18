@@ -231,6 +231,18 @@ class MetadataTemplateFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
 
 
+class ContentObjectTypeFactory(factory.django.DjangoModelFactory):
+    """A factory to create content object types for testing purposes (E2.2)."""
+
+    class Meta:
+        model = models.ContentObjectType
+
+    key = factory.Sequence(lambda n: f"type-{n}")
+    label = factory.Faker("sentence", nb_words=2)
+    base = models.ItemTypeChoices.FOLDER
+    creator = factory.SubFactory(UserFactory)
+
+
 class AuditEventFactory(factory.django.DjangoModelFactory):
     """A factory to create audit events for testing purposes."""
 
