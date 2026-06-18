@@ -271,6 +271,73 @@ class UserViewSet(
         context = {"request": request}
         return drf.response.Response(self.get_serializer(request.user, context=context).data)
 
+    @drf.decorators.action(detail=False, methods=["get"], url_path="me/data-export")
+    def data_export(self, request, *args, **kwargs):
+        """Export the personal data of the current user (data-subject access, H1.10)."""
+        user = request.user
+        data = {
+            "profile": {
+                "id": str(user.id),
+                "sub": user.sub,
+                "email": user.email,
+                "full_name": user.full_name,
+                "short_name": user.short_name,
+                "language": user.language,
+                "created_at": user.created_at.isoformat() if user.created_at else None,
+            },
+            "items_created": [
+                {
+                    "id": str(item.id),
+                    "title": item.title,
+                    "path": str(item.path),
+                    "created_at": item.created_at.isoformat(),
+                }
+                for item in models.Item.objects.filter(creator=user).only(
+                    "id", "title", "path", "created_at"
+                )
+            ],
+            "accesses": [
+                {"item_id": str(access.item_id), "role": access.role}
+                for access in models.ItemAccess.objects.filter(user=user)
+            ],
+            "audit_events": [
+                {
+                    "action": event.action,
+                    "created_at": event.created_at.isoformat(),
+                    "target_uuid": str(event.target_uuid) if event.target_uuid else None,
+                }
+                for event in models.AuditEvent.objects.filter(actor=user)[:1000]
+            ],
+        }
+        audit.record("user.data_export", actor=user, metadata={"user_id": str(user.id)})
+        return drf.response.Response(data)
+
+    @drf.decorators.action(detail=False, methods=["post"], url_path="me/data-deletion")
+    def data_deletion(self, request, *args, **kwargs):
+        """Erase (anonymize) the current user's personal data (right to erasure, H1.10).
+
+        PII is scrubbed and the account deactivated, while the user row is kept so
+        the immutable audit trail and content ownership stay referentially intact.
+        """
+        user = request.user
+        audit.record("user.data_deletion", actor=user, metadata={"sub": user.sub})
+        user.email = None
+        user.admin_email = None
+        user.full_name = None
+        user.short_name = None
+        user.is_active = False
+        user.save(
+            update_fields=[
+                "email",
+                "admin_email",
+                "full_name",
+                "short_name",
+                "is_active",
+                "updated_at",
+            ]
+        )
+        return drf.response.Response({"detail": "Your personal data has been erased."})
+
 
 class ItemMetadata(drf.metadata.SimpleMetadata):
     """Custom metadata class to add information"""
