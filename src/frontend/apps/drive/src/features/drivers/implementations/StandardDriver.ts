@@ -38,6 +38,7 @@ import {
   Manifest,
   MetadataProposal,
   MetadataTemplate,
+  MetadataTemplateInput,
   MetricsSummary,
   RetentionStatus,
   ShareLink,
@@ -441,6 +442,31 @@ export class StandardDriver extends Driver {
   async getMetadataTemplates(): Promise<MetadataTemplate[]> {
     const response = await fetchAPI(`metadata-templates/`);
     return await response.json();
+  }
+
+  async createMetadataTemplate(
+    payload: MetadataTemplateInput,
+  ): Promise<MetadataTemplate> {
+    const response = await fetchAPI(`metadata-templates/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async updateMetadataTemplate(
+    key: string,
+    payload: MetadataTemplateInput,
+  ): Promise<MetadataTemplate> {
+    const response = await fetchAPI(`metadata-templates/${key}/`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async deleteMetadataTemplate(key: string): Promise<void> {
+    await fetchAPI(`metadata-templates/${key}/`, { method: "DELETE" });
   }
 
   async createContentObjectType(

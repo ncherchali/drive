@@ -27,6 +27,7 @@
       "admin": {
         "content_types": {
           "menu": "Administration",
+          "menu_tab": "Content types",
           "title": "Content types",
           "create": "New type",
           "loading": "Loading…",
@@ -55,6 +56,35 @@
             "behavior_proxy": "Behaviour proxy (dotted path)",
             "description": "Description",
             "active": "Active",
+            "cancel": "Cancel",
+            "submit": "Save"
+          }
+        },
+        "metadata_templates": {
+          "menu_tab": "Metadata templates",
+          "title": "Metadata templates",
+          "create": "New template",
+          "loading": "Loading…",
+          "forbidden": "This area is reserved for administrators.",
+          "confirm_delete": "Delete the template \"{{key}}\"?",
+          "edit": "Edit",
+          "delete": "Delete",
+          "col_key": "Key",
+          "col_name": "Name",
+          "col_fields": "Fields",
+          "col_actions": "Actions",
+          "form": {
+            "title_new": "New metadata template",
+            "title_edit": "Edit metadata template",
+            "key": "Key",
+            "name": "Name",
+            "fields": "Fields",
+            "add_field": "Add field",
+            "no_field": "No field yet.",
+            "field_key": "Field key",
+            "required": "Required",
+            "options": "Options (comma-separated)",
+            "remove_field": "Remove field",
             "cancel": "Cancel",
             "submit": "Save"
           }
@@ -832,6 +862,7 @@
       "admin": {
         "content_types": {
           "menu": "Administration",
+          "menu_tab": "Types de contenu",
           "title": "Types de contenu",
           "create": "Nouveau type",
           "loading": "Chargement…",
@@ -860,6 +891,35 @@
             "behavior_proxy": "Proxy de comportement (chemin pointé)",
             "description": "Description",
             "active": "Actif",
+            "cancel": "Annuler",
+            "submit": "Enregistrer"
+          }
+        },
+        "metadata_templates": {
+          "menu_tab": "Templates de métadonnées",
+          "title": "Templates de métadonnées",
+          "create": "Nouveau template",
+          "loading": "Chargement…",
+          "forbidden": "Cet espace est réservé aux administrateurs.",
+          "confirm_delete": "Supprimer le template « {{key}} » ?",
+          "edit": "Modifier",
+          "delete": "Supprimer",
+          "col_key": "Clé",
+          "col_name": "Nom",
+          "col_fields": "Champs",
+          "col_actions": "Actions",
+          "form": {
+            "title_new": "Nouveau template de métadonnées",
+            "title_edit": "Modifier le template de métadonnées",
+            "key": "Clé",
+            "name": "Nom",
+            "fields": "Champs",
+            "add_field": "Ajouter un champ",
+            "no_field": "Aucun champ.",
+            "field_key": "Clé du champ",
+            "required": "Requis",
+            "options": "Options (séparées par des virgules)",
+            "remove_field": "Retirer le champ",
             "cancel": "Annuler",
             "submit": "Enregistrer"
           }
@@ -1645,6 +1705,7 @@
       "admin": {
         "content_types": {
           "menu": "Beheer",
+          "menu_tab": "Inhoudstypes",
           "title": "Inhoudstypes",
           "create": "Nieuw type",
           "loading": "Laden…",
@@ -1673,6 +1734,35 @@
             "behavior_proxy": "Gedrag-proxy (gestippeld pad)",
             "description": "Beschrijving",
             "active": "Actief",
+            "cancel": "Annuleren",
+            "submit": "Opslaan"
+          }
+        },
+        "metadata_templates": {
+          "menu_tab": "Metadatasjablonen",
+          "title": "Metadatasjablonen",
+          "create": "Nieuw sjabloon",
+          "loading": "Laden…",
+          "forbidden": "Dit gedeelte is alleen voor beheerders.",
+          "confirm_delete": "Sjabloon \"{{key}}\" verwijderen?",
+          "edit": "Bewerken",
+          "delete": "Verwijderen",
+          "col_key": "Sleutel",
+          "col_name": "Naam",
+          "col_fields": "Velden",
+          "col_actions": "Acties",
+          "form": {
+            "title_new": "Nieuw metadatasjabloon",
+            "title_edit": "Metadatasjabloon bewerken",
+            "key": "Sleutel",
+            "name": "Naam",
+            "fields": "Velden",
+            "add_field": "Veld toevoegen",
+            "no_field": "Nog geen veld.",
+            "field_key": "Veldsleutel",
+            "required": "Vereist",
+            "options": "Opties (komma-gescheiden)",
+            "remove_field": "Veld verwijderen",
             "cancel": "Annuleren",
             "submit": "Opslaan"
           }

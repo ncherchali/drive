@@ -30,6 +30,7 @@ import {
   Manifest,
   MetadataProposal,
   MetadataTemplate,
+  MetadataTemplateInput,
   MetricsSummary,
   RetentionStatus,
   ShareLink,
@@ -227,6 +228,14 @@ export abstract class Driver {
   ): Promise<void>;
   abstract getContentObjectTypes(): Promise<ContentObjectType[]>;
   abstract getMetadataTemplates(): Promise<MetadataTemplate[]>;
+  abstract createMetadataTemplate(
+    payload: MetadataTemplateInput,
+  ): Promise<MetadataTemplate>;
+  abstract updateMetadataTemplate(
+    key: string,
+    payload: MetadataTemplateInput,
+  ): Promise<MetadataTemplate>;
+  abstract deleteMetadataTemplate(key: string): Promise<void>;
   abstract createContentObjectType(
     payload: ContentObjectTypeInput,
   ): Promise<ContentObjectType>;

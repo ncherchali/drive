@@ -273,6 +273,13 @@ export type MetadataTemplate = {
   fields: TemplateField[];
 };
 
+// Entrée d'écriture d'un template de métadonnées (création / mise à jour).
+export type MetadataTemplateInput = {
+  key: string;
+  name: string;
+  fields: TemplateField[];
+};
+
 // Type métier du registre (phases 1/4) + schéma de son template.
 export type ContentObjectType = {
   id: string;

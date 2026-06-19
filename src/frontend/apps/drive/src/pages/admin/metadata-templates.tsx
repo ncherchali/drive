@@ -1,16 +1,16 @@
-// Console d'administration du registre des types de contenu (ADR-0001).
+// Console d'administration des templates de métadonnées (E2.1).
 // Réservée aux administrateurs (is_staff) ; le backend refuse les écritures
-// des non-staff de toute façon (403). Pages Router : pas de "use client".
+// des non-staff (403). Pages Router : pas de "use client".
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { getSimpleLayout } from "@/features/layouts/components/simple/SimpleLayout";
 import { useAuth } from "@/features/auth/Auth";
-import { useContentObjectTypes } from "@/features/explorer/hooks/useQueries";
-import { useMutationDeleteContentType } from "@/features/admin/hooks/useMutationsContentTypes";
-import { ContentTypeFormModal } from "@/features/admin/components/ContentTypeFormModal";
+import { useMetadataTemplates } from "@/features/explorer/hooks/useQueries";
+import { useMutationDeleteTemplate } from "@/features/admin/hooks/useMutationsMetadataTemplates";
+import { MetadataTemplateFormModal } from "@/features/admin/components/MetadataTemplateFormModal";
 import { AdminNav } from "@/features/admin/components/AdminNav";
-import { ContentObjectType } from "@/features/drivers/types";
+import { MetadataTemplate } from "@/features/drivers/types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -21,28 +21,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function AdminContentTypesPage() {
+export default function AdminMetadataTemplatesPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { data: types, isLoading } = useContentObjectTypes();
-  const deleteType = useMutationDeleteContentType();
+  const { data: templates, isLoading } = useMetadataTemplates();
+  const deleteTemplate = useMutationDeleteTemplate();
 
   const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<ContentObjectType | null>(null);
+  const [editing, setEditing] = useState<MetadataTemplate | null>(null);
 
   const openCreate = () => {
     setEditing(null);
     setFormOpen(true);
   };
-  const openEdit = (type: ContentObjectType) => {
-    setEditing(type);
+  const openEdit = (template: MetadataTemplate) => {
+    setEditing(template);
     setFormOpen(true);
   };
-  const onDelete = (type: ContentObjectType) => {
+  const onDelete = (template: MetadataTemplate) => {
     if (
-      window.confirm(t("admin.content_types.confirm_delete", { key: type.key }))
+      window.confirm(
+        t("admin.metadata_templates.confirm_delete", { key: template.key }),
+      )
     ) {
-      deleteType.mutate(type.key);
+      deleteTemplate.mutate(template.key);
     }
   };
 
@@ -50,7 +52,7 @@ export default function AdminContentTypesPage() {
     return (
       <div className="mx-auto max-w-4xl p-6">
         <p className="text-muted-foreground">
-          {t("admin.content_types.forbidden")}
+          {t("admin.metadata_templates.forbidden")}
         </p>
       </div>
     );
@@ -61,53 +63,47 @@ export default function AdminContentTypesPage() {
       <AdminNav />
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold text-foreground">
-          {t("admin.content_types.title")}
+          {t("admin.metadata_templates.title")}
         </h1>
         <Button onClick={openCreate}>
           <Plus className="size-4" />
-          {t("admin.content_types.create")}
+          {t("admin.metadata_templates.create")}
         </Button>
       </div>
 
       {isLoading ? (
         <p className="text-muted-foreground">
-          {t("admin.content_types.loading")}
+          {t("admin.metadata_templates.loading")}
         </p>
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("admin.content_types.col_key")}</TableHead>
-              <TableHead>{t("admin.content_types.col_label")}</TableHead>
-              <TableHead>{t("admin.content_types.col_base")}</TableHead>
-              <TableHead>{t("admin.content_types.col_template")}</TableHead>
-              <TableHead>{t("admin.content_types.col_active")}</TableHead>
+              <TableHead>{t("admin.metadata_templates.col_key")}</TableHead>
+              <TableHead>{t("admin.metadata_templates.col_name")}</TableHead>
+              <TableHead>{t("admin.metadata_templates.col_fields")}</TableHead>
               <TableHead className="text-right">
-                {t("admin.content_types.col_actions")}
+                {t("admin.metadata_templates.col_actions")}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {(types ?? []).map((type) => (
-              <TableRow key={type.key}>
-                <TableCell className="font-medium">{type.key}</TableCell>
-                <TableCell>{type.label}</TableCell>
-                <TableCell>{type.base}</TableCell>
+            {(templates ?? []).map((template) => (
+              <TableRow key={template.key}>
+                <TableCell className="font-medium">{template.key}</TableCell>
+                <TableCell>{template.name}</TableCell>
                 <TableCell className="text-muted-foreground">
-                  {type.template_key ?? "—"}
-                </TableCell>
-                <TableCell>
-                  {type.is_active
-                    ? t("admin.content_types.yes")
-                    : t("admin.content_types.no")}
+                  {(template.fields ?? [])
+                    .map((field) => field.key)
+                    .join(", ") || "—"}
                 </TableCell>
                 <TableCell className="flex justify-end gap-1">
                   <Button
                     variant="ghost"
                     size="icon"
                     className="size-8"
-                    aria-label={t("admin.content_types.edit")}
-                    onClick={() => openEdit(type)}
+                    aria-label={t("admin.metadata_templates.edit")}
+                    onClick={() => openEdit(template)}
                   >
                     <Pencil className="size-4" />
                   </Button>
@@ -115,8 +111,8 @@ export default function AdminContentTypesPage() {
                     variant="ghost"
                     size="icon"
                     className="size-8"
-                    aria-label={t("admin.content_types.delete")}
-                    onClick={() => onDelete(type)}
+                    aria-label={t("admin.metadata_templates.delete")}
+                    onClick={() => onDelete(template)}
                   >
                     <Trash2 className="size-4" />
                   </Button>
@@ -127,7 +123,7 @@ export default function AdminContentTypesPage() {
         </Table>
       )}
 
-      <ContentTypeFormModal
+      <MetadataTemplateFormModal
         open={formOpen}
         editing={editing}
         onClose={() => setFormOpen(false)}
@@ -136,4 +132,4 @@ export default function AdminContentTypesPage() {
   );
 }
 
-AdminContentTypesPage.getLayout = getSimpleLayout;
+AdminMetadataTemplatesPage.getLayout = getSimpleLayout;
