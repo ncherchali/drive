@@ -1240,6 +1240,15 @@ class Base(Configuration):
         environ_prefix=None,
     )
 
+    # Keycloak roles/groups that grant Django's is_staff (admin areas) at login.
+    # When set, is_staff is synced from the token on every login (granting AND
+    # revoking, except for superusers). Empty = is_staff managed manually.
+    OIDC_STAFF_ROLES = values.ListValue(
+        default=[],
+        environ_name="OIDC_STAFF_ROLES",
+        environ_prefix=None,
+    )
+
     # WARNING: Enabling this setting allows multiple user accounts to share the same email
     # address. This may cause security issues and is not recommended for production use when
     # email is activated as fallback for identification (see previous setting).

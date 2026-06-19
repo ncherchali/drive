@@ -631,3 +631,71 @@ def test_authentication_get_or_create_user_raises_exception_when_entitlement_bac
     # Verify the entitlement backend was called
     mock_get_entitlements_backend.assert_called_once()
     mock_entitlement_backend.can_access.assert_called_once()
+
+
+# --- Keycloak → is_staff mapping (admin areas) -------------------------------
+
+
+@override_settings(OIDC_STAFF_ROLES=["drive-admin"])
+def test_oidc_staff_mapping_grants_from_realm_role():
+    """A matching realm role yields is_staff=True in the extra claims."""
+    klass = OIDCAuthenticationBackend()
+    user_info = {
+        "sub": "1",
+        "realm_access": {"roles": ["offline_access", "drive-admin"]},
+    }
+    assert klass.get_extra_claims(user_info)["is_staff"] is True
+
+
+@override_settings(OIDC_STAFF_ROLES=["drive-admin"])
+def test_oidc_staff_mapping_denies_without_matching_role():
+    klass = OIDCAuthenticationBackend()
+    user_info = {"sub": "1", "realm_access": {"roles": ["offline_access"]}}
+    assert klass.get_extra_claims(user_info)["is_staff"] is False
+
+
+def test_oidc_staff_mapping_disabled_when_no_roles_configured():
+    """With OIDC_STAFF_ROLES empty, is_staff is left untouched (not in claims)."""
+    klass = OIDCAuthenticationBackend()
+    user_info = {"sub": "1", "realm_access": {"roles": ["drive-admin"]}}
+    assert "is_staff" not in klass.get_extra_claims(user_info)
+
+
+def test_oidc_extract_roles_from_groups_and_resource_access():
+    klass = OIDCAuthenticationBackend()
+    user_info = {
+        "groups": ["/admins", "/users"],
+        "resource_access": {"drive": {"roles": ["editor"]}},
+        "roles": ["plain-role"],
+    }
+    assert klass._extract_roles(user_info) == {  # pylint: disable=protected-access
+        "admins",
+        "users",
+        "editor",
+        "plain-role",
+    }
+
+
+def test_oidc_staff_mapping_revokes_when_role_absent():
+    """The post hook revokes is_staff authoritatively (downgrade)."""
+    klass = OIDCAuthenticationBackend()
+    user = UserFactory(is_staff=True)
+    klass.post_get_or_create_user(user, {"is_staff": False}, False)
+    user.refresh_from_db()
+    assert user.is_staff is False
+
+
+def test_oidc_staff_mapping_grants_via_post_hook():
+    klass = OIDCAuthenticationBackend()
+    user = UserFactory(is_staff=False)
+    klass.post_get_or_create_user(user, {"is_staff": True}, False)
+    user.refresh_from_db()
+    assert user.is_staff is True
+
+
+def test_oidc_staff_mapping_never_downgrades_superuser():
+    klass = OIDCAuthenticationBackend()
+    user = UserFactory(is_staff=True, is_superuser=True)
+    klass.post_get_or_create_user(user, {"is_staff": False}, False)
+    user.refresh_from_db()
+    assert user.is_staff is True
