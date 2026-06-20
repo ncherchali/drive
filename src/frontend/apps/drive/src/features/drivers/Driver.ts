@@ -184,6 +184,9 @@ export abstract class Driver {
     policyKey: string,
   ): Promise<RetentionStatus>;
   abstract getItemAccessPolicy(itemId: string): Promise<AccessPolicy>;
+  abstract getItemsClassifications(
+    ids: string[],
+  ): Promise<Record<string, ClassificationLevel | null>>;
   abstract getItemLegalHolds(itemId: string): Promise<LegalHold[]>;
   abstract placeItemLegalHold(
     itemId: string,

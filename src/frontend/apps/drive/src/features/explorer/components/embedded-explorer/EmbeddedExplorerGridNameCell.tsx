@@ -9,6 +9,7 @@ import { removeFileExtension } from "@/features/explorer/utils/fileTypes";
 import { LoadingRing } from "@/features/ui/components/loading-ring/LoadingRing";
 import { useEmbeddedExplorerGirdContext } from "./EmbeddedExplorerGrid";
 import { useIsItemSelected } from "@/features/explorer/stores/selectionStore";
+import { ClassificationLabel } from "@/features/items/components/ClassificationBadge";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 export type EmbeddedExplorerGridNameCellProps = CellContext<Item, string> & {
@@ -22,7 +23,9 @@ const EmbeddedExplorerGridNameCellComponent = (
   const { t } = useTranslation();
   const ref = useRef<HTMLSpanElement>(null);
   const [isOverflown, setIsOverflown] = useState(false);
-  const { disableItemDragAndDrop } = useEmbeddedExplorerGirdContext();
+  const { disableItemDragAndDrop, classifications } =
+    useEmbeddedExplorerGirdContext();
+  const classification = classifications?.[item.id] ?? null;
   const isSelected = useIsItemSelected(item.id);
   const isDuplicating = item.upload_state === ItemUploadState.DUPLICATING;
 
@@ -108,6 +111,9 @@ const EmbeddedExplorerGridNameCellComponent = (
           <ItemIcon key={item.id} item={item} size={IconSize.LARGE} />
         )}
         {renderTitle()}
+        {classification && (
+          <ClassificationLabel level={classification} compact />
+        )}
         {rightIcon && (
           <Icon
             name={rightIcon}

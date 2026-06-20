@@ -1,4 +1,10 @@
-import { Item, ItemType, ItemUploadState } from "@/features/drivers/types";
+import {
+  ClassificationLevel,
+  Item,
+  ItemType,
+  ItemUploadState,
+} from "@/features/drivers/types";
+import { useItemsClassifications } from "@/features/explorer/hooks/useQueries";
 import {
   createContext,
   useCallback,
@@ -36,10 +42,7 @@ import { ColumnConfig, ColumnType, SortState } from "../../types/columns";
 import { IconSize } from "@/features/ui/components/icon/Icon";
 import { useColumnWidths } from "../../hooks/useColumnWidths";
 import { useDuplicatingItemsPoller } from "../../hooks/useDuplicatingItemsPoller";
-import {
-  DsExplorerGridRow,
-  DsSelectAllCheckbox,
-} from "./DsExplorerGridRow";
+import { DsExplorerGridRow, DsSelectAllCheckbox } from "./DsExplorerGridRow";
 import { DsGridSortHeader } from "./headers/DsGridSortHeader";
 import {
   Table,
@@ -83,6 +86,7 @@ type EmbeddedExplorerGridContextType = {
   disableItemDragAndDrop?: boolean;
   isActionModalOpen: boolean;
   setIsActionModalOpen: (value: boolean) => void;
+  classifications?: Record<string, ClassificationLevel | null>;
 };
 
 export const EmbeddedExplorerGridContext = createContext<
@@ -205,13 +209,21 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
     [props.onSort],
   );
 
+  // Batch des classifications des items visibles (1 requête, anti-N+1).
+  const itemIds = useMemo(
+    () => (props.items ?? EMPTY_ARRAY).map((item) => item.id),
+    [props.items],
+  );
+  const { data: classifications } = useItemsClassifications(itemIds);
+
   const contextValue = useMemo<EmbeddedExplorerGridContextType>(
     () => ({
       disableItemDragAndDrop: props.disableItemDragAndDrop,
       isActionModalOpen,
       setIsActionModalOpen,
+      classifications,
     }),
-    [props.disableItemDragAndDrop, isActionModalOpen],
+    [props.disableItemDragAndDrop, isActionModalOpen, classifications],
   );
 
   const applyShiftRangeSelect = useCallback(
@@ -368,112 +380,112 @@ export const EmbeddedExplorerGrid = (props: EmbeddedExplorerGridProps) => {
   // le moteur (TanStack, sélection, DnD, menu contextuel, clavier) est partagé.
   return (
     <EmbeddedExplorerGridContext.Provider value={contextValue}>
-        <Table
-          ref={tableRef}
-          tabIndex={0}
-          onKeyDown={onKeyDown}
-          className={clsx({ explorer__compact: props.isCompact })}
-          // `table-layout: fixed` + <colgroup> : largeurs de colonnes contrôlées
-          // (redimensionnables) ; la colonne « Nom » reste SANS largeur → elle
-          // absorbe l'espace restant (évite le collapse des autres colonnes).
-          style={resizable ? { tableLayout: "fixed" } : undefined}
-        >
-          {resizable && (
-            <colgroup>
-              <col style={{ width: 44 }} />
-              <col />
-              {columnConfigs.map((config) => (
-                <col
-                  key={config.type}
-                  style={{ width: getWidth(config.type) }}
-                />
-              ))}
-              <col style={{ width: 48 }} />
-            </colgroup>
-          )}
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="w-9 ps-3 pe-0">
-                <DsSelectAllCheckbox rows={rows} selectionStore={selectionStore} />
-              </TableHead>
-              <TableHead className="w-full">
-                <DsGridSortHeader
-                  label={t("explorer.grid.name")}
-                  columnId="title"
-                  sortState={props.sortState ?? null}
-                  onSort={handleSortTitle}
-                  sortable={props.viewSortable !== false}
-                />
-              </TableHead>
-              {!props.isCompact && (
-                <>
-                  {columnConfigs.map((config) => {
-                    const ColumnIcon = config.icon;
-                    return (
-                      <TableHead key={config.type} className="relative">
-                        <DsGridSortHeader
-                          label={t(config.labelKey)}
-                          columnId={config.type}
-                          sortState={props.sortState ?? null}
-                          onSort={handleSortColumn}
-                          sortable={
-                            props.viewSortable !== false &&
-                            config.sortable !== false
-                          }
-                          icon={<ColumnIcon size={IconSize.SMALL} />}
-                        />
-                        {/* Poignée de redimensionnement (bord inline-end). */}
-                        <div
-                          role="separator"
-                          aria-orientation="vertical"
-                          aria-label={t(
-                            "explorer.grid.columns.resize",
-                            "Redimensionner la colonne",
-                          )}
-                          onMouseDown={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            startResize(
-                              config.type,
-                              event.clientX,
-                              getWidth(config.type),
-                            );
-                          }}
-                          className="absolute inset-y-1 end-0 z-10 w-1 cursor-col-resize touch-none rounded bg-transparent transition-colors hover:bg-primary/40"
-                        />
-                      </TableHead>
-                    );
-                  })}
-                  <TableHead className="w-12" />
-                </>
-              )}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <DsExplorerGridRow
-                key={row.original.id}
-                row={row}
-                isOvered={!!overedItemIds[row.original.id]}
-                onClickRow={handleRowClick}
-                onContextMenuRow={handleRowContextMenu}
-                onOver={handleRowOver}
-                onToggleSelect={toggleRowSelection}
-              />
+      <Table
+        ref={tableRef}
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        className={clsx({ explorer__compact: props.isCompact })}
+        // `table-layout: fixed` + <colgroup> : largeurs de colonnes contrôlées
+        // (redimensionnables) ; la colonne « Nom » reste SANS largeur → elle
+        // absorbe l'espace restant (évite le collapse des autres colonnes).
+        style={resizable ? { tableLayout: "fixed" } : undefined}
+      >
+        {resizable && (
+          <colgroup>
+            <col style={{ width: 44 }} />
+            <col />
+            {columnConfigs.map((config) => (
+              <col key={config.type} style={{ width: getWidth(config.type) }} />
             ))}
-          </TableBody>
-        </Table>
-        {moveModal.isOpen && moveItem && (
-          <ExplorerMoveFolder
-            {...moveModal}
-            onClose={handleCloseMoveModal}
-            itemsToMove={[moveItem]}
-            initialFolderId={props.parentItem?.id}
-          />
+            <col style={{ width: 48 }} />
+          </colgroup>
         )}
-        {itemActionModals}
-      </EmbeddedExplorerGridContext.Provider>
-    );
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="w-9 ps-3 pe-0">
+              <DsSelectAllCheckbox
+                rows={rows}
+                selectionStore={selectionStore}
+              />
+            </TableHead>
+            <TableHead className="w-full">
+              <DsGridSortHeader
+                label={t("explorer.grid.name")}
+                columnId="title"
+                sortState={props.sortState ?? null}
+                onSort={handleSortTitle}
+                sortable={props.viewSortable !== false}
+              />
+            </TableHead>
+            {!props.isCompact && (
+              <>
+                {columnConfigs.map((config) => {
+                  const ColumnIcon = config.icon;
+                  return (
+                    <TableHead key={config.type} className="relative">
+                      <DsGridSortHeader
+                        label={t(config.labelKey)}
+                        columnId={config.type}
+                        sortState={props.sortState ?? null}
+                        onSort={handleSortColumn}
+                        sortable={
+                          props.viewSortable !== false &&
+                          config.sortable !== false
+                        }
+                        icon={<ColumnIcon size={IconSize.SMALL} />}
+                      />
+                      {/* Poignée de redimensionnement (bord inline-end). */}
+                      <div
+                        role="separator"
+                        aria-orientation="vertical"
+                        aria-label={t(
+                          "explorer.grid.columns.resize",
+                          "Redimensionner la colonne",
+                        )}
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          startResize(
+                            config.type,
+                            event.clientX,
+                            getWidth(config.type),
+                          );
+                        }}
+                        className="absolute inset-y-1 end-0 z-10 w-1 cursor-col-resize touch-none rounded bg-transparent transition-colors hover:bg-primary/40"
+                      />
+                    </TableHead>
+                  );
+                })}
+                <TableHead className="w-12" />
+              </>
+            )}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row) => (
+            <DsExplorerGridRow
+              key={row.original.id}
+              row={row}
+              isOvered={!!overedItemIds[row.original.id]}
+              onClickRow={handleRowClick}
+              onContextMenuRow={handleRowContextMenu}
+              onOver={handleRowOver}
+              onToggleSelect={toggleRowSelection}
+            />
+          ))}
+        </TableBody>
+      </Table>
+      {moveModal.isOpen && moveItem && (
+        <ExplorerMoveFolder
+          {...moveModal}
+          onClose={handleCloseMoveModal}
+          itemsToMove={[moveItem]}
+          initialFolderId={props.parentItem?.id}
+        />
+      )}
+      {itemActionModals}
+    </EmbeddedExplorerGridContext.Provider>
+  );
 };
 
 export type EmbeddedExplorerGridTypeCellProps = CellContext<Item, string> & {

@@ -318,6 +318,18 @@ export class StandardDriver extends Driver {
     return await response.json();
   }
 
+  async getItemsClassifications(
+    ids: string[],
+  ): Promise<Record<string, ClassificationLevel | null>> {
+    if (ids.length === 0) {
+      return {};
+    }
+    const response = await fetchAPI(`items/classifications/`, {
+      params: { ids: ids.join(",") },
+    });
+    return await response.json();
+  }
+
   async placeItemLegalHold(itemId: string, reason: string): Promise<LegalHold> {
     const response = await fetchAPI(`items/${itemId}/legal-hold/`, {
       method: "POST",

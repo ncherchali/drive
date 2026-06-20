@@ -80,6 +80,17 @@ export const useItemClassification = (itemId: string) => {
   });
 };
 
+// Batch des classifications des items visibles (1 requête, anti-N+1 sur la liste).
+export const useItemsClassifications = (ids: string[]) => {
+  const sorted = [...ids].sort();
+  return useQuery({
+    queryKey: ["itemsClassifications", sorted],
+    queryFn: () => getDriver().getItemsClassifications(sorted),
+    enabled: sorted.length > 0,
+    staleTime: 30_000,
+  });
+};
+
 export const useRetentionPolicies = () => {
   return useQuery({
     queryKey: ["retentionPolicies"],

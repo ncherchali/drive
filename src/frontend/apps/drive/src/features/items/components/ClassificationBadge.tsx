@@ -1,6 +1,8 @@
-// Badge de classification de sensibilité (p6), visible en permanence dans
-// l'en-tête du panneau de droite. Couleur par niveau ; affiche la classification
-// EFFECTIVE (la plus restrictive, héritée des parties). Rien si non classifié.
+// Badge de classification de sensibilité (p6). Deux usages :
+// - <ClassificationLabel level> : badge pur (couleur par niveau), sans fetch —
+//   utilisé sur les lignes de l'explorateur (données fournies par un batch).
+// - <ClassificationBadge itemId> : variante auto-fetch (classification EFFECTIVE)
+//   pour l'en-tête du panneau de droite.
 // Pages Router : pas de "use client".
 import { useTranslation } from "react-i18next";
 import { ShieldAlert } from "lucide-react";
@@ -16,24 +18,38 @@ const LEVEL_CLASS: Record<ClassificationLevel, string> = {
   secret: "bg-destructive/15 text-destructive",
 };
 
-export type ClassificationBadgeProps = {
-  itemId: string;
+export type ClassificationLabelProps = {
+  level: ClassificationLevel;
+  compact?: boolean;
 };
 
-export const ClassificationBadge = ({ itemId }: ClassificationBadgeProps) => {
+export const ClassificationLabel = ({
+  level,
+  compact = false,
+}: ClassificationLabelProps) => {
   const { t } = useTranslation();
-  const { data } = useItemClassification(itemId);
-  const level = data?.effective_classification ?? null;
-  if (!level) {
-    return null;
-  }
   return (
     <Badge
       variant="outline"
-      className={`gap-1 border-transparent ${LEVEL_CLASS[level]}`}
+      className={`shrink-0 gap-1 border-transparent ${
+        compact ? "px-1.5 py-0 text-[10px]" : ""
+      } ${LEVEL_CLASS[level]}`}
     >
       <ShieldAlert className="size-3" />
       {t(`explorer.rightPanel.compliance.level.${level}`)}
     </Badge>
   );
+};
+
+export type ClassificationBadgeProps = {
+  itemId: string;
+};
+
+export const ClassificationBadge = ({ itemId }: ClassificationBadgeProps) => {
+  const { data } = useItemClassification(itemId);
+  const level = data?.effective_classification ?? null;
+  if (!level) {
+    return null;
+  }
+  return <ClassificationLabel level={level} />;
 };
