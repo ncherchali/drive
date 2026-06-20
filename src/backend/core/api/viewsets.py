@@ -1905,6 +1905,24 @@ class ItemViewSet(
             access_policy_service.resolve_effective_access(item, request.user)
         )
 
+    @drf.decorators.action(detail=False, methods=["get"], url_path="classifications")
+    def classifications(self, request, *args, **kwargs):
+        """Batch: own classification of readable items by id (listing badges).
+
+        Returns a `{item_id: level|null}` map in a single query, so a listing can
+        render classification badges without an N+1 of per-item lookups.
+        """
+        raw = request.query_params.get("ids", "")
+        ids = [value for value in raw.split(",") if value]
+        if not ids:
+            return drf.response.Response({})
+        rows = (
+            models.Item.objects.readable_per_se(request.user)
+            .filter(id__in=ids)
+            .values_list("id", "classification")
+        )
+        return drf.response.Response({str(item_id): level for item_id, level in rows})
+
     @drf.decorators.action(
         detail=True, methods=["get", "post"], url_path="classification"
     )

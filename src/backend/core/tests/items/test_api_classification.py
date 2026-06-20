@@ -89,3 +89,22 @@ def test_api_reject_unknown_classification():
         URL.format(id=item.id), {"classification": "bogus"}, format="json"
     )
     assert response.status_code == 400
+
+
+def test_api_batch_classifications_returns_map_for_readable_items():
+    owner = factories.UserFactory()
+    secret = factories.ItemFactory(
+        classification=C.SECRET, users=[(owner, R.OWNER)]
+    )
+    plain = factories.ItemFactory(users=[(owner, R.OWNER)])
+    foreign = factories.ItemFactory(classification=C.SECRET)  # not readable
+
+    response = _client(owner).get(
+        f"/api/v1.0/items/classifications/?ids={secret.id},{plain.id},{foreign.id}"
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body[str(secret.id)] == "secret"
+    assert body[str(plain.id)] is None
+    assert str(foreign.id) not in body  # access-filtered out
