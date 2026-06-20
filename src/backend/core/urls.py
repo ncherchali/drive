@@ -25,6 +25,11 @@ router.register(
     viewsets.ContentObjectTypeViewSet,
     basename="content_object_types",
 )
+router.register(
+    "retention-policies",
+    viewsets.RetentionPolicyViewSet,
+    basename="retention_policies",
+)
 
 # - Routes nested under a item
 item_related_router = DefaultRouter()

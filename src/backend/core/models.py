@@ -1873,6 +1873,65 @@ class MetadataTemplate(BaseModel):
         return f"MetadataTemplate({self.key})"
 
 
+class RetentionBasisChoices(models.TextChoices):
+    """What a retention policy's countdown starts from (E3.1)."""
+
+    CREATION = "creation", _("Creation date")
+    METADATA_DATE = "metadata_date", _("Metadata date field")
+
+
+class RetentionPolicy(BaseModel):
+    """A named, reusable retention rule (E3.1 / RetentionService).
+
+    Computes an item's retention deadline from a `basis` (its creation date, or a
+    date stored in a governed metadata field) plus `duration_days`. Applying a
+    policy is extend-only (WORM): it never shortens an existing retention. After
+    the deadline AND absent any legal hold, an item becomes eligible for
+    disposition.
+    """
+
+    key = models.SlugField(max_length=100, unique=True)
+    name = models.CharField(max_length=255)
+    duration_days = models.PositiveIntegerField()
+    basis = models.CharField(
+        max_length=20,
+        choices=RetentionBasisChoices.choices,
+        default=RetentionBasisChoices.CREATION,
+    )
+    metadata_template = models.ForeignKey(
+        MetadataTemplate,
+        on_delete=models.SET_NULL,
+        related_name="retention_policies",
+        null=True,
+        blank=True,
+        help_text=_("Template holding the date field (when basis=metadata_date)."),
+    )
+    metadata_field = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        help_text=_("Date field key within the template (when basis=metadata_date)."),
+    )
+    is_active = models.BooleanField(default=True)
+    description = models.TextField(blank=True, default="")
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="retention_policies_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_retention_policy"
+        verbose_name = _("Retention policy")
+        verbose_name_plural = _("Retention policies")
+        ordering = ("name",)
+
+    def __str__(self):
+        return f"RetentionPolicy({self.key})"
+
+
 class ContentObjectType(BaseModel):
     """A business content-object type (E2.2 / ADR-0001 §2 — registry-in-data).
 

@@ -35,6 +35,7 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "records": {"POST": "children_create"},
     # Retention & legal holds (H1.6 / Coffre) are governance acts: managers only.
     "retention": {"GET": "accesses_manage", "POST": "accesses_manage"},
+    "apply_retention_policy": {"POST": "accesses_manage"},
     "legal_hold": {"GET": "accesses_manage", "POST": "accesses_manage"},
     "legal_hold_detail": {"DELETE": "accesses_manage"},
     "data_room": {

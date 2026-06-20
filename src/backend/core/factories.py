@@ -255,6 +255,19 @@ class ContentRelationFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
 
 
+class RetentionPolicyFactory(factory.django.DjangoModelFactory):
+    """A factory to create retention policies for testing purposes (E3.1)."""
+
+    class Meta:
+        model = models.RetentionPolicy
+
+    key = factory.Sequence(lambda n: f"policy-{n}")
+    name = factory.Faker("sentence", nb_words=3)
+    duration_days = 365
+    basis = models.RetentionBasisChoices.CREATION
+    creator = factory.SubFactory(UserFactory)
+
+
 class MetadataProposalFactory(factory.django.DjangoModelFactory):
     """A factory to create metadata proposals for testing purposes (E2.2)."""
 

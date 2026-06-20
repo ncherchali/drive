@@ -56,6 +56,7 @@ from core.services import metadata as metadata_service
 from core.services import provenance as provenance_service
 from core.services import records as records_service
 from core.services import relations as relations_service
+from core.services import retention as retention_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
 from core.services.search_indexers import (
@@ -2083,6 +2084,26 @@ class ItemViewSet(
         )
         return drf.response.Response({"retention_until": item.retention_until})
 
+    @drf.decorators.action(
+        detail=True, methods=["post"], url_path="apply-retention-policy"
+    )
+    def apply_retention_policy(self, request, *args, **kwargs):
+        """Apply a governed retention policy to an item (E3.1, extend-only)."""
+        item = self.get_object()
+        serializer = serializers.RetentionPolicyApplySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            policy = models.RetentionPolicy.objects.get(
+                key=serializer.validated_data["policy"], is_active=True
+            )
+        except models.RetentionPolicy.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        try:
+            retention_service.apply_policy(item, policy, actor=request.user)
+        except retention_service.RetentionError as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        return drf.response.Response({"retention_until": item.retention_until})
+
     @drf.decorators.action(detail=True, methods=["get", "post"], url_path="legal-hold")
     def legal_hold(self, request, *args, **kwargs):
         """List the legal holds of an item, or place a new one (H1.6)."""
@@ -3058,6 +3079,19 @@ class MetadataTemplateViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = models.MetadataTemplate.objects.all()
     serializer_class = serializers.MetadataTemplateSerializer
+    lookup_field = "key"
+    pagination_class = None
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
+
+class RetentionPolicyViewSet(viewsets.ModelViewSet):
+    """Manage the retention policy registry (E3.1). Admin-only."""
+
+    permission_classes = [IsAdminUser]
+    queryset = models.RetentionPolicy.objects.all()
+    serializer_class = serializers.RetentionPolicySerializer
     lookup_field = "key"
     pagination_class = None
 

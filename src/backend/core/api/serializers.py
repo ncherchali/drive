@@ -1150,6 +1150,32 @@ class RetentionSerializer(serializers.Serializer):
     duration_days = serializers.IntegerField(min_value=1)
 
 
+class RetentionPolicySerializer(serializers.ModelSerializer):
+    """A governed retention policy from the registry (E3.1)."""
+
+    class Meta:
+        model = models.RetentionPolicy
+        fields = [
+            "id",
+            "key",
+            "name",
+            "duration_days",
+            "basis",
+            "metadata_template",
+            "metadata_field",
+            "is_active",
+            "description",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+
+
+class RetentionPolicyApplySerializer(serializers.Serializer):
+    """Input to apply a retention policy to an item (E3.1)."""
+
+    policy = serializers.SlugField()
+
+
 class LegalHoldSerializer(serializers.ModelSerializer):
     """A legal hold placed on an item (H1.6)."""
 

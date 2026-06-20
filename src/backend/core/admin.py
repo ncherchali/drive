@@ -335,6 +335,34 @@ class MetadataProposalAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(models.RetentionPolicy)
+class RetentionPolicyAdmin(admin.ModelAdmin):
+    """Admin console for the retention policy registry (E3.1)."""
+
+    fields = (
+        "key",
+        "name",
+        "duration_days",
+        "basis",
+        "metadata_template",
+        "metadata_field",
+        "is_active",
+        "description",
+        "creator",
+        "created_at",
+    )
+    readonly_fields = ("creator", "created_at")
+    list_display = ("key", "name", "duration_days", "basis", "is_active")
+    list_filter = ("basis", "is_active")
+    search_fields = ("key", "name", "description")
+    ordering = ("name",)
+
+    def save_model(self, request, obj, form, change):
+        if not change and obj.creator_id is None:
+            obj.creator = request.user
+        obj.save()
+
+
 @admin.register(models.SignatureRequest)
 class SignatureRequestAdmin(admin.ModelAdmin):
     """Read-only view over e-signature requests (H1.8)."""
