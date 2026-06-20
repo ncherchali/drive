@@ -1135,6 +1135,15 @@ class RecordCreateSerializer(serializers.Serializer):
     metadata = serializers.DictField(required=False)
 
 
+class ClassificationSerializer(serializers.Serializer):
+    """Input to set (or clear) an item's classification (ADR-0001 §5.4)."""
+
+    classification = serializers.ChoiceField(
+        choices=models.ClassificationChoices.choices,
+        allow_null=True,
+    )
+
+
 class RetentionSerializer(serializers.Serializer):
     """Input to set/extend an item's retention deadline (H1.6)."""
 

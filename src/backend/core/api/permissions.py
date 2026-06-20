@@ -23,6 +23,9 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "relations_detail": {"DELETE": "update"},
     "manifest": {"GET": "download"},
     "access_policy": {"GET": "download"},
+    # Classification (ADR-0001 §5.4): read with read access; setting the level
+    # is a governance/security act reserved to managers.
+    "classification": {"GET": "download", "POST": "accesses_manage"},
     # Metadata provenance (ADR-0001 §6): proposing is a write; promoting
     # (accept/reject) into the authoritative source of truth is a governance act.
     "metadata_proposals": {"GET": "download", "POST": "update"},

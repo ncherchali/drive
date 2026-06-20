@@ -50,6 +50,7 @@ from core import enums, models
 from core.entitlements import get_entitlements_backend
 from core.services import access_policy as access_policy_service
 from core.services import audit
+from core.services import classification as classification_service
 from core.services import content_types as content_types_service
 from core.services import metadata as metadata_service
 from core.services import provenance as provenance_service
@@ -1901,6 +1902,41 @@ class ItemViewSet(
         item = self.get_object()
         return drf.response.Response(
             access_policy_service.resolve_effective_access(item, request.user)
+        )
+
+    @drf.decorators.action(
+        detail=True, methods=["get", "post"], url_path="classification"
+    )
+    def classification(self, request, *args, **kwargs):
+        """Read or set an item's classification (ADR-0001 §5.4).
+
+        GET returns the item's own level and its effective (most restrictive)
+        level resolved over its parts. POST sets the own level (governance act);
+        `classification=null` clears it.
+        """
+        item = self.get_object()
+        if request.method == "GET":
+            return drf.response.Response(
+                {
+                    "classification": item.classification,
+                    "effective_classification": (
+                        classification_service.effective_classification(item)
+                    ),
+                }
+            )
+
+        serializer = serializers.ClassificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        classification_service.classify(
+            item, serializer.validated_data["classification"], actor=request.user
+        )
+        return drf.response.Response(
+            {
+                "classification": item.classification,
+                "effective_classification": (
+                    classification_service.effective_classification(item)
+                ),
+            }
         )
 
     @drf.decorators.action(

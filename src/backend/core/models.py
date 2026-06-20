@@ -38,6 +38,7 @@ from lasuite.drf.models.choices import (
     PRIVILEGED_ROLES,
     LinkReachChoices,
     LinkRoleChoices,
+    PriorityTextChoices,
     RoleChoices,
     get_equivalent_link_definition,
 )
@@ -107,6 +108,19 @@ class TruthStateChoices(models.TextChoices):
 
     DRAFT = "draft", _("Draft")
     CANONICAL = "canonical", _("Canonical")
+
+
+class ClassificationChoices(PriorityTextChoices):
+    """Data sensitivity levels, ordered least → most restrictive (ADR-0001 §5.4).
+
+    A composite inherits the most restrictive classification of its parts
+    (resolved by the ClassificationService, passe 6).
+    """
+
+    PUBLIC = "public", _("Public")
+    INTERNAL = "internal", _("Internal")
+    CONFIDENTIAL = "confidential", _("Confidential")
+    SECRET = "secret", _("Secret")
 
 
 class MirrorItemTaskStatusChoices(models.TextChoices):
@@ -673,6 +687,16 @@ class Item(TreeModel, BaseModel):
     # Retention (H1.6 / Coffre): the item cannot be deleted before this date.
     # Extend-only (compliance WORM); NULL means no retention.
     retention_until = models.DateTimeField(null=True, blank=True)
+    # Data sensitivity (ADR-0001 §5.4, passe 6): an item's own explicit level.
+    # NULL = unclassified. A composite's EFFECTIVE classification is resolved by
+    # the ClassificationService (most restrictive of own + parts).
+    classification = models.CharField(
+        _("classification"),
+        max_length=20,
+        choices=ClassificationChoices.choices,
+        null=True,
+        blank=True,
+    )
 
     # Remove them in a future release. They must be kept while the columns are not removed
     _deprecated_numchild = models.PositiveIntegerField(default=0, db_column="numchild")
@@ -704,6 +728,9 @@ class Item(TreeModel, BaseModel):
             GinIndex(fields=["metadata"], name="drive_item_metadata_gin"),
             models.Index(fields=["content_type"], name="drive_item_content_type_idx"),
             models.Index(fields=["truth_state"], name="drive_item_truth_state_idx"),
+            models.Index(
+                fields=["classification"], name="drive_item_classification_idx"
+            ),
         ]
 
     def __str__(self):
