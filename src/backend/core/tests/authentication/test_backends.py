@@ -654,6 +654,7 @@ def test_oidc_staff_mapping_denies_without_matching_role():
     assert klass.get_extra_claims(user_info)["is_staff"] is False
 
 
+@override_settings(OIDC_STAFF_ROLES=[])
 def test_oidc_staff_mapping_disabled_when_no_roles_configured():
     """With OIDC_STAFF_ROLES empty, is_staff is left untouched (not in claims)."""
     klass = OIDCAuthenticationBackend()
