@@ -3087,13 +3087,21 @@ class MetadataTemplateViewSet(viewsets.ModelViewSet):
 
 
 class RetentionPolicyViewSet(viewsets.ModelViewSet):
-    """Manage the retention policy registry (E3.1). Admin-only."""
+    """The retention policy registry (E3.1).
 
-    permission_classes = [IsAdminUser]
+    Reading is open to any authenticated user (so managers can pick a policy to
+    apply to an item); writing the registry remains admin-only.
+    """
+
     queryset = models.RetentionPolicy.objects.all()
     serializer_class = serializers.RetentionPolicySerializer
     lookup_field = "key"
     pagination_class = None
+
+    def get_permissions(self):
+        if self.action in ("list", "retrieve"):
+            return [permissions.IsAuthenticated()]
+        return [IsAdminUser()]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)

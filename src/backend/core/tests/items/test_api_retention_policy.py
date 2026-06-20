@@ -42,6 +42,15 @@ def test_api_admin_creates_policy():
     assert models.RetentionPolicy.objects.get(key="contracts").duration_days == 3650
 
 
+def test_api_registry_is_readable_by_any_authenticated_user():
+    """Reading the registry is open (managers pick a policy to apply)."""
+    user = factories.UserFactory()
+    factories.RetentionPolicyFactory(key="contracts")
+    response = _client(user).get(REGISTRY_URL)
+    assert response.status_code == 200
+    assert "contracts" in [p["key"] for p in response.json()]
+
+
 # --- Apply to an item --------------------------------------------------------
 
 
