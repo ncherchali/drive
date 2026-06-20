@@ -2327,3 +2327,45 @@ class AuditEvent(models.Model):
     def delete(self, *args, **kwargs):
         """Block deletion; retention purge is handled by a dedicated task (A2-4)."""
         raise RuntimeError("AuditEvent is append-only and cannot be deleted.")
+
+
+class AuditOutboxStatusChoices(models.TextChoices):
+    """Lifecycle of a transactional audit outbox entry (passe 3)."""
+
+    PENDING = "pending", _("Pending")
+    DELIVERED = "delivered", _("Delivered")
+    FAILED = "failed", _("Failed")  # dead-letter, after max attempts
+
+
+class AuditOutboxEntry(BaseModel):
+    """Transactional outbox row for asynchronous audit shipping (passe 3).
+
+    Written in the SAME transaction as its audit event (so 'event committed ⇔
+    outbox row committed' — zero event loss), then shipped to the configured
+    AuditEventSink by a Celery worker. Carries a self-contained `payload` snapshot
+    so delivery needs no read of the partitioned audit table; `audit_event_id`
+    references the event WITHOUT a FK (the audit table is range-partitioned).
+    """
+
+    audit_event_id = models.UUIDField(db_index=True)
+    payload = models.JSONField(default=dict)
+    status = models.CharField(
+        max_length=20,
+        choices=AuditOutboxStatusChoices.choices,
+        default=AuditOutboxStatusChoices.PENDING,
+    )
+    attempts = models.PositiveIntegerField(default=0)
+    last_error = models.TextField(blank=True, default="")
+    delivered_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "drive_audit_outbox"
+        verbose_name = _("Audit outbox entry")
+        verbose_name_plural = _("Audit outbox entries")
+        ordering = ("created_at",)
+        indexes = [
+            models.Index(fields=["status", "created_at"], name="drive_audit_outbox_idx"),
+        ]
+
+    def __str__(self):
+        return f"AuditOutboxEntry({self.status}: {self.audit_event_id})"

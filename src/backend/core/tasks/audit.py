@@ -14,7 +14,7 @@ from django.db import connection
 from django.utils import timezone
 
 from core import models
-from core.services import audit
+from core.services import audit, audit_outbox
 
 from drive.celery_app import app
 
@@ -120,3 +120,18 @@ def manage_audit_partitions(months_ahead=3):
 
     logger.info("Audit partitions ensured=%s dropped=%s", created, dropped)
     return {"created": created, "dropped": dropped}
+
+
+@app.task
+def process_audit_outbox(batch_size=100):
+    """Ship pending audit outbox entries (passe 3).
+
+    No-op when FEATURES_AUDIT_OUTBOX is off, so the scheduled beat is cheap when
+    the feature is disabled.
+    """
+    if not getattr(settings, "FEATURES_AUDIT_OUTBOX", False):
+        return None
+
+    result = audit_outbox.process_pending(batch_size=batch_size)
+    logger.info("Audit outbox processed: %s", result)
+    return result

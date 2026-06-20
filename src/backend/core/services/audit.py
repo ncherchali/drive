@@ -66,6 +66,35 @@ def _entry_hash(event, prev_hash):
     return hashlib.sha256(f"{prev_hash}:{payload}".encode()).hexdigest()
 
 
+def _event_payload(event):
+    """Self-contained, JSON-serializable snapshot of an audit event (outbox)."""
+    return {
+        "id": str(event.id),
+        "action": event.action,
+        "actor_id": str(event.actor_id) if event.actor_id else None,
+        "actor_type": event.actor_type,
+        "target_uuid": str(event.target_uuid) if event.target_uuid else None,
+        "target_type": event.target_type,
+        "path_snapshot": event.path_snapshot,
+        "metadata": event.metadata,
+        "created_at": event.created_at.isoformat() if event.created_at else None,
+    }
+
+
+def _enqueue_outbox(event):
+    """Write a transactional outbox row for `event` when the feature is on.
+
+    Runs inside the caller's transaction (same as the event), guaranteeing the
+    outbox row commits atomically with the audited operation — zero event loss.
+    """
+    if not getattr(settings, "FEATURES_AUDIT_OUTBOX", False):
+        return
+    models.AuditOutboxEntry.objects.create(
+        audit_event_id=event.id,
+        payload=_event_payload(event),
+    )
+
+
 def _append_chained(event):
     """Append ``event`` to the hash chain under a serializing advisory lock."""
     with transaction.atomic():
@@ -141,8 +170,10 @@ def record(  # noqa: PLR0913
 
     try:
         if getattr(settings, "FEATURES_AUDIT_TAMPER_EVIDENT", False):
-            return _append_chained(event)
-        event.save()
+            _append_chained(event)
+        else:
+            event.save()
+        _enqueue_outbox(event)
         return event
     except Exception:  # pylint: disable=broad-except
         logger.exception("Failed to record audit event '%s'", action)

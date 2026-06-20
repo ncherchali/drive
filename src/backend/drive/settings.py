@@ -969,6 +969,27 @@ class Base(Configuration):
         False, environ_name="FEATURES_AUDIT_TAMPER_EVIDENT", environ_prefix=None
     )
 
+    # Passe 3 (AuditEventSink / outbox): when enabled, each recorded audit event
+    # also writes a transactional outbox row, shipped asynchronously to the
+    # configured sink (sovereign by default — replaces PostHog). Off by default:
+    # record() keeps its synchronous behavior unchanged.
+    FEATURES_AUDIT_OUTBOX = values.BooleanValue(
+        False, environ_name="FEATURES_AUDIT_OUTBOX", environ_prefix=None
+    )
+    AUDIT_EVENT_SINK = values.Value(
+        "core.audit_sink.logging_sink.LoggingAuditSink",
+        environ_name="AUDIT_EVENT_SINK",
+        environ_prefix=None,
+    )
+    AUDIT_EVENT_SINK_PARAMETERS = values.DictValue(
+        {}, environ_name="AUDIT_EVENT_SINK_PARAMETERS", environ_prefix=None
+    )
+    # Outbox entries are sent to the dead-letter state after this many failed
+    # delivery attempts.
+    AUDIT_OUTBOX_MAX_ATTEMPTS = values.IntegerValue(
+        5, environ_name="AUDIT_OUTBOX_MAX_ATTEMPTS", environ_prefix=None
+    )
+
     # H1.3: lifetime (seconds) of the signed media grant a share-link resolution
     # issues so the file fetch (media-auth) is authorized without re-checking the
     # password. Short by design — the grant is essentially session-scoped.
@@ -1141,6 +1162,11 @@ class Base(Configuration):
         "manage-audit-partitions": {
             "task": "core.tasks.audit.manage_audit_partitions",
             "schedule": crontab(hour=3, minute=0),
+        },
+        # Ships pending audit outbox entries (no-op when FEATURES_AUDIT_OUTBOX off).
+        "process-audit-outbox": {
+            "task": "core.tasks.audit.process_audit_outbox",
+            "schedule": crontab(minute="*"),
         },
     }
 
