@@ -22,6 +22,7 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     "relations": {"GET": "download", "POST": "update"},
     "relations_detail": {"DELETE": "update"},
     "manifest": {"GET": "download"},
+    "access_policy": {"GET": "download"},
     # Metadata provenance (ADR-0001 §6): proposing is a write; promoting
     # (accept/reject) into the authoritative source of truth is a governance act.
     "metadata_proposals": {"GET": "download", "POST": "update"},

@@ -48,6 +48,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from core import enums, models
 from core.entitlements import get_entitlements_backend
+from core.services import access_policy as access_policy_service
 from core.services import audit
 from core.services import content_types as content_types_service
 from core.services import metadata as metadata_service
@@ -1888,6 +1889,19 @@ class ItemViewSet(
             status_data.pop("relations"), many=True
         ).data
         return drf.response.Response({"parts": parts, **status_data})
+
+    @drf.decorators.action(detail=True, methods=["get"], url_path="access-policy")
+    def access_policy(self, request, *args, **kwargs):
+        """Resolve the caller's effective access on a composite (ADR-0001 §5.4).
+
+        Accessing a composite does not grant access to its parts; this returns
+        the most restrictive role across the composite and its manifest, and
+        whether the assembled document is fully accessible to the caller.
+        """
+        item = self.get_object()
+        return drf.response.Response(
+            access_policy_service.resolve_effective_access(item, request.user)
+        )
 
     @drf.decorators.action(
         detail=True, methods=["get", "post"], url_path="metadata-proposals"
