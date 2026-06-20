@@ -21,6 +21,7 @@ import { ItemActivityDs } from "@/features/items/components/ItemActivityDs";
 import { ItemShareLinksDs } from "@/features/items/components/ItemShareLinksDs";
 import { ItemMetadataDs } from "@/features/items/components/ItemMetadataDs";
 import { ItemCompositionDs } from "@/features/items/components/ItemCompositionDs";
+import { ClassificationBadge } from "@/features/items/components/ClassificationBadge";
 import { ItemVersionsDs } from "@/features/items/components/ItemVersionsDs";
 import { ItemComplianceDs } from "@/features/items/components/ItemComplianceDs";
 import { ItemDataRoomDs } from "@/features/items/components/ItemDataRoomDs";
@@ -117,8 +118,11 @@ export const ExplorerRightPanelContentDs = ({
                 type="mini"
               />
             </div>
-            <div className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
-              {firstSelectedItem.title}
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="truncate text-sm font-medium text-foreground">
+                {firstSelectedItem.title}
+              </span>
+              <ClassificationBadge itemId={firstSelectedItem.id} />
             </div>
             {closeButton}
           </div>
