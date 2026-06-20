@@ -238,6 +238,45 @@ export type RetentionStatus = {
   retention_until: string | null;
 };
 
+// Classification de sensibilité (p6 / ADR-0001 §5.4).
+export type ClassificationLevel =
+  | "public"
+  | "internal"
+  | "confidential"
+  | "secret";
+
+export type ClassificationStatus = {
+  classification: ClassificationLevel | null;
+  effective_classification: ClassificationLevel | null;
+};
+
+// Politique de rétention gouvernée (E3.1).
+export type RetentionPolicy = {
+  id: string;
+  key: string;
+  name: string;
+  duration_days: number;
+  basis: "creation" | "metadata_date";
+  is_active: boolean;
+};
+
+// Accès effectif sur un composite (p4 / ADR-0001 §5.4).
+export type AccessPolicyPart = {
+  item_id: string;
+  title: string;
+  manifest_role: string;
+  role: string | null;
+  accessible: boolean;
+};
+
+export type AccessPolicy = {
+  own_role: string | null;
+  parts: AccessPolicyPart[];
+  effective_role: string | null;
+  fully_accessible: boolean;
+  inaccessible_part_ids: string[];
+};
+
 export type LegalHold = {
   id: string;
   name: string;

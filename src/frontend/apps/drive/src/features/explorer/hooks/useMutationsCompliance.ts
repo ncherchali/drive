@@ -1,7 +1,37 @@
 import { getDriver } from "@/features/config/Config";
+import { ClassificationLevel } from "@/features/drivers/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Mutations for compliance: retention & legal holds (H1.6).
+// Mutations for compliance: retention & legal holds (H1.6), classification (p6),
+// retention policies (E3.1).
+
+export const useMutationSetClassification = () => {
+  const driver = getDriver();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: {
+      itemId: string;
+      level: ClassificationLevel | null;
+    }) => driver.setItemClassification(variables.itemId, variables.level),
+    onSuccess: (_, variables) =>
+      queryClient.invalidateQueries({
+        queryKey: ["itemClassification", variables.itemId],
+      }),
+  });
+};
+
+export const useMutationApplyRetentionPolicy = () => {
+  const driver = getDriver();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (variables: { itemId: string; policyKey: string }) =>
+      driver.applyRetentionPolicy(variables.itemId, variables.policyKey),
+    onSuccess: (_, variables) =>
+      queryClient.invalidateQueries({
+        queryKey: ["itemRetention", variables.itemId],
+      }),
+  });
+};
 
 export const useMutationSetRetention = () => {
   const driver = getDriver();

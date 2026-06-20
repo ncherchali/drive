@@ -330,7 +330,19 @@
             "no_hold": "No active hold.",
             "release": "Release",
             "reason": "Reason",
-            "place_hold": "Place hold"
+            "place_hold": "Place hold",
+            "classification": "Classification",
+            "unclassified": "Unclassified",
+            "effective_classification": "Effective:",
+            "level": {
+              "public": "Public",
+              "internal": "Internal",
+              "confidential": "Confidential",
+              "secret": "Secret"
+            },
+            "policy": "Retention policy",
+            "policy_choose": "Choose a policy…",
+            "apply_policy": "Apply"
           },
           "metadata": {
             "content_type": "Content type",
@@ -360,7 +372,16 @@
             "missing": "missing",
             "add": "Add",
             "target_id": "Target item ID",
-            "remove": "Remove"
+            "remove": "Remove",
+            "effective_access": "Effective access",
+            "access_full": "Fully accessible:",
+            "access_restricted": "{{count}} part(s) you cannot access — assembly restricted.",
+            "access_role": {
+              "reader": "Reader",
+              "editor": "Editor",
+              "administrator": "Administrator",
+              "owner": "Owner"
+            }
           },
           "data_room": {
             "description": "A view-only space: invited guests can preview the content but not download it.",
@@ -1171,7 +1192,19 @@
             "no_hold": "Aucune conservation active.",
             "release": "Lever",
             "reason": "Motif",
-            "place_hold": "Placer une conservation"
+            "place_hold": "Placer une conservation",
+            "classification": "Classification",
+            "unclassified": "Non classifié",
+            "effective_classification": "Effective :",
+            "level": {
+              "public": "Public",
+              "internal": "Interne",
+              "confidential": "Confidentiel",
+              "secret": "Secret"
+            },
+            "policy": "Politique de rétention",
+            "policy_choose": "Choisir une politique…",
+            "apply_policy": "Appliquer"
           },
           "metadata": {
             "content_type": "Type de contenu",
@@ -1201,7 +1234,16 @@
             "missing": "manquante",
             "add": "Ajouter",
             "target_id": "ID de l'item cible",
-            "remove": "Retirer"
+            "remove": "Retirer",
+            "effective_access": "Accès effectif",
+            "access_full": "Entièrement accessible :",
+            "access_restricted": "{{count}} partie(s) inaccessible(s) — assemblage restreint.",
+            "access_role": {
+              "reader": "Lecteur",
+              "editor": "Éditeur",
+              "administrator": "Administrateur",
+              "owner": "Propriétaire"
+            }
           },
           "data_room": {
             "description": "Un espace en lecture seule : les invités peuvent consulter le contenu mais pas le télécharger.",
@@ -2020,7 +2062,19 @@
             "no_hold": "Geen actieve bewaring.",
             "release": "Opheffen",
             "reason": "Reden",
-            "place_hold": "Bewaring plaatsen"
+            "place_hold": "Bewaring plaatsen",
+            "classification": "Classificatie",
+            "unclassified": "Niet geclassificeerd",
+            "effective_classification": "Effectief:",
+            "level": {
+              "public": "Openbaar",
+              "internal": "Intern",
+              "confidential": "Vertrouwelijk",
+              "secret": "Geheim"
+            },
+            "policy": "Bewaarbeleid",
+            "policy_choose": "Kies een beleid…",
+            "apply_policy": "Toepassen"
           },
           "metadata": {
             "content_type": "Inhoudstype",
@@ -2050,7 +2104,16 @@
             "missing": "ontbreekt",
             "add": "Toevoegen",
             "target_id": "Doel-item-ID",
-            "remove": "Verwijderen"
+            "remove": "Verwijderen",
+            "effective_access": "Effectieve toegang",
+            "access_full": "Volledig toegankelijk:",
+            "access_restricted": "{{count}} onderde(e)l(en) zonder toegang — assemblage beperkt.",
+            "access_role": {
+              "reader": "Lezer",
+              "editor": "Bewerker",
+              "administrator": "Beheerder",
+              "owner": "Eigenaar"
+            }
           },
           "data_room": {
             "description": "Een alleen-lezen ruimte: genodigden kunnen de inhoud bekijken maar niet downloaden.",

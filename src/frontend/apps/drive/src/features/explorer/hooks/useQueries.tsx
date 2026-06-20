@@ -71,6 +71,31 @@ export const useItemLegalHolds = (itemId: string) => {
   });
 };
 
+export const useItemClassification = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemClassification", itemId],
+    queryFn: () => getDriver().getItemClassification(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
+export const useRetentionPolicies = () => {
+  return useQuery({
+    queryKey: ["retentionPolicies"],
+    queryFn: () => getDriver().getRetentionPolicies(),
+  });
+};
+
+export const useItemAccessPolicy = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemAccessPolicy", itemId],
+    queryFn: () => getDriver().getItemAccessPolicy(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useItemDataRoom = (itemId: string) => {
   return useQuery({
     queryKey: ["itemDataRoom", itemId],

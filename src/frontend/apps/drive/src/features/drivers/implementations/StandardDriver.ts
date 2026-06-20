@@ -24,6 +24,9 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  AccessPolicy,
+  ClassificationLevel,
+  ClassificationStatus,
   ContentObjectType,
   ContentObjectTypeInput,
   ContentRelation,
@@ -40,6 +43,7 @@ import {
   MetadataTemplate,
   MetadataTemplateInput,
   MetricsSummary,
+  RetentionPolicy,
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
@@ -239,9 +243,7 @@ export class StandardDriver extends Driver {
     itemId: string,
     versionId: string,
   ): Promise<string> {
-    const response = await fetchAPI(
-      `items/${itemId}/versions/${versionId}/`,
-    );
+    const response = await fetchAPI(`items/${itemId}/versions/${versionId}/`);
     const data = await response.json();
     return data.url;
   }
@@ -279,10 +281,44 @@ export class StandardDriver extends Driver {
     return await response.json();
   }
 
-  async placeItemLegalHold(
+  async getItemClassification(itemId: string): Promise<ClassificationStatus> {
+    const response = await fetchAPI(`items/${itemId}/classification/`);
+    return await response.json();
+  }
+
+  async setItemClassification(
     itemId: string,
-    reason: string,
-  ): Promise<LegalHold> {
+    level: ClassificationLevel | null,
+  ): Promise<ClassificationStatus> {
+    const response = await fetchAPI(`items/${itemId}/classification/`, {
+      method: "POST",
+      body: JSON.stringify({ classification: level }),
+    });
+    return await response.json();
+  }
+
+  async getRetentionPolicies(): Promise<RetentionPolicy[]> {
+    const response = await fetchAPI(`retention-policies/`);
+    return await response.json();
+  }
+
+  async applyRetentionPolicy(
+    itemId: string,
+    policyKey: string,
+  ): Promise<RetentionStatus> {
+    const response = await fetchAPI(`items/${itemId}/apply-retention-policy/`, {
+      method: "POST",
+      body: JSON.stringify({ policy: policyKey }),
+    });
+    return await response.json();
+  }
+
+  async getItemAccessPolicy(itemId: string): Promise<AccessPolicy> {
+    const response = await fetchAPI(`items/${itemId}/access-policy/`);
+    return await response.json();
+  }
+
+  async placeItemLegalHold(itemId: string, reason: string): Promise<LegalHold> {
     const response = await fetchAPI(`items/${itemId}/legal-hold/`, {
       method: "POST",
       body: JSON.stringify({ reason }),
@@ -374,9 +410,7 @@ export class StandardDriver extends Driver {
     return await response.json();
   }
 
-  async getItemMetadataProposals(
-    itemId: string,
-  ): Promise<MetadataProposal[]> {
+  async getItemMetadataProposals(itemId: string): Promise<MetadataProposal[]> {
     const response = await fetchAPI(`items/${itemId}/metadata-proposals/`);
     return await response.json();
   }
@@ -425,10 +459,7 @@ export class StandardDriver extends Driver {
     return await response.json();
   }
 
-  async removeItemRelation(
-    itemId: string,
-    relationId: string,
-  ): Promise<void> {
+  async removeItemRelation(itemId: string, relationId: string): Promise<void> {
     await fetchAPI(`items/${itemId}/relations/${relationId}/`, {
       method: "DELETE",
     });

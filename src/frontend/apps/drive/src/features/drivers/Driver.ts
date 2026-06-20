@@ -16,6 +16,9 @@ import {
   APIList,
   AuditEvent,
   Invitation,
+  AccessPolicy,
+  ClassificationLevel,
+  ClassificationStatus,
   ContentObjectType,
   ContentObjectTypeInput,
   ContentRelation,
@@ -32,6 +35,7 @@ import {
   MetadataTemplate,
   MetadataTemplateInput,
   MetricsSummary,
+  RetentionPolicy,
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
@@ -168,6 +172,18 @@ export abstract class Driver {
     itemId: string,
     durationDays: number,
   ): Promise<RetentionStatus>;
+  // Governance — classification (p6), retention policies (E3.1), access (p4)
+  abstract getItemClassification(itemId: string): Promise<ClassificationStatus>;
+  abstract setItemClassification(
+    itemId: string,
+    level: ClassificationLevel | null,
+  ): Promise<ClassificationStatus>;
+  abstract getRetentionPolicies(): Promise<RetentionPolicy[]>;
+  abstract applyRetentionPolicy(
+    itemId: string,
+    policyKey: string,
+  ): Promise<RetentionStatus>;
+  abstract getItemAccessPolicy(itemId: string): Promise<AccessPolicy>;
   abstract getItemLegalHolds(itemId: string): Promise<LegalHold[]>;
   abstract placeItemLegalHold(
     itemId: string,

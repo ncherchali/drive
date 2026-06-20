@@ -8,12 +8,16 @@
 // partie. Réservé aux managers (l'onglet n'est monté que pour eux).
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Boxes, X } from "lucide-react";
+import { Boxes, KeyRound, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { ContentRelation } from "@/features/drivers/types";
-import { useItemManifest } from "@/features/explorer/hooks/useQueries";
+import {
+  useItemAccessPolicy,
+  useItemManifest,
+} from "@/features/explorer/hooks/useQueries";
 import {
   useMutationAddRelation,
   useMutationRemoveRelation,
@@ -26,6 +30,7 @@ export type ItemCompositionDsProps = {
 export const ItemCompositionDs = ({ itemId }: ItemCompositionDsProps) => {
   const { t } = useTranslation();
   const { data: manifest } = useItemManifest(itemId);
+  const { data: accessPolicy } = useItemAccessPolicy(itemId);
   const addRelation = useMutationAddRelation();
   const removeRelation = useMutationRemoveRelation();
 
@@ -80,6 +85,34 @@ export const ItemCompositionDs = ({ itemId }: ItemCompositionDsProps) => {
           </div>
         )}
       </section>
+
+      {/* Accès effectif (p4) — seulement pertinent quand il y a des parties */}
+      {parts.length > 0 && accessPolicy && (
+        <section className="flex flex-col gap-2 border-t border-solid border-border pt-3">
+          <h3 className="flex items-center gap-2 font-medium text-foreground">
+            <KeyRound className="size-4" />
+            {t("explorer.rightPanel.composition.effective_access")}
+          </h3>
+          {accessPolicy.fully_accessible ? (
+            <p className="text-muted-foreground">
+              {t("explorer.rightPanel.composition.access_full")}{" "}
+              {accessPolicy.effective_role && (
+                <Badge variant="secondary">
+                  {t(
+                    `explorer.rightPanel.composition.access_role.${accessPolicy.effective_role}`,
+                  )}
+                </Badge>
+              )}
+            </p>
+          ) : (
+            <div className="rounded-md bg-destructive/10 px-3 py-2 text-destructive">
+              {t("explorer.rightPanel.composition.access_restricted", {
+                count: accessPolicy.inaccessible_part_ids.length,
+              })}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Parties (manifeste) */}
       <section className="flex flex-col gap-2 border-t border-solid border-border pt-3">
