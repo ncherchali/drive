@@ -958,6 +958,13 @@ class Base(Configuration):
     )
     PURGE_GRACE_DAYS = values.Value(7, environ_name="PURGE_GRACE_DAYS", environ_prefix=None)
 
+    # E3.1: when enabled, a scheduled task disposes (soft-deletes to trashbin)
+    # items whose retention has expired and that are under no legal hold. Auto
+    # deletion is sensitive, so it is OFF by default.
+    FEATURES_RETENTION_DISPOSITION = values.BooleanValue(
+        False, environ_name="FEATURES_RETENTION_DISPOSITION", environ_prefix=None
+    )
+
     # Audit (A2-4): number of days to keep audit events. None/0 disables purge
     # (keep forever) — the safe default for a tamper-evident governance trail.
     AUDIT_RETENTION_DAYS = values.Value(
@@ -1167,6 +1174,11 @@ class Base(Configuration):
         "process-audit-outbox": {
             "task": "core.tasks.audit.process_audit_outbox",
             "schedule": crontab(minute="*"),
+        },
+        # Disposes items past retention (no-op when FEATURES_RETENTION_DISPOSITION off).
+        "dispose-expired-items": {
+            "task": "core.tasks.retention.dispose_expired_items",
+            "schedule": crontab(hour=2, minute=30),
         },
     }
 

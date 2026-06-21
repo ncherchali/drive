@@ -74,6 +74,53 @@ def test_set_retention_is_extend_only():
         retention.set_retention(item, timezone.now() + timedelta(days=10))
 
 
+def _expired(**kwargs):
+    item = factories.ItemFactory(**kwargs)
+    item.retention_until = timezone.now() - timedelta(days=1)
+    item.save(update_fields=["retention_until"])
+    return item
+
+
+def test_dispose_soft_deletes_and_audits():
+    item = _expired()
+
+    retention.dispose(item)
+
+    item.refresh_from_db()
+    assert item.deleted_at is not None
+    assert models.AuditEvent.objects.filter(
+        action="item.retention_disposed", target_uuid=item.id
+    ).exists()
+
+
+def test_run_disposition_disposes_only_eligible():
+    expired = _expired()
+    held = _expired()
+    factories.LegalHoldFactory(item=held, is_active=True)
+    active = factories.ItemFactory()
+    active.retention_until = timezone.now() + timedelta(days=10)
+    active.save(update_fields=["retention_until"])
+
+    result = retention.run_disposition()
+
+    assert result["disposed"] == 1
+    assert str(expired.id) in result["ids"]
+    expired.refresh_from_db()
+    held.refresh_from_db()
+    active.refresh_from_db()
+    assert expired.deleted_at is not None
+    assert held.deleted_at is None  # legal hold protects it
+    assert active.deleted_at is None  # still under retention
+
+
+def test_run_disposition_is_idempotent():
+    _expired()
+    first = retention.run_disposition()
+    second = retention.run_disposition()
+    assert first["disposed"] == 1
+    assert second["disposed"] == 0  # nothing left to dispose
+
+
 def test_disposition_candidates_excludes_held_and_unexpired():
     now = timezone.now()
     # Expired, no hold → candidate.
