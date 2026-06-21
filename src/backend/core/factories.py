@@ -281,6 +281,17 @@ class MetadataProposalFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
 
 
+class EncryptionKeyFactory(factory.django.DjangoModelFactory):
+    """A factory to create encryption keys for testing purposes (E4.1)."""
+
+    class Meta:
+        model = models.EncryptionKey
+
+    key_ref = factory.Sequence(lambda n: f"key-{n}")
+    label = factory.Faker("sentence", nb_words=2)
+    creator = factory.SubFactory(UserFactory)
+
+
 class AuditEventFactory(factory.django.DjangoModelFactory):
     """A factory to create audit events for testing purposes."""
 

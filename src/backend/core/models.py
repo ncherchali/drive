@@ -2428,3 +2428,40 @@ class AuditOutboxEntry(BaseModel):
 
     def __str__(self):
         return f"AuditOutboxEntry({self.status}: {self.audit_event_id})"
+
+
+class EncryptionKey(BaseModel):
+    """A BYOK encryption key reference (E4.1 / KMS).
+
+    The actual key material lives in the KMS (never in this table) — only an
+    opaque `key_ref` the configured provider understands is stored. `provider`
+    records which KMS holds it (sovereign local by default, or a customer's BYOK
+    endpoint). Deactivating the key is a logical crypto-shred: the encryption
+    service then refuses to unseal anything sealed under it.
+    """
+
+    key_ref = models.SlugField(max_length=100, unique=True)
+    label = models.CharField(max_length=255)
+    provider = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=_("KMS holding the key (empty = the configured default)."),
+    )
+    is_active = models.BooleanField(default=True)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="encryption_keys_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_encryption_key"
+        verbose_name = _("Encryption key")
+        verbose_name_plural = _("Encryption keys")
+        ordering = ("label",)
+
+    def __str__(self):
+        return f"EncryptionKey({self.key_ref})"

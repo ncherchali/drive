@@ -975,6 +975,24 @@ class Base(Configuration):
     )
     CLASSIFICATION_RULES = []
 
+    # E4.1 (KMS / BYOK): pluggable key-management provider (sovereign by default).
+    # The default local provider derives per-key_ref keys from KMS_MASTER_KEY —
+    # set a strong secret in production. A real cloud/HSM/BYOK adapter replaces
+    # it via KMS_PROVIDER.
+    KMS_PROVIDER = values.Value(
+        "core.kms.local_provider.LocalKMSProvider",
+        environ_name="KMS_PROVIDER",
+        environ_prefix=None,
+    )
+    KMS_PROVIDER_PARAMETERS = values.DictValue(
+        {}, environ_name="KMS_PROVIDER_PARAMETERS", environ_prefix=None
+    )
+    KMS_MASTER_KEY = values.Value(
+        "dev-insecure-kms-master-key-change-me",
+        environ_name="KMS_MASTER_KEY",
+        environ_prefix=None,
+    )
+
     # Audit (A2-4): number of days to keep audit events. None/0 disables purge
     # (keep forever) — the safe default for a tamper-evident governance trail.
     AUDIT_RETENTION_DAYS = values.Value(

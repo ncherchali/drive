@@ -363,6 +363,32 @@ class RetentionPolicyAdmin(admin.ModelAdmin):
         obj.save()
 
 
+@admin.register(models.EncryptionKey)
+class EncryptionKeyAdmin(admin.ModelAdmin):
+    """Admin console for the BYOK encryption key registry (E4.1).
+
+    Only key references are managed here — the key material lives in the KMS.
+    """
+
+    fields = ("key_ref", "label", "provider", "is_active", "creator", "created_at")
+    readonly_fields = ("creator", "created_at")
+    list_display = ("key_ref", "label", "provider", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("key_ref", "label")
+    ordering = ("label",)
+
+    def get_readonly_fields(self, request, obj=None):
+        # key_ref is immutable once created (it ties data to a KMS key).
+        if obj is not None:
+            return self.readonly_fields + ("key_ref",)
+        return self.readonly_fields
+
+    def save_model(self, request, obj, form, change):
+        if not change and obj.creator_id is None:
+            obj.creator = request.user
+        obj.save()
+
+
 @admin.register(models.SignatureRequest)
 class SignatureRequestAdmin(admin.ModelAdmin):
     """Read-only view over e-signature requests (H1.8)."""
