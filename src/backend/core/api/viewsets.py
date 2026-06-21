@@ -1958,6 +1958,25 @@ class ItemViewSet(
             }
         )
 
+    @drf.decorators.action(detail=True, methods=["post"], url_path="auto-classify")
+    def auto_classify(self, request, *args, **kwargs):
+        """Run the classification rules engine and raise the item's level (p6).
+
+        Only raises (never lowers): applies the most restrictive of the current
+        level and the engine's suggestion. Returns the resulting classification.
+        """
+        item = self.get_object()
+        level = classification_service.auto_classify(item, actor=request.user)
+        return drf.response.Response(
+            {
+                "classification": item.classification,
+                "suggested": level,
+                "effective_classification": (
+                    classification_service.effective_classification(item)
+                ),
+            }
+        )
+
     @drf.decorators.action(
         detail=True, methods=["get", "post"], url_path="metadata-proposals"
     )

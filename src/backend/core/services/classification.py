@@ -9,6 +9,7 @@ a classification is a governed act (audited).
 """
 
 from core import models
+from core.classification_rules import get_classification_rules_engine
 from core.services import audit, relations
 
 ClassificationChoices = models.ClassificationChoices
@@ -47,3 +48,25 @@ def classify(item, level, actor=None):
         metadata={"classification": level},
     )
     return item
+
+
+def suggest(item):
+    """Suggest a classification for `item` via the rules engine (or None)."""
+    return get_classification_rules_engine().suggest(item)
+
+
+def auto_classify(item, actor=None):
+    """Raise an item's classification to the rules-engine suggestion, if any.
+
+    Only RAISES (never lowers): the applied level is the most restrictive of the
+    item's current own level and the suggestion. Returns the resulting level, or
+    None when no rule matched. The act is audited as `item.classify` (the level
+    change) — a no-op when the suggestion is not more restrictive.
+    """
+    suggested = suggest(item)
+    if suggested is None:
+        return item.classification
+    target = most_restrictive([item.classification, suggested])
+    if target != item.classification:
+        classify(item, target, actor=actor)
+    return target

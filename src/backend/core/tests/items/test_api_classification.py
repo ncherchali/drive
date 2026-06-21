@@ -1,5 +1,7 @@
 """API tests for item classification (ADR-0001 §5.4, passe 6)."""
 
+from django.test.utils import override_settings
+
 import pytest
 from rest_framework.test import APIClient
 
@@ -89,6 +91,30 @@ def test_api_reject_unknown_classification():
         URL.format(id=item.id), {"classification": "bogus"}, format="json"
     )
     assert response.status_code == 400
+
+
+def test_api_auto_classify_raises_level_via_rules():
+    owner = factories.UserFactory()
+    item = factories.ItemFactory(
+        content_type="contract", users=[(owner, R.OWNER)]
+    )
+    rules = [{"content_type": "contract", "level": "confidential"}]
+    with override_settings(CLASSIFICATION_RULES=rules):
+        response = _client(owner).post(
+            f"/api/v1.0/items/{item.id}/auto-classify/"
+        )
+    assert response.status_code == 200
+    assert response.json()["classification"] == "confidential"
+
+
+def test_api_auto_classify_forbidden_for_editor():
+    owner = factories.UserFactory()
+    editor = factories.UserFactory()
+    item = factories.ItemFactory(
+        users=[(owner, R.OWNER), (editor, R.EDITOR)],
+    )
+    response = _client(editor).post(f"/api/v1.0/items/{item.id}/auto-classify/")
+    assert response.status_code == 403
 
 
 def test_api_batch_classifications_returns_map_for_readable_items():

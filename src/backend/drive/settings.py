@@ -965,6 +965,16 @@ class Base(Configuration):
         False, environ_name="FEATURES_RETENTION_DISPOSITION", environ_prefix=None
     )
 
+    # Passe 6: pluggable classification rules engine + its declarative rules.
+    # Default engine reads CLASSIFICATION_RULES (empty = auto-classification is
+    # opt-in). See core/classification_rules/rules_engine.py for the rule shape.
+    CLASSIFICATION_RULES_ENGINE = values.Value(
+        "core.classification_rules.rules_engine.SettingsRulesEngine",
+        environ_name="CLASSIFICATION_RULES_ENGINE",
+        environ_prefix=None,
+    )
+    CLASSIFICATION_RULES = []
+
     # Audit (A2-4): number of days to keep audit events. None/0 disables purge
     # (keep forever) — the safe default for a tamper-evident governance trail.
     AUDIT_RETENTION_DAYS = values.Value(
