@@ -36,6 +36,7 @@ import {
   MetadataTemplateInput,
   MetricsSummary,
   RetentionPolicy,
+  RetentionPolicyInput,
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
@@ -179,6 +180,14 @@ export abstract class Driver {
     level: ClassificationLevel | null,
   ): Promise<ClassificationStatus>;
   abstract getRetentionPolicies(): Promise<RetentionPolicy[]>;
+  abstract createRetentionPolicy(
+    payload: RetentionPolicyInput,
+  ): Promise<RetentionPolicy>;
+  abstract updateRetentionPolicy(
+    key: string,
+    payload: RetentionPolicyInput,
+  ): Promise<RetentionPolicy>;
+  abstract deleteRetentionPolicy(key: string): Promise<void>;
   abstract applyRetentionPolicy(
     itemId: string,
     policyKey: string,

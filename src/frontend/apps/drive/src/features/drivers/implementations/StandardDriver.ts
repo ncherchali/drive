@@ -44,6 +44,7 @@ import {
   MetadataTemplateInput,
   MetricsSummary,
   RetentionPolicy,
+  RetentionPolicyInput,
   RetentionStatus,
   ShareLink,
   ShareLinkResolution,
@@ -300,6 +301,31 @@ export class StandardDriver extends Driver {
   async getRetentionPolicies(): Promise<RetentionPolicy[]> {
     const response = await fetchAPI(`retention-policies/`);
     return await response.json();
+  }
+
+  async createRetentionPolicy(
+    payload: RetentionPolicyInput,
+  ): Promise<RetentionPolicy> {
+    const response = await fetchAPI(`retention-policies/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async updateRetentionPolicy(
+    key: string,
+    payload: RetentionPolicyInput,
+  ): Promise<RetentionPolicy> {
+    const response = await fetchAPI(`retention-policies/${key}/`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  }
+
+  async deleteRetentionPolicy(key: string): Promise<void> {
+    await fetchAPI(`retention-policies/${key}/`, { method: "DELETE" });
   }
 
   async applyRetentionPolicy(

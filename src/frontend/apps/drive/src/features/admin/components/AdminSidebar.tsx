@@ -4,7 +4,13 @@
 // nav-state-active, persistent-nav du skill ui-ux-pro-max).
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { Boxes, FileSliders, ArrowLeft, ShieldCheck } from "lucide-react";
+import {
+  Boxes,
+  FileSliders,
+  Timer,
+  ArrowLeft,
+  ShieldCheck,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +33,11 @@ const NAV = [
     href: "/admin/metadata-templates",
     icon: FileSliders,
     key: "metadata_templates.menu_tab",
+  },
+  {
+    href: "/admin/retention-policies",
+    icon: Timer,
+    key: "retention_policies.menu_tab",
   },
 ];
 

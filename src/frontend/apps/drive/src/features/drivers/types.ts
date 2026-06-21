@@ -251,13 +251,31 @@ export type ClassificationStatus = {
 };
 
 // Politique de rétention gouvernée (E3.1).
+export type RetentionBasis = "creation" | "metadata_date";
+
 export type RetentionPolicy = {
   id: string;
   key: string;
   name: string;
   duration_days: number;
-  basis: "creation" | "metadata_date";
+  basis: RetentionBasis;
+  metadata_template: string | null;
+  metadata_field: string;
   is_active: boolean;
+  description: string;
+  created_at: string;
+};
+
+// Entrée d'écriture d'une politique de rétention (création / mise à jour).
+export type RetentionPolicyInput = {
+  key: string;
+  name: string;
+  duration_days: number;
+  basis: RetentionBasis;
+  metadata_template: string | null;
+  metadata_field?: string;
+  is_active?: boolean;
+  description?: string;
 };
 
 // Accès effectif sur un composite (p4 / ADR-0001 §5.4).
