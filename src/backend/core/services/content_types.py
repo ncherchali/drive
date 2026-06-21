@@ -7,14 +7,35 @@ optional behaviour proxy (a Django proxy model). Registry-in-data — types are
 rows, never Python subclasses (no multi-table inheritance).
 """
 
+import logging
+
 from django.utils.module_loading import import_string
 
 from core import models
 from core.services import audit
 
+logger = logging.getLogger(__name__)
+
 
 class ContentTypeError(Exception):
     """Raised when a content type assignment is invalid."""
+
+
+def _auto_classify(item):
+    """Run rules-based auto-classification after a typing change (passe 6).
+
+    Fail-soft: classification must never break a content-type assignment. The
+    import is lazy to avoid a cycle (classification → relations → content_types).
+    A no-op when no CLASSIFICATION_RULES are configured (opt-in).
+    """
+    try:
+        from core.services import (  # noqa: PLC0415  pylint: disable=import-outside-toplevel
+            classification,
+        )
+
+        classification.auto_classify(item)
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Auto-classification failed for item %s", item.pk)
 
 
 def get_type(key):
@@ -42,6 +63,7 @@ def assign_content_type(item, type_key, actor=None):
         target=item,
         metadata={"content_type": content_type.key},
     )
+    _auto_classify(item)
     return item
 
 

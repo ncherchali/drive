@@ -1,5 +1,9 @@
 """Tests for the content object type service (E2.2 / ADR-0001 phase 1)."""
 
+from unittest import mock
+
+from django.test.utils import override_settings
+
 import pytest
 
 from core import factories, models
@@ -92,3 +96,40 @@ def test_workspace_manager_scopes_to_workspace_content_type():
 def test_workspace_branding_reads_metadata_namespace():
     workspace = models.Workspace(metadata={"workspace": {"branding": "teal"}})
     assert workspace.branding == "teal"
+
+
+# --- Auto-classification on typing (passe 6 hook) ----------------------------
+
+
+@override_settings(
+    CLASSIFICATION_RULES=[{"content_type": "workspace", "level": "confidential"}]
+)
+def test_assign_content_type_auto_classifies_via_rules():
+    folder = factories.ItemFactory(type=models.ItemTypeChoices.FOLDER)
+
+    content_types.assign_content_type(folder, "workspace")
+
+    folder.refresh_from_db()
+    assert folder.classification == models.ClassificationChoices.CONFIDENTIAL
+
+
+@override_settings(CLASSIFICATION_RULES=[])
+def test_assign_content_type_no_rule_keeps_unclassified():
+    folder = factories.ItemFactory(type=models.ItemTypeChoices.FOLDER)
+    content_types.assign_content_type(folder, "workspace")
+    folder.refresh_from_db()
+    assert folder.classification is None
+
+
+def test_assign_content_type_resilient_to_classification_failure():
+    """A classification error never breaks the content-type assignment."""
+    folder = factories.ItemFactory(type=models.ItemTypeChoices.FOLDER)
+
+    with mock.patch(
+        "core.services.classification.auto_classify",
+        side_effect=RuntimeError("boom"),
+    ):
+        content_types.assign_content_type(folder, "workspace")
+
+    folder.refresh_from_db()
+    assert folder.content_type == "workspace"  # assignment succeeded
