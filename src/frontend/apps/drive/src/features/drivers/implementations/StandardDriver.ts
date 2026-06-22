@@ -35,6 +35,7 @@ import {
   Item,
   ItemBreadcrumb,
   ItemMetadata,
+  ItemSecret,
   ItemType,
   ItemVersion,
   LegalHold,
@@ -354,6 +355,40 @@ export class StandardDriver extends Driver {
       params: { ids: ids.join(",") },
     });
     return await response.json();
+  }
+
+  async getItemSecrets(itemId: string): Promise<ItemSecret[]> {
+    const response = await fetchAPI(`items/${itemId}/secrets/`);
+    return await response.json();
+  }
+
+  async setItemSecret(
+    itemId: string,
+    name: string,
+    value: string,
+  ): Promise<ItemSecret> {
+    const response = await fetchAPI(`items/${itemId}/secrets/`, {
+      method: "POST",
+      body: JSON.stringify({ name, value }),
+    });
+    return await response.json();
+  }
+
+  async revealItemSecret(
+    itemId: string,
+    secretId: string,
+  ): Promise<{ name: string; value: string }> {
+    const response = await fetchAPI(
+      `items/${itemId}/secrets/${secretId}/reveal/`,
+      { method: "POST" },
+    );
+    return await response.json();
+  }
+
+  async deleteItemSecret(itemId: string, secretId: string): Promise<void> {
+    await fetchAPI(`items/${itemId}/secrets/${secretId}/`, {
+      method: "DELETE",
+    });
   }
 
   async placeItemLegalHold(itemId: string, reason: string): Promise<LegalHold> {

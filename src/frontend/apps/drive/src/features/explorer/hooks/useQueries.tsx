@@ -107,6 +107,15 @@ export const useItemAccessPolicy = (itemId: string) => {
   });
 };
 
+export const useItemSecrets = (itemId: string) => {
+  return useQuery({
+    queryKey: ["itemSecrets", itemId],
+    queryFn: () => getDriver().getItemSecrets(itemId),
+    staleTime: 0,
+    gcTime: 0,
+  });
+};
+
 export const useItemDataRoom = (itemId: string) => {
   return useQuery({
     queryKey: ["itemDataRoom", itemId],

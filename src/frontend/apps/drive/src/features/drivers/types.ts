@@ -420,6 +420,14 @@ export type Manifest = {
   complete: boolean;
 };
 
+// Secret scellé attaché à un item (E4.1) — la valeur n'est jamais exposée ici.
+export type ItemSecret = {
+  id: string;
+  name: string;
+  key_ref: string;
+  created_at: string;
+};
+
 // Une version S3 du fichier d'un item (H1.4).
 export type ItemVersion = {
   version_id: string;

@@ -330,6 +330,7 @@
             "versions": "Versions",
             "signatures": "Signature",
             "compliance": "Compliance",
+            "secrets": "Secrets",
             "composition": "Composition",
             "data_room": "Room"
           },
@@ -382,6 +383,16 @@
             "policy": "Retention policy",
             "policy_choose": "Choose a policy…",
             "apply_policy": "Apply"
+          },
+          "secrets": {
+            "title": "Secrets",
+            "description": "Sensitive values sealed with the KMS; revealed on demand (audited).",
+            "empty": "No secret yet.",
+            "name": "Name",
+            "value": "Value",
+            "add": "Add",
+            "reveal": "Reveal",
+            "delete": "Delete"
           },
           "metadata": {
             "content_type": "Content type",
@@ -1231,6 +1242,7 @@
             "versions": "Versions",
             "signatures": "Signature",
             "compliance": "Conformité",
+            "secrets": "Secrets",
             "composition": "Composition",
             "data_room": "Espace"
           },
@@ -1283,6 +1295,16 @@
             "policy": "Politique de rétention",
             "policy_choose": "Choisir une politique…",
             "apply_policy": "Appliquer"
+          },
+          "secrets": {
+            "title": "Secrets",
+            "description": "Valeurs sensibles scellées via le KMS ; révélées à la demande (audité).",
+            "empty": "Aucun secret.",
+            "name": "Nom",
+            "value": "Valeur",
+            "add": "Ajouter",
+            "reveal": "Révéler",
+            "delete": "Supprimer"
           },
           "metadata": {
             "content_type": "Type de contenu",
@@ -2140,6 +2162,7 @@
             "versions": "Versies",
             "signatures": "Handtekening",
             "compliance": "Naleving",
+            "secrets": "Secrets",
             "composition": "Samenstelling",
             "data_room": "Ruimte"
           },
@@ -2192,6 +2215,16 @@
             "policy": "Bewaarbeleid",
             "policy_choose": "Kies een beleid…",
             "apply_policy": "Toepassen"
+          },
+          "secrets": {
+            "title": "Secrets",
+            "description": "Gevoelige waarden verzegeld met de KMS; op verzoek onthuld (geaudit).",
+            "empty": "Nog geen secret.",
+            "name": "Naam",
+            "value": "Waarde",
+            "add": "Toevoegen",
+            "reveal": "Onthullen",
+            "delete": "Verwijderen"
           },
           "metadata": {
             "content_type": "Inhoudstype",

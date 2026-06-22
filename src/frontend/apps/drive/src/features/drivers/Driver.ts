@@ -27,6 +27,7 @@ import {
   Item,
   ItemBreadcrumb,
   ItemMetadata,
+  ItemSecret,
   ItemType,
   ItemVersion,
   LegalHold,
@@ -196,6 +197,18 @@ export abstract class Driver {
   abstract getItemsClassifications(
     ids: string[],
   ): Promise<Record<string, ClassificationLevel | null>>;
+  // Sealed secrets (E4.1)
+  abstract getItemSecrets(itemId: string): Promise<ItemSecret[]>;
+  abstract setItemSecret(
+    itemId: string,
+    name: string,
+    value: string,
+  ): Promise<ItemSecret>;
+  abstract revealItemSecret(
+    itemId: string,
+    secretId: string,
+  ): Promise<{ name: string; value: string }>;
+  abstract deleteItemSecret(itemId: string, secretId: string): Promise<void>;
   abstract getItemLegalHolds(itemId: string): Promise<LegalHold[]>;
   abstract placeItemLegalHold(
     itemId: string,
