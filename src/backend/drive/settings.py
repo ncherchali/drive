@@ -1000,6 +1000,28 @@ class Base(Configuration):
         environ_prefix=None,
     )
 
+    # Real sovereign KMS: HashiCorp Vault transit engine (set KMS_PROVIDER=
+    # core.kms.vault_provider.VaultTransitKMSProvider to use it). Outbound port:
+    # timeout + circuit breaker, fail-closed.
+    KMS_VAULT_ADDR = values.Value(
+        "", environ_name="KMS_VAULT_ADDR", environ_prefix=None
+    )
+    KMS_VAULT_TOKEN = values.Value(
+        "", environ_name="KMS_VAULT_TOKEN", environ_prefix=None
+    )
+    KMS_VAULT_TRANSIT_MOUNT = values.Value(
+        "transit", environ_name="KMS_VAULT_TRANSIT_MOUNT", environ_prefix=None
+    )
+    KMS_TIMEOUT = values.IntegerValue(
+        5, environ_name="KMS_TIMEOUT", environ_prefix=None
+    )
+    KMS_BREAKER_FAILURE_THRESHOLD = values.IntegerValue(
+        5, environ_name="KMS_BREAKER_FAILURE_THRESHOLD", environ_prefix=None
+    )
+    KMS_BREAKER_RESET_TIMEOUT = values.FloatValue(
+        30.0, environ_name="KMS_BREAKER_RESET_TIMEOUT", environ_prefix=None
+    )
+
     # Audit (A2-4): number of days to keep audit events. None/0 disables purge
     # (keep forever) — the safe default for a tamper-evident governance trail.
     AUDIT_RETENTION_DAYS = values.Value(
