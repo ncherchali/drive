@@ -992,6 +992,13 @@ class Base(Configuration):
         environ_name="KMS_MASTER_KEY",
         environ_prefix=None,
     )
+    # key_ref used to seal item secrets when none is specified (must reference
+    # an active EncryptionKey).
+    DEFAULT_ENCRYPTION_KEY_REF = values.Value(
+        "default",
+        environ_name="DEFAULT_ENCRYPTION_KEY_REF",
+        environ_prefix=None,
+    )
 
     # Audit (A2-4): number of days to keep audit events. None/0 disables purge
     # (keep forever) — the safe default for a tamper-evident governance trail.

@@ -2465,3 +2465,41 @@ class EncryptionKey(BaseModel):
 
     def __str__(self):
         return f"EncryptionKey({self.key_ref})"
+
+
+class ItemSecret(BaseModel):
+    """A sealed secret attached to an item (E4.1 — KMS wiring).
+
+    Stores a sensitive value (password, API key, note) as a KMS ciphertext
+    token, never in clear. The plaintext is only produced on an explicit,
+    audited reveal. `key_ref` ties the token to the EncryptionKey that sealed it;
+    shredding that key makes the secret unrecoverable (crypto-shred).
+    """
+
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="secrets"
+    )
+    name = models.CharField(max_length=255)
+    sealed_value = models.TextField()
+    key_ref = models.SlugField(max_length=100)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="item_secrets_created",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = "drive_item_secret"
+        verbose_name = _("Item secret")
+        verbose_name_plural = _("Item secrets")
+        ordering = ("name",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["item", "name"], name="drive_item_secret_unique_name"
+            ),
+        ]
+
+    def __str__(self):
+        return f"ItemSecret({self.name} on {self.item_id})"

@@ -48,15 +48,18 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from core import enums, models
 from core.entitlements import get_entitlements_backend
+from core.kms import KMSError
 from core.services import access_policy as access_policy_service
 from core.services import audit
 from core.services import classification as classification_service
 from core.services import content_types as content_types_service
+from core.services import encryption as encryption_service
 from core.services import metadata as metadata_service
 from core.services import provenance as provenance_service
 from core.services import records as records_service
 from core.services import relations as relations_service
 from core.services import retention as retention_service
+from core.services import secrets as secrets_service
 from core.services import versions as item_versions
 from core.services.sdk_relay import SDKRelayManager
 from core.services.search_indexers import (
@@ -1976,6 +1979,67 @@ class ItemViewSet(
                 ),
             }
         )
+
+    @drf.decorators.action(detail=True, methods=["get", "post"], url_path="secrets")
+    def secrets(self, request, *args, **kwargs):
+        """List (names only) or set a sealed secret on the item (E4.1).
+
+        Values are sealed via the KMS and never returned here; reveal them
+        through the dedicated reveal endpoint.
+        """
+        item = self.get_object()
+        if request.method == "GET":
+            serializer = serializers.ItemSecretSerializer(
+                item.secrets.all(), many=True
+            )
+            return drf.response.Response(serializer.data)
+
+        serializer = serializers.ItemSecretCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        key_ref = data.get("key_ref") or settings.DEFAULT_ENCRYPTION_KEY_REF
+        key = encryption_service.get_active_key(key_ref)
+        try:
+            secret = secrets_service.set_secret(
+                item, data["name"], data["value"], key, actor=request.user
+            )
+        except (secrets_service.SecretError, KMSError) as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        return drf.response.Response(
+            serializers.ItemSecretSerializer(secret).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["post"],
+        url_path="secrets/(?P<secret_id>[^/.]+)/reveal",
+    )
+    def secret_reveal(self, request, *args, secret_id=None, **kwargs):
+        """Reveal (unseal) a secret's value — a sensitive, audited read (E4.1)."""
+        item = self.get_object()
+        try:
+            secret = item.secrets.get(pk=secret_id)
+        except models.ItemSecret.DoesNotExist as excpt:
+            raise drf.exceptions.NotFound() from excpt
+        try:
+            value = secrets_service.reveal_secret(secret, actor=request.user)
+        except KMSError as excpt:
+            raise drf.exceptions.ValidationError(str(excpt)) from excpt
+        return drf.response.Response({"name": secret.name, "value": value})
+
+    @drf.decorators.action(
+        detail=True,
+        methods=["delete"],
+        url_path="secrets/(?P<secret_id>[^/.]+)",
+    )
+    def secrets_detail(self, request, *args, secret_id=None, **kwargs):
+        """Delete a sealed secret from the item (E4.1)."""
+        item = self.get_object()
+        deleted, _ = item.secrets.filter(pk=secret_id).delete()
+        if not deleted:
+            raise drf.exceptions.NotFound()
+        return drf.response.Response(status=status.HTTP_204_NO_CONTENT)
 
     @drf.decorators.action(
         detail=True, methods=["get", "post"], url_path="metadata-proposals"

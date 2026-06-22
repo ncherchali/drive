@@ -1176,6 +1176,23 @@ class RetentionPolicyApplySerializer(serializers.Serializer):
     policy = serializers.SlugField()
 
 
+class ItemSecretSerializer(serializers.ModelSerializer):
+    """A sealed secret's metadata (E4.1) — NEVER exposes the value."""
+
+    class Meta:
+        model = models.ItemSecret
+        fields = ["id", "name", "key_ref", "created_at"]
+        read_only_fields = fields
+
+
+class ItemSecretCreateSerializer(serializers.Serializer):
+    """Input to set a sealed secret on an item (E4.1)."""
+
+    name = serializers.CharField(max_length=255)
+    value = serializers.CharField()
+    key_ref = serializers.SlugField(required=False)
+
+
 class LegalHoldSerializer(serializers.ModelSerializer):
     """A legal hold placed on an item (H1.6)."""
 

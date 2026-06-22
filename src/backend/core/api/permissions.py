@@ -27,6 +27,11 @@ ACTION_FOR_METHOD_TO_PERMISSION = {
     # is a governance/security act reserved to managers.
     "classification": {"GET": "download", "POST": "accesses_manage"},
     "auto_classify": {"POST": "accesses_manage"},
+    # Sealed secrets (E4.1): list names with read; set/reveal/delete are edits
+    # (revealing the plaintext is audited).
+    "secrets": {"GET": "download", "POST": "update"},
+    "secret_reveal": {"POST": "update"},
+    "secrets_detail": {"DELETE": "update"},
     # Metadata provenance (ADR-0001 §6): proposing is a write; promoting
     # (accept/reject) into the authoritative source of truth is a governance act.
     "metadata_proposals": {"GET": "download", "POST": "update"},
